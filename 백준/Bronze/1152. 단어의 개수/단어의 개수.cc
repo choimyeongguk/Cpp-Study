@@ -3,16 +3,17 @@ using namespace std;
 
 int main()
 {
-	int idx = 0, cnt = 0;
-	string S;
+	int cnt = 0, i;
+	char prev, s;
 	
-	getline(cin, S);
-	while(S[++idx] != '\0')
+	prev = getchar();
+	while((s=getchar()) != '\n')
 	{
-		if(S[idx] == ' ')
+		if(s == ' ')
 			cnt++;
+		prev = s;
 	}
-	if(S[idx-1] == ' ')
+	if(prev == ' ')
 		cnt--;
 	cout << cnt + 1;
 	
