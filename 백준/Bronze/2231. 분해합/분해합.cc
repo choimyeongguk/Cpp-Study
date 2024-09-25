@@ -1,15 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int getDigit(int x) {
-	int n = 0;
-	while(x > 0) {
-		n++;
-		x /= 10;
-	}
-	return n;
-}
-
 int getDSum(int x) {
 	int result = x;
 	while(x > 0) {
@@ -20,7 +11,7 @@ int getDSum(int x) {
 }
 
 int main() {
-	int N, M = 0, upperLimit;
+	int N, M = 0;
 	
 	cin >> N;
 	for(int i = 1; i <= N; i++) {
