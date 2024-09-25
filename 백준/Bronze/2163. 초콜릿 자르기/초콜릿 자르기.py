@@ -8,4 +8,7 @@ def cutChoco(r, c):
   return 1 + cutChoco(r-1, c) + cutChoco(1, c)
 
 N, M = map(int, input().split())
-print(cutChoco(N, M))
+#print(cutChoco(N, M))
+if(N < M):
+  N, M = M, N
+print((N-1) + N*(M-1))
