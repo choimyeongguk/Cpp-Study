@@ -3,10 +3,9 @@ using namespace std;
 
 int main() {
 	int R, C, min, cnt, r, c, i, j;
-	vector<vector<char>> table;
+	char table[50][50];
 	
 	cin >> R >> C;
-	table.assign(R, vector<char>(C));
 	getchar();
 	for(r = 0; r < R; r++) {
 		for(c = 0; c < C; c++) {
