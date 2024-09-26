@@ -24,7 +24,7 @@ int main() {
 	// 다익스트라 알고리즘
 	distance[s] = 0;
 	heap.push({0, s});
-	while(!heap.empty()) {
+	while(heap.size()) {
 		curDist = heap.top().first;
 		curNode = heap.top().second;
 		heap.pop();
