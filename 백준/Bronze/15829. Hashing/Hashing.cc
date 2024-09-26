@@ -2,8 +2,8 @@
 using namespace std;
 
 int main() {
-	int L, H = 0;
-	int a, r = 31, M = 1234567891;
+	int L, r = 31, M = 1234567891;
+	long long int H = 0, a;
 	
 	cin >> L;
 	getchar();
