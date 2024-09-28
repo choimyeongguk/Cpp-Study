@@ -2,38 +2,41 @@
 using namespace std;
 
 int main() {
-	char prev = '\n', c;
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	bool chk;
+	string input;
 	stack<char> stack;
 	
 	while(true) {
-		c = getchar();
+		chk = true;
+		getline(cin, input);
 		
-		switch(c) {
-			case '.' :
-				if(prev == '\n') {
-					return 0;
-				}
-				if(stack.size()) {
-					cout << "no" << '\n';
-					while(!stack.empty()) stack.pop();
-				} else {
-					cout << "yes" << '\n';
-				}
-				break;
-				
-			case '(' : case '[' :
-				stack.push(c);
-				break;
-				
-			case ')' : case ']' :
-				if(!stack.empty() && stack.top() == (c==')'?'(':'[')) {
+		if(input == ".") {
+			break;
+		}
+		
+		for(int i = 0; i < input.length(); i++) {
+			if(input[i] == '(' || input[i] == '[') {
+				stack.push(input[i]);
+			} else if(input[i] == ')' || input[i] == ']') {
+				if(!stack.empty() && stack.top() == (input[i]==')'?'(':'[')) {
 					stack.pop();
 				} else {
-					stack.push(c);
+					chk = false;
+					break;
 				}
-				break;
+			}
 		}
-		prev = c;
+		if(!stack.empty()) {
+			chk = false;
+			while(!stack.empty()) {
+				stack.pop();
+			}
+		}
+		cout << (chk==true ? "yes" : "no") << '\n';
 	}
 	
 	return 0;
