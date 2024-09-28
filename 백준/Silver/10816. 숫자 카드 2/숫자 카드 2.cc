@@ -20,8 +20,7 @@ int main() {
 	cin >> M;
 	for(i = 0; i < M; i++) {
 		cin >> num;
-		tmp = upper_bound(card.begin(), card.end(), num) - lower_bound(card.begin(), card.end(), num);
-		cout << tmp << ' ';
+		cout << upper_bound(card.begin(), card.end(), num) - lower_bound(card.begin(), card.end(), num) << ' ';
 	}
 	
 	return 0;
