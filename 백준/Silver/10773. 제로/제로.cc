@@ -7,16 +7,17 @@ int main() {
 	cout.tie(0);
 	
 	int N, sum = 0, num, i;
-	vector<int> stack;
+	int stack[100000]; int top = 0;
 	
 	cin >> N;
+	//stack.assign(N, 0);
 	for(i = 0; i < N; i++) {
 		cin >> num;
-		if(num) stack.push_back(num);
-		else stack.pop_back();
+		if(num) stack[top++] = num;
+		else top--;
 	}
-	for(int& e : stack) {
-		sum += e;
+	for(i = 0; i < top; i++) {
+		sum += stack[i];
 	}
 //	while(!stack.empty()) {
 //		sum += stack.top();
