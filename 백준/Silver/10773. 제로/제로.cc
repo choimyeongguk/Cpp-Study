@@ -7,18 +7,21 @@ int main() {
 	cout.tie(0);
 	
 	int N, sum = 0, num, i;
-	stack<int> stack;
+	vector<int> stack;
 	
 	cin >> N;
 	for(i = 0; i < N; i++) {
 		cin >> num;
-		if(num) stack.push(num);
-		else stack.pop();
+		if(num) stack.push_back(num);
+		else stack.pop_back();
 	}
-	while(!stack.empty()) {
-		sum += stack.top();
-		stack.pop();
+	for(int& e : stack) {
+		sum += e;
 	}
+//	while(!stack.empty()) {
+//		sum += stack.top();
+//		stack.pop();
+//	}
 	cout << sum;
 	
 	return 0;
