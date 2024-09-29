@@ -17,14 +17,14 @@ int main() {
 	prime.push_back(2);
 	for(i = 3; i < M; i++) {
 		chk = true;
-		for(j = 0; prime[j]*prime[j] <= i && j < prime.size(); j++) {
+		for(j = 0; prime[j]*prime[j] <= i; j++) {
 			if(!(i % prime[j])) chk = false;
 		}
 		if(chk) prime.push_back(i);
 	}
 	for(i = M; i <= N; i++) {
 		chk = true;
-		for(j = 0; prime[j]*prime[j] <= i && j < prime.size(); j++) {
+		for(j = 0; prime[j]*prime[j] <= i; j++) {
 			if(!(i % prime[j])) chk = false;
 		}
 		if(chk) {
