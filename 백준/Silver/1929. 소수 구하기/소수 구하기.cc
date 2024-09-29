@@ -7,30 +7,21 @@ int main() {
 	cout.tie(0);
 	
 	int M, N, i, j;
-	bool chk;
-	vector<int> prime;
+	bool isPrime;
 	
 	cin >> M >> N;
 	if(M == 1) M++;
 	if(N == 1) return 0;
 	
-	prime.push_back(2);
-	for(i = 3; i < M; i++) {
-		chk = true;
-		for(j = 0; prime[j]*prime[j] <= i; j++) {
-			if(!(i % prime[j])) chk = false;
-		}
-		if(chk) prime.push_back(i);
-	}
 	for(i = M; i <= N; i++) {
-		chk = true;
-		for(j = 0; prime[j]*prime[j] <= i; j++) {
-			if(!(i % prime[j])) chk = false;
+		isPrime = true;
+		for(j = 2; j*j <= i; j++) {
+			if(!(i % j)) {
+				isPrime = false;
+				break;
+			}
 		}
-		if(chk) {
-			prime.push_back(i);
-			cout << i << '\n';	
-		}	
+		if(isPrime) cout << i << '\n';
 	}
 	
 	return 0;
