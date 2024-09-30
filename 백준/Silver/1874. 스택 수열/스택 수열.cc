@@ -8,36 +8,25 @@ int main() {
 	
 	int n, num, nxt = 1, i;
 	stack<int> stk;		// seq를 위해 임시 저장 
-	queue<int> seq;		// 입력된 수열 저장
-	queue<char> cmd;	// +/- 저장 
+	vector<char> cmd;	// +/- 저장 
 	
 	cin >> n;
-	for(i = 0; i < n; i++) {
+	while(n--) {
 		cin >> num;
-		seq.push(num);
-	}
-
-	while(!seq.empty()) {
-		if(stk.empty()) {
+		while(nxt <= num) {
 			stk.push(nxt++);
-			cmd.push('+');
-			continue;
+			cmd.push_back('+');
 		}
-		if(seq.front() == stk.top()) {
+		if(stk.top() == num) {
 			stk.pop();
-			seq.pop();
-			cmd.push('-');
-		} else if(seq.front() > stk.top()) {
-			stk.push(nxt++);
-			cmd.push('+');
+			cmd.push_back('-');
 		} else {
 			cout << "NO";
 			return 0;
 		}
 	}
-	while(!cmd.empty()) {
-		cout << cmd.front() << '\n';
-		cmd.pop();
+	for(char& e : cmd) {
+		cout << e << '\n';
 	}
 	
 	return 0;
