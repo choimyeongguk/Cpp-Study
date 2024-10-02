@@ -2,8 +2,8 @@
 using namespace std;
 
 typedef struct {
-	int r;
-	int c;
+	short r;
+	short c;
 	int day;
 } BOX;
 
@@ -12,7 +12,8 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int C, R, numRaw = 0, r, c, day = 0, i, j;
+	int day = 0;
+	short C, R, numRaw = 0, r, c, i, j;
 	char d[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	vector<vector<short>> tomato;
 	queue<BOX> bfs;
@@ -35,7 +36,6 @@ int main() {
 		r = bfs.front().r;
 		c = bfs.front().c;
 		day = bfs.front().day;
-		//cout << ">> " << r << ' ' << c << ' ' << day << '\n';
 		bfs.pop();
 		
 		for(i = 0; i < 4; i++) {
