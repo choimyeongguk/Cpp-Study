@@ -13,7 +13,7 @@ int main() {
 	cout.tie(0);
 	
 	int day = 0;
-	short C, R, numRaw = 0, r, c, i, j;
+	short C, R, numRaw = 0, r, c, tr, tc, i, j;
 	char d[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 	vector<vector<short>> tomato;
 	queue<BOX> bfs;
@@ -39,15 +39,13 @@ int main() {
 		bfs.pop();
 		
 		for(i = 0; i < 4; i++) {
-			r += d[i][0];
-			c += d[i][1];
-			if(0 <= r && r < R && 0 <= c && c < C && !tomato[r][c]) {
-				tomato[r][c]++;
+			tr = r + d[i][0];
+			tc = c + d[i][1];
+			if(0 <= tr && tr < R && 0 <= tc && tc < C && !tomato[tr][tc]) {
+				tomato[tr][tc]++;
 				numRaw--;
-				bfs.push({r, c, day + 1});
+				bfs.push({tr, tc, day + 1});
 			}
-			r -= d[i][0];
-			c -= d[i][1];
 		}
 	}
 	
