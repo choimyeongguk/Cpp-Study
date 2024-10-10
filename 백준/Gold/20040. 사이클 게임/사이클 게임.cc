@@ -15,7 +15,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int n, m, a, b, result = 0, i;
+	int n, m, a, b, ra, rb, result = 0, i;
 	
 	cin >> n >> m;
 	tree.assign(n, -1);
@@ -29,11 +29,13 @@ int main() {
 		} else if(tree[b] == -1) {
 			tree[b] = a;
 		} else {  // 둘 다 부모가 있음 
-			if(root(a) == root(b)) {
+			ra = root(a);
+			rb = root(b);
+			if(ra == rb) {
 				result = i;
 				break;
 			} else {
-				tree[root(b)] = a;  // b의 root 노드를 a의 child 노드로 
+				tree[rb] = a;  // b의 root 노드를 a의 child 노드로 
 			}
 		}
 	}
