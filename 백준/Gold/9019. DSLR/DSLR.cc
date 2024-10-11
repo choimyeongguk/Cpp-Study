@@ -22,8 +22,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int T, a, b, num, tmp, i, j;
-	string cmd;
+	int T, a, b, tmp, i, j;
 	vector<bool> visited;
 	queue<pair<int,string>> bfs;
 	int (*func[4])(int) = {D, S, L, R};
@@ -36,9 +35,8 @@ int main() {
 		visited.assign(10000, false);
 		bfs.push({a, ""});
 		while(bfs.front().first != b) {
-			num = bfs.front().first;
-			cmd = bfs.front().second;
-			bfs.pop();
+			int& num = bfs.front().first;
+			string& cmd = bfs.front().second;
 			
 			for(j = 0; j < 4; j++) {
 				tmp = func[j](num);
@@ -47,6 +45,7 @@ int main() {
 					bfs.push({tmp, cmd + funcName[j]});
 				}
 			}
+			bfs.pop();
 		}
 		cout << bfs.front().second << "\n";
 		while(!bfs.empty()) bfs.pop();
