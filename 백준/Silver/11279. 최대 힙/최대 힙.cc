@@ -15,9 +15,9 @@ int main() {
 		if(cmd) {
 			pq.push(cmd);
 		} else if(pq.empty()) {
-			cout << 0 << '\n';
+			cout << 0 << "\n";
 		} else {
-			cout << pq.top() << '\n';
+			cout << pq.top() << "\n";
 			pq.pop();
 		}
 	}
