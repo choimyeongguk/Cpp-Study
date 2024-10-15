@@ -7,14 +7,13 @@ int main() {
 	cout.tie(0);
 	
 	int N, tmp, i, j;
-	vector<vector<bool>> graph;
+	vector<vector<short>> graph;
 	
 	cin >> N;
-	graph.assign(N, vector<bool>(N, false));
+	graph.assign(N, vector<short>(N, 0));
 	for(i = 0; i < N; i++) {
 		for(j = 0; j < N; j++) {
-			cin >> tmp;
-			graph[i][j] = tmp;
+			cin >> graph[i][j];
 		}
 	}
 	
