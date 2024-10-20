@@ -15,11 +15,7 @@ int main() {
 		cin >> N;
 		for(j = 0; j < N; j++) {
 			cin >> name >> type;
-			if(clothes.find(type) != clothes.end()) {
-				(clothes.find(type)->second)++;
-			} else {
-				clothes.insert({type,1});
-			}
+			clothes[type]++;
 		}
 		ans = 1;
 		for(auto& e : clothes) {
