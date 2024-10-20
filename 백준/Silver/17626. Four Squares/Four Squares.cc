@@ -9,17 +9,17 @@ int main() {
 	for(i = 1; i * i <= 50000; i++) {
 		dp[i * i] = 1;
 	}
-	cin >> n;
-	for(i = 2; i <= n; i++) {
+	for(i = 2; i <= 50000; i++) {
 		if(dp[i]) continue;
 		min = INF;
-		for(j = 1; j<<1 <= i; j++) {
-			tmp = dp[j] + dp[i - j];
+		for(j = 1; j * j <= i; j++) {
+			tmp = 1 + dp[i - j * j];
 			if(min > tmp) min = tmp;
 		}
 		dp[i] = min;
 	}
 	
+	cin >> n;
 	cout << dp[n];
 	
 	return 0;
