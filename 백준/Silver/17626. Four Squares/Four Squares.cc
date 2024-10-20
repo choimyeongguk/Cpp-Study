@@ -1,26 +1,19 @@
 #include <bits/stdc++.h>
-#define INF 1000000000
 using namespace std;
 
 int main() {
-	int i, j, n, min, tmp;
-	int dp[50001] = { 0 };
-	
-	for(i = 1; i * i <= 50000; i++) {
-		dp[i * i] = 1;
-	}
-	for(i = 2; i <= 50000; i++) {
-		if(dp[i]) continue;
-		min = INF;
-		for(j = 1; j * j <= i; j++) {
-			tmp = 1 + dp[i - j * j];
-			if(min > tmp) min = tmp;
-		}
-		dp[i] = min;
-	}
-	
+	int n, i, j, k;
 	cin >> n;
-	cout << dp[n];
-	
+	for(i = 0; i * i <= n; i++) {
+		for(j = i; j * j <= n; j++) {
+			for(k = j; k * k <= n; k++) {
+				if(i * i + j * j + k * k == n) {
+					cout << 3 - !i - !j;
+					return 0;
+				}
+			}
+		}
+	}
+	cout << 4;
 	return 0;
 }
