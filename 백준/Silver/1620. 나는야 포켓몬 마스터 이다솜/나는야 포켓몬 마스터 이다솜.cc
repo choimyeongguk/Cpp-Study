@@ -9,7 +9,7 @@ int main() {
 	int N, M, i;
 	string tmp;
 	vector<string> pokemon1;
-	map<string,int> pokemon2;
+	unordered_map<string,int> pokemon2;
 	
 	cin >> N >> M;
 	pokemon1.assign(N + 1, "");
