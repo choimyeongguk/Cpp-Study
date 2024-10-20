@@ -9,7 +9,8 @@ int main() {
 	for(i = 1; i * i <= 50000; i++) {
 		dp[i * i] = 1;
 	}
-	for(i = 2; i <= 50000; i++) {
+	cin >> n;
+	for(i = 2; i <= n; i++) {
 		if(dp[i]) continue;
 		min = INF;
 		for(j = 1; j<<1 <= i; j++) {
@@ -19,7 +20,6 @@ int main() {
 		dp[i] = min;
 	}
 	
-	cin >> n;
 	cout << dp[n];
 	
 	return 0;
