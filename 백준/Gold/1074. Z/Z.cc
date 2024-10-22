@@ -4,10 +4,8 @@ using namespace std;
 int r, c;
 
 int dfs(int size) {
-	if(size == 1) {
-		return 0;
-	}
-	int ans = 0, n = size / 2;
+	if(size == 1) return 0;
+	int ans = 0, n = size >> 1;
 	if(r >= n && c >= n) {
 		c -= n; r -= n;
 		ans += n * n * 3;
@@ -30,7 +28,7 @@ int main() {
 	int N;
 	
 	cin >> N >> r >> c;
-	cout << dfs(pow(2, N));
+	cout << dfs(1 << N);
 	
 	return 0;
 }
