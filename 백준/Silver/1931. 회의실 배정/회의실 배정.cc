@@ -22,11 +22,10 @@ int main() {
 		return a.second < b.second;
 	});
 	
-	ans = 1;
-	end = meeting[0].second;
-	for(i = 1; i < N; i++) {
-		if(meeting[i].first < end) continue;
-		end = meeting[i].second;
+	ans = 0, end = 0;
+	for(auto& e : meeting) {
+		if(e.first < end) continue;
+		end = e.second;
 		ans++;
 	}
 	
