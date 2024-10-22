@@ -6,31 +6,35 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, i;
-	vector<int> X;
-	priority_queue<int, vector<int>, greater<int>> X_sorted;
-	vector<int> map;
+	int N, idx, prev, i;
+	vector<pair<int,int>> X;  // 값, 입력 순서 
 	
 	cin >> N;
-	X.assign(N, 0);
-	for(auto& e : X) {
-		cin >> e;
-		X_sorted.push(e);
+	X.resize(N);
+	for(i = 0; i < N; i++) {
+		cin >> X[i].first;
+		X[i].second = i;
 	}
+	sort(X.begin(), X.end());
 	
-	map.push_back(X_sorted.top());
-	X_sorted.pop();
-	while(!X_sorted.empty()) {
-		if(map.back() != X_sorted.top()) {
-			map.push_back(X_sorted.top());
+	idx = 0;
+	prev = X[0].first;
+	X[0].first = idx;
+	for(i = 1; i < N; i++) {
+		if(X[i].first == prev) {
+			X[i].first = idx;
+		} else {
+			prev = X[i].first;
+			X[i].first = ++idx; 
 		}
-		X_sorted.pop();
 	}
 	
+	sort(X.begin(), X.end(), [](const pair<int,int> a, const pair<int,int> b) {
+		return a.second < b.second;
+	});
 	for(auto& e : X) {
-		cout << lower_bound(map.begin(), map.end(), e) - map.begin() << " ";
+		cout << e.first << " ";
 	}
-	
 	
 	return 0;
-} 
+}
