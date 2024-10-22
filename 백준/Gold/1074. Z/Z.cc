@@ -3,16 +3,22 @@ using namespace std;
 
 int r, c;
 
-int dfs(int R, int C, int size) {
-	if(R == r && C == c) {
+int dfs(int size) {
+	if(size == 1) {
 		return 0;
 	}
 	int ans = 0, n = size / 2;
-	if     (r < R + n && c < C + n)	 ans += dfs(R, C, n);
-	else if(r < R + n && c >= C + n) ans += n * n + dfs(R, C + n, n);
-	else if(r >= R + n && c < C + n) ans += n * n * 2 + dfs(R + n, C, n);
-	else							 ans += n * n * 3 + dfs(R + n, C + n, n);
-	
+	if(r >= n && c >= n) {
+		c -= n; r -= n;
+		ans += n * n * 3;
+	} else if(r >= n) {
+		r -= n;
+		ans += n * n * 2;
+	} else if(c >= n) {
+		c -= n;
+		ans += n * n;
+	}
+	ans += dfs(n);
 	return ans;
 }
 
@@ -24,7 +30,7 @@ int main() {
 	int N;
 	
 	cin >> N >> r >> c;
-	cout << dfs(0, 0, pow(2, N));
+	cout << dfs(pow(2, N));
 	
 	return 0;
 }
