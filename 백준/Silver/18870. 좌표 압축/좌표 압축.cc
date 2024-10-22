@@ -8,6 +8,7 @@ int main() {
 	
 	int N, idx, prev, i;
 	vector<pair<int,int>> X;  // 값, 입력 순서 
+	vector<int> X_compressed;
 	
 	cin >> N;
 	X.resize(N);
@@ -17,23 +18,20 @@ int main() {
 	}
 	sort(X.begin(), X.end());
 	
+	X_compressed.resize(N);
 	idx = 0;
 	prev = X[0].first;
-	X[0].first = idx;
+	X_compressed[X[0].second] = idx;
 	for(i = 1; i < N; i++) {
-		if(X[i].first == prev) {
-			X[i].first = idx;
-		} else {
+		if(X[i].first != prev) {
 			prev = X[i].first;
-			X[i].first = ++idx; 
+			idx++;
 		}
+		X_compressed[X[i].second] = idx;
 	}
 	
-	sort(X.begin(), X.end(), [](const pair<int,int> a, const pair<int,int> b) {
-		return a.second < b.second;
-	});
-	for(auto& e : X) {
-		cout << e.first << " ";
+	for(auto& e : X_compressed) {
+		cout << e << " ";
 	}
 	
 	return 0;
