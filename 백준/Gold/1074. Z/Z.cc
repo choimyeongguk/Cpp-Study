@@ -3,13 +3,13 @@ using namespace std;
 
 int N, r, c;
 
-int dfs(int size) {
-	if(size == 1) return 0;
-	int n = size >> 1, i = 0;
-	if(r >= n && c >= n) i = 3, r -= n, c -= n;
-	else if(r >= n) 	 i = 2, r -= n;
-	else if(c >= n)		 i = 1, c -= n;
-	return n * n * i + dfs(n);
+int dfs(int L) {
+	if(L == 1) return 0;
+	int l = L >> 1, i = 0;
+	if(r >= l && c >= l) i = 3, r -= l, c -= l;
+	else if(r >= l) 	 i = 2, r -= l;
+	else if(c >= l)		 i = 1, c -= l;
+	return l * l * i + dfs(l);
 }
 
 int main() {
