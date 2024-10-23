@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define INF 1000000000
+#define INF 15000
 using namespace std;
 
 int main() {
@@ -8,12 +8,12 @@ int main() {
 	cout.tie(0);
 	
 	int N, M, s, m, e, i, j, min, sum;
-	vector<vector<int>> graph;
+	vector<vector<short>> graph;
 	vector<int> kevin_bacon;
 	
 	cin >> N >> M;
 	
-	graph.assign(N + 1, vector<int>(N + 1, INF));
+	graph.assign(N + 1, vector<short>(N + 1, INF));
 	kevin_bacon.assign(N + 1, INF);
 	for(i = 1; i <= N; i++) {
 		graph[i][i] = 0;
