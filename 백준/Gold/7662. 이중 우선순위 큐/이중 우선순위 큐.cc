@@ -8,14 +8,13 @@ int main() {
 	
 	char cmd;
 	int T, k, v, idx, i, j;
-	vector<bool> isRemain;
-	priority_queue<pair<int,int>> maxQ;
-	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> minQ;
 	
 	cin >> T;
 	for(i = 0; i < T; i++) {
+		vector<bool> isRemain;
+		priority_queue<pair<int,int>> maxQ;
+		priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> minQ;
 		cin >> k;
-		isRemain.clear();
 		for(idx = 0, j = 0; j < k; j++) {
 			cin >> cmd >> v;
 			if(cmd == 'I') {
@@ -44,8 +43,6 @@ int main() {
 		} else {
 			cout << maxQ.top().first << " " << minQ.top().first << "\n";
 		}
-		while(!minQ.empty()) minQ.pop();
-		while(!maxQ.empty()) maxQ.pop();
 	}
 	
 	return 0;
