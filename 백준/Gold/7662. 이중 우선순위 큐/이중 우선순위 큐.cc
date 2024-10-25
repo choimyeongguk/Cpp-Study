@@ -25,13 +25,11 @@ int main() {
 				idx++;
 			} else {
 				if(v == -1) {
-					if(minQ.empty()) continue;
 					while(!minQ.empty() && isRemain[minQ.top().second] == false) minQ.pop();
 					if(minQ.empty()) continue;
 					isRemain[minQ.top().second] = false;
 					minQ.pop();
 				} else {
-					if(maxQ.empty()) continue;
 					while(!maxQ.empty() && isRemain[maxQ.top().second] == false) maxQ.pop();
 					if(maxQ.empty()) continue;
 					isRemain[maxQ.top().second] = false;
