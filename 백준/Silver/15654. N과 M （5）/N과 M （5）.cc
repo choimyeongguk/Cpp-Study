@@ -8,13 +8,13 @@ vector<bool> used;
 
 void comb(int start, int depth) {
 	if(depth == M) {
-		for(auto& i : idx) cout << seq[i] << " ";
+		for(auto& e : idx) cout << e << " ";
 		cout << "\n";
 		return;
 	}
 	for(int i = 0; i < N; i++) {
 		if(used[i]) continue;
-		idx.push_back(i);
+		idx.push_back(seq[i]);
 		used[i] = true;
 		comb(i, depth + 1);
 		idx.pop_back();
