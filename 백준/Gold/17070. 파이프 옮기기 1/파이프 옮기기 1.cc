@@ -6,7 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, tmp, i, j;
+	int N, i, j;
 	cin >> N;
 	vector<vector<int>> pipe(N + 1, vector<int>(N + 1, 0));
 	vector<vector<vector<int>>> dp(N + 1, vector<vector<int>>(N + 1, vector<int>(3, 0)));
