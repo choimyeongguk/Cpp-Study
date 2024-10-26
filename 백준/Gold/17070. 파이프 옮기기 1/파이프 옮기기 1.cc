@@ -7,19 +7,16 @@ int main() {
 	cout.tie(0);
 	
 	int N, tmp, i, j;
-	vector<vector<int>> pipe;
-	vector<vector<vector<int>>> dp;
-	
 	cin >> N;
+	vector<vector<int>> pipe(N + 1, vector<int>(N + 1, 0));
+	vector<vector<vector<int>>> dp(N + 1, vector<vector<int>>(N + 1, vector<int>(3, 0)));
 	
-	pipe.assign(N + 1, vector<int>(N + 1, 0));
 	for(i = 1; i <= N; i++) {
 		for(j = 1; j <= N; j++) {
 			cin >> pipe[i][j];
 		}
 	}
 	
-	dp.assign(N + 1, vector<vector<int>>(N + 1, vector<int>(3, 0)));
 	dp[1][2][0] = 1;
 	for(i = 1; i <= N; i++) {
 		for(j = 3; j <= N; j++) {
