@@ -1,49 +1,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Pipe {
-	int r, c, status;
-};
-
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, ans = 0;
+	int N, tmp, i, j;
 	vector<vector<int>> pipe;
-	queue<Pipe> bfs;
+	vector<vector<vector<int>>> dp;
 	
 	cin >> N;
-	pipe.resize(N, vector<int>(N));
-	for(auto& r : pipe) {
-		for(auto& c : r) {
-			cin >> c;
-			if(c) c -=2;
+	
+	pipe.assign(N + 1, vector<int>(N + 1, 0));
+	for(i = 1; i <= N; i++) {
+		for(j = 1; j <= N; j++) {
+			cin >> pipe[i][j];
 		}
 	}
-	bfs.push({0, 1, 0});
-	while(!bfs.empty()) {
-		int& r = bfs.front().r;
-		int& c = bfs.front().c;
-		int& s = bfs.front().status;
-		if(r == N - 1 && c == N - 1) {
-			ans++;
-			bfs.pop();
-			continue;
+	
+	dp.assign(N + 1, vector<vector<int>>(N + 1, vector<int>(3, 0)));
+	dp[1][2][0] = 1;
+	for(i = 1; i <= N; i++) {
+		for(j = 3; j <= N; j++) {
+			if(pipe[i][j]) continue;
+			if(!pipe[i - 1][j] && !pipe[i][j - 1]) {
+				dp[i][j][2] += dp[i - 1][j - 1][0] + dp[i - 1][j - 1][1] + dp[i - 1][j - 1][2];
+			}
+			dp[i][j][0] += dp[i][j - 1][0] + dp[i][j - 1][2];
+			dp[i][j][1] += dp[i - 1][j][1] + dp[i - 1][j][2];
 		}
-		if(s != 1 && c + 1 < N && pipe[r][c + 1] >= 0) {
-			bfs.push({r, c + 1, 0});
-		}
-		if(s != 0 && r + 1 < N && pipe[r + 1][c] >= 0) {
-			bfs.push({r + 1, c, 1});
-		}
-		if(c + 1 < N && r + 1 < N && pipe[r + 1][c + 1] >= 0 && pipe[r + 1][c] >= 0 && pipe[r][c + 1] >= 0) {
-			bfs.push({r + 1, c + 1, 2});
-		}
-		bfs.pop();
 	}
-	cout << ans;
+	
+	cout << dp[N][N][0] + dp[N][N][1] + dp[N][N][2];
 	
 	return 0;
 }
