@@ -20,7 +20,9 @@ int main() {
 		nx = x, ny = y;
 		chk = true;
 		while(nx != ny) {
-			nx < ny ? (nx += M) : (ny += N);
+			while(nx < ny) nx += M;
+			while(nx > ny) ny += N;
+			//nx < ny ? (nx += M) : (ny += N);
 			if(nx > lastYear || ny > lastYear) {
 				chk = false;
 				break;
