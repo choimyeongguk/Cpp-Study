@@ -17,9 +17,7 @@ void dfs(int r, int c, int depth, int val) {
 		nr = r + d[i][0];
 		nc = c + d[i][1];
 		if(0 <= nr&&nr < R && 0 <= nc&&nc < C && !visited[nr][nc]) {
-			visited[nr][nc] = true;
 			dfs(nr, nc, depth + 1, val + paper[nr][nc]);
-			visited[nr][nc] = false;
 		}
 	}
 	visited[r][c] = false;
