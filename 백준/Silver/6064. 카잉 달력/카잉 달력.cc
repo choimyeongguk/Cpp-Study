@@ -12,26 +12,21 @@ int main() {
 	cout.tie(0);
 	
 	bool chk;
-	int T, M, N, x, y, lastYear, Q1, Q2, k1, k2, i;
+	int T, M, N, x, y, lastYear, nx, ny, i;
 	cin >> T;
 	for(i = 0; i < T; i++) {
 		cin >> M >> N >> x >> y;
 		lastYear = M * N / gcd(M, N);
-		Q1 = 0, Q2 = 0;
-		k1 = M * Q1 + x;
-		k2 = N * Q2 + y;
+		nx = x, ny = y;
 		chk = true;
-		while(k1 != k2) {
-			if(k1 < k2) Q1++;
-			else Q2++;
-			k1 = M * Q1 + x;
-			k2 = N * Q2 + y;
-			if(k1 > lastYear || k2 > lastYear) {
+		while(nx != ny) {
+			nx < ny ? (nx += M) : (ny += N);
+			if(nx > lastYear || ny > lastYear) {
 				chk = false;
 				break;
 			}
 		}
-		cout << (chk ? k1 : -1) << "\n";
+		cout << (chk ? nx : -1) << "\n";
 	}
 	
 	return 0;
