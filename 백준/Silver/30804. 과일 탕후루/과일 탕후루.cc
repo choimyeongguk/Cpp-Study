@@ -7,7 +7,7 @@ int main() {
 	cout.tie(0);
 	
 	int N, ans, p1, p2, f1, f2, i;
-	vector<int> fruit;
+	vector<char> fruit;
 	
 	cin >> N;
 	
