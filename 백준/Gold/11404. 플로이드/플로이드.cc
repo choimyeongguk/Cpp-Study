@@ -9,24 +9,25 @@ int main() {
 	
 	int N, M, s, m, e, c, i;
 	cin >> N >> M;
-	vector<vector<int>> graph(N + 1, vector<int>(N + 1, INF));
-	for(i = 1; i <= N; i++) graph[i][i] = 0;
+	vector<vector<int>> graph(N, vector<int>(N, INF));
+	for(i = 0; i < N; i++) graph[i][i] = 0;
 	for(i = 0; i < M; i++) {
 		cin >> s >> e >> c;
+		s--, e--;
 		graph[s][e] = min(graph[s][e], c);
 	}
 	
-	for(m = 1; m <= N; m++) {
-		for(s = 1; s <= N; s++) {
-			for(e = 1; e <= N; e++) {
+	for(m = 0; m < N; m++) {
+		for(s = 0; s < N; s++) {
+			for(e = 0; e < N; e++) {
 				graph[s][e] = min(graph[s][e], graph[s][m] + graph[m][e]);
 			}
 		}
 	}
 	
-	for(s = 1; s <= N; s++) {
-		for(e = 1; e <= N; e++) {
-			cout << (graph[s][e] == INF ? 0 : graph[s][e]) << " ";
+	for(auto& r : graph) {
+		for(auto& c : r) {
+			cout << (c == INF ? 0 : c) << " ";
 		}
 		cout << "\n";
 	}
