@@ -6,24 +6,24 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int tmp, on, ans, i, j;
+	bool chk;
+	int tmp, ans, i, j;
 	int N[1000] = { 0 };
 	string A, B;
 	
 	cin >> A >> B;
 
 	for(i = 0; i < B.length(); i++) {
-		tmp = 0;
-		for(j = 0; j < A.length(); j++) {
-			on = 0;
+		for(tmp = 0, j = 0; j < A.length(); j++) {
+			chk = false;
 			if(A[j] == B[i]) {
 				if(tmp + 1 > N[j]) {
 					N[j] = tmp + 1;
-					on = 1;
+					chk = true;
 				}
 			}
 			if(tmp < N[j]) {
-				if(A[j] == B[i] && on == 1) continue;
+				if(A[j] == B[i] && chk) continue;
 				tmp = N[j];
 			}
 		}
