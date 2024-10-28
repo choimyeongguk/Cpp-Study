@@ -2,25 +2,36 @@
 using namespace std;
 
 int main() {
-	ios_base::sync_with_stdio(0);
+	ios::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 	
-	int ans = 0;
-	string s1, s2;
-	int dp[1001][1001] = { 0 };
+	int tmp, on, ans, i, j;
+	int N[1000] = { 0 };
+	string A, B;
 	
-	cin >> s1 >> s2;
-	for(int i = 1; i <= s1.length(); i++) {
-		for(int j = 1; j <= s2.length(); j++) {
-			dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-			if(s1[i - 1] == s2[j - 1]) {
-				dp[i][j] = max(dp[i][j], 1 + dp[i - 1][j - 1]);
+	cin >> A >> B;
+
+	for(i = 0; i < B.length(); i++) {
+		tmp = 0;
+		for(j = 0; j < A.length(); j++) {
+			on = 0;
+			if(A[j] == B[i]) {
+				if(tmp + 1 > N[j]) {
+					N[j] = tmp + 1;
+					on = 1;
+				}
 			}
-			ans = max(ans, dp[i][j]);
+			if(tmp < N[j]) {
+				if(A[j] == B[i] && on == 1) continue;
+				tmp = N[j];
+			}
 		}
 	}
+	for(ans = 0, i = 0; i < A.length(); i++) {
+		if(ans < N[i]) ans = N[i];
+	}
 	cout << ans;
-	
+
 	return 0;
 }
