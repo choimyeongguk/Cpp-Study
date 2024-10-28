@@ -8,10 +8,9 @@ int main() {
 	
 	int ans = 0;
 	string s1, s2;
-	vector<vector<int>> dp;
+	int dp[1001][1001] = { 0 };
 	
 	cin >> s1 >> s2;
-	dp.assign(s1.length() + 1, vector<int>(s2.length() + 1, 0));
 	for(int i = 1; i <= s1.length(); i++) {
 		for(int j = 1; j <= s2.length(); j++) {
 			dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
