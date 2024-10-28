@@ -6,7 +6,7 @@ struct node {
 	char right;
 };
 
-vector<node> tree(91);
+vector<node> tree(26);
 
 void preorder(char node) {
 	if(node == '.') return;
