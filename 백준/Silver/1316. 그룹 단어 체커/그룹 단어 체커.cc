@@ -2,12 +2,12 @@
 using namespace std;
 
 bool isGroup(string S) {
-	bool used[26] = { 0 };
-	used[S[0] - 'a'] = true;
+	bool used[123] = { 0 };
+	used[S[0]] = true;
 	for(int i = 1; i < S.length(); i++) {
 		if(S[i - 1] == S[i]) continue;
-		if(used[S[i] - 'a']) return false;
-		used[S[i] - 'a'] = true;
+		if(used[S[i]]) return false;
+		used[S[i]] = true;
 	}
 	return true;
 }
