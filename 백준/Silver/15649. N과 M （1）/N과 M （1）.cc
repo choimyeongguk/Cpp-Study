@@ -13,7 +13,7 @@ void comb() {
 	for(int i = 1; i <= N; i++) {
 		if(used[i]) continue;
 		ans += i + '0';
-		ans += ' ';
+		ans += " ";
 		used[i] = true;
 		comb();
 		ans.resize(ans.size() - 2);
