@@ -5,7 +5,7 @@ int N, M;
 vector<int> ans;
 vector<bool> used;
 
-void comb(int start) {
+void comb() {
 	if(ans.size() == M) {
 		for(auto& e : ans) cout << e << " ";
 		cout << "\n";
@@ -15,7 +15,7 @@ void comb(int start) {
 		if(used[i]) continue;
 		ans.push_back(i);
 		used[i] = true;
-		comb(i);
+		comb();
 		ans.pop_back();
 		used[i] = false;
 	}
@@ -28,6 +28,6 @@ int main() {
 	
 	cin >> N >> M;
 	used.assign(N + 1, false);
-	comb(0);
+	comb();
 	return 0;
 }
