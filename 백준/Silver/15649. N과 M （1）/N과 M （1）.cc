@@ -6,9 +6,8 @@ string ans;
 vector<bool> used;
 
 void comb() {
-	if(ans.length() == M * 2) {
-		cout << ans;
-		cout << "\n";
+	if(ans.length() == M) {
+		cout << ans << "\n";
 		return;
 	}
 	for(int i = 1; i <= N; i++) {
@@ -17,8 +16,7 @@ void comb() {
 		ans += ' ';
 		used[i] = true;
 		comb();
-		ans.pop_back();
-		ans.pop_back();
+		ans.resize(ans.size() - 2);
 		used[i] = false;
 	}
 }
@@ -29,6 +27,7 @@ int main() {
 	cout.tie(0);
 	
 	cin >> N >> M;
+	M *= 2;
 	used.assign(N + 1, false);
 	comb();
 	return 0;
