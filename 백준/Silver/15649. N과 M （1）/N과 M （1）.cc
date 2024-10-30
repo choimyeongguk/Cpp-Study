@@ -2,20 +2,22 @@
 using namespace std;
 
 int N, M;
-vector<int> ans;
+string ans;
 vector<bool> used;
 
 void comb() {
-	if(ans.size() == M) {
-		for(auto& e : ans) cout << e << " ";
+	if(ans.length() == M * 2) {
+		cout << ans;
 		cout << "\n";
 		return;
 	}
 	for(int i = 1; i <= N; i++) {
 		if(used[i]) continue;
-		ans.push_back(i);
+		ans += i + '0';
+		ans += ' ';
 		used[i] = true;
 		comb();
+		ans.pop_back();
 		ans.pop_back();
 		used[i] = false;
 	}
