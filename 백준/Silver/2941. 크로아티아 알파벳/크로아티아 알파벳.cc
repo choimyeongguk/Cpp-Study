@@ -12,7 +12,7 @@ int main() {
 				if(word[i + 1] == '=' || word[i + 1] == '-') i++;
 				break;
 			case 'd' :
-				if(i + 2 < word.length() && word[i + 1] == 'z' && word[i + 2] == '=') i += 2;
+				if(word[i + 1] == 'z' && word[i + 2] == '=') i += 2;
 				if(word[i + 1] == '-') i++;
 				break;
 			case 'l' : case 'n':
