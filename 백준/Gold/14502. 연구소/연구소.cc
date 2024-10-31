@@ -7,8 +7,8 @@ int main() {
 	cout.tie(0);
 	
 	char d[2][4] = {{ -1, 1, 0, 0 }, { 0, 0, -1, 1 }};
-	int R, C, numSafe, infected, min, tmp, nr, nc, i, j, k, l;
-	char lab[8][8];
+	int R, C, numSafe, infected, min, nr, nc, i, j, k, l;
+	int lab[8][8];
 	bool visited[8][8];
 	vector<pair<int,int>> start;
 	
@@ -16,11 +16,10 @@ int main() {
 	
 	for(numSafe = 0, i = 0; i < R; i++) {
 		for(j = 0; j < C; j++) {
-			cin >> tmp;
-			lab[i][j] = tmp;
-			if(tmp == 2) {
+			cin >> lab[i][j];
+			if(lab[i][j] == 2) {
 				start.push_back({ i, j });
-			} else if(tmp == 0) numSafe++;
+			} else if(lab[i][j] == 0) numSafe++;
 		}
 	}
 	
