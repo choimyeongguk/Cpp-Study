@@ -8,13 +8,11 @@ int main() {
 	
 	char d[2][4] = {{ -1, 1, 0, 0 }, { 0, 0, -1, 1 }};
 	int R, C, numSafe, infected, min, tmp, nr, nc, i, j, k, l;
-	vector<vector<char>> lab;
-	vector<vector<bool>> visited;
+	char lab[8][8];
 	vector<pair<int,int>> start;
 	
 	cin >> R >> C;
 	
-	lab.assign(R, vector<char>(C, 0));
 	for(numSafe = 0, i = 0; i < R; i++) {
 		for(j = 0; j < C; j++) {
 			cin >> tmp;
@@ -35,7 +33,7 @@ int main() {
 				if(lab[k / C][k % C]) continue;
 				lab[k / C][k % C] = 1;
 				
-				visited.assign(R, vector<bool>(C, false));
+				bool visited[8][8] = { 0 };
 				queue<pair<int,int>> bfs;
 				for(auto& e : start) {
 					bfs.push(e);
