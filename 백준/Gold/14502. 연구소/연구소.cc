@@ -9,6 +9,7 @@ int main() {
 	char d[2][4] = {{ -1, 1, 0, 0 }, { 0, 0, -1, 1 }};
 	int R, C, numSafe, infected, min, tmp, nr, nc, i, j, k, l;
 	char lab[8][8];
+	bool visited[8][8];
 	vector<pair<int,int>> start;
 	
 	cin >> R >> C;
@@ -33,7 +34,7 @@ int main() {
 				if(lab[k / C][k % C]) continue;
 				lab[k / C][k % C] = 1;
 				
-				bool visited[8][8] = { 0 };
+				for(auto& r : visited) for(auto& c : r) c = false;
 				queue<pair<int,int>> bfs;
 				for(auto& e : start) {
 					bfs.push(e);
