@@ -7,22 +7,21 @@ vector<pair<int,vector<int>>> tree;
 // tree[i].second[j] = k : i노드의 j번째 자식은 k 노드 
 
 void postorder(int parent) {
-	int i, w, first = 0, second = 0;
+	int first = 0, second = 0;
 	int numChild = tree[parent].second.size();
-	for(i = 0; i < numChild; i++) {
-		postorder(tree[parent].second[i]);
+	for(auto& child : tree[parent].second) {
+		postorder(child);
 	}
-	for(i = 0; i < numChild; i++) {
-		w = tree[tree[parent].second[i]].first;
-		if(w >= first) {
+	for(auto& child : tree[parent].second) {
+		if(tree[child].first >= first) {
 			second = first;
-			first = w;
-		} else if(w >= second) {
-			second = w;
+			first = tree[child].first;
+		} else if(tree[child].first >= second) {
+			second = tree[child].first;
 		}
 	}
 	tree[parent].first += first;
-	ans = ans > first + second ? ans : first + second;
+	ans = max(ans, first + second);
 }
 
 int main() {
