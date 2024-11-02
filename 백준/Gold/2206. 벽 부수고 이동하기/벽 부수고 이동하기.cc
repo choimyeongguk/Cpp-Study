@@ -34,9 +34,6 @@ int main() {
 		int& r = bfs.front().r;
 		int& c = bfs.front().c;
 		int& w = bfs.front().w;
-		if(r == R - 1 && c == C - 1) {
-			ans = w;
-		}
 		for(i = 0; i < 4; i++) {
 			nr = r + d[0][i];
 			nc = c + d[1][i];
@@ -47,6 +44,7 @@ int main() {
 		}
 		bfs.pop();
 	}
+    ans = M[R - 1][C - 1][0];
 	
 	M[R - 1][C - 1][1] = 1;
 	bfs.push({R - 1, C - 1, 1});
