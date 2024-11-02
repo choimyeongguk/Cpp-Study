@@ -26,10 +26,10 @@ int main() {
 		}
 	}
 	
-	if(M[0][0].first != -1) {
+	//if(M[0][0].first != -1) {
 		M[0][0].first = 1;
 		bfs.push({0, 0, 1});
-	}
+	//}
 	while(!bfs.empty()) {
 		int& r = bfs.front().r;
 		int& c = bfs.front().c;
@@ -48,10 +48,10 @@ int main() {
 		bfs.pop();
 	}
 	
-	if(M[R - 1][C - 1].first != -1) {
+	//if(M[R - 1][C - 1].first != -1) {
 		M[R - 1][C - 1].second = 1;
 		bfs.push({R - 1, C - 1, 1});
-	}
+	//}
 	while(!bfs.empty()) {
 		int& r = bfs.front().r;
 		int& c = bfs.front().c;
