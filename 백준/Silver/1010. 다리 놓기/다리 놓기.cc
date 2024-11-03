@@ -3,14 +3,13 @@ using namespace std;
 
 typedef long long ll;
 
-ll comb(int m, int n) {  // mCn
-	int i, j = m - n;
-	ll ret = 1;
+int comb(int m, int n) {  // mCn
+	int ret = 1, i, j = 2;
 	for(i = m; i > n; i--) {
 		ret *= i;
-		while(j > 0 && ret % j == 0) {
+		while(j <= m - n && ret % j == 0) {
 			ret /= j;
-			j--;
+			j++;
 		}
 	}
 	return ret;
