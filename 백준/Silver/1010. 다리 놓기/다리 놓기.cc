@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-
 int comb(int m, int n) {  // mCn
 	int ret = 1, i, j = 2;
 	for(i = m; i > n; i--) {
