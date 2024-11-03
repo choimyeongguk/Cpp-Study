@@ -2,13 +2,10 @@
 using namespace std;
 
 int comb(int m, int n) {  // mCn
-	int ret = 1, i, j = 2;
-	for(i = m; i > n; i--) {
+	int ret = 1, i, j = 1;
+	for(i = m; i > m - n; i--) {
 		ret *= i;
-		while(j <= m - n && ret % j == 0) {
-			ret /= j;
-			j++;
-		}
+		ret /= j++;
 	}
 	return ret;
 }
