@@ -4,7 +4,7 @@ using namespace std;
 
 int city[50][50];
 int N, M, ans = INF;
-vector<pair<int,int>> choose;
+vector<int> idx;
 vector<pair<int,int>> chicken;
 vector<pair<int,int>> house;
 
@@ -12,8 +12,8 @@ void getDist() {
 	int dist = 0, min, l;
 	for(auto& h : house) {
 		min = INF;
-		for(auto& ch : choose) {
-			l = abs(ch.first - h.first) + abs(ch.second - h.second);
+		for(auto& i : idx) {
+			l = abs(h.first - chicken[i].first) + abs(h.second - chicken[i].second);
 			min = min < l ? min : l;
 		}
 		dist += min;
@@ -22,14 +22,14 @@ void getDist() {
 }
 
 void comb(int start, int depth) {
-	if(depth == M) {
+	if(depth++ == M) {
 		getDist();
 		return;
 	}
 	for(int i = start; i < chicken.size(); i++) {
-		choose.push_back(chicken[i]);
-		comb(i + 1, depth + 1);
-		choose.pop_back();
+		idx.push_back(i);
+		comb(i + 1, depth);
+		idx.pop_back();
 	}
 }
 
