@@ -7,12 +7,11 @@ int main() {
 	cout.tie(0);
 	
 	int N, M, num, i;
-	vector<int> card;
 	
 	cin >> N;
-	card.resize(N);
-	for(i = 0; i < N; i++) {
-		cin >> card[i];
+	vector<int> card(N);
+	for(auto& e : card) {
+		cin >> e;
 	}
 	sort(card.begin(), card.end());
 	cin >> M;
