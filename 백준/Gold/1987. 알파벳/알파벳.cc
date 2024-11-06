@@ -14,6 +14,7 @@ int dfs(int r, int c) {
 			used[board[nr][nc]] = true;
 			tmp = dfs(nr, nc);
 			ret = ret > tmp ? ret : tmp;
+			if(ret == 25) break;
 			used[board[nr][nc]] = false;
 		}
 	}
