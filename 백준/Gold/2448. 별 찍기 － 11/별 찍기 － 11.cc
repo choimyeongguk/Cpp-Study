@@ -23,10 +23,10 @@ int main() {
 	
 	int N;
 	cin >> N;
-	tri.assign(N, vector<char>(2 * N - 1, ' '));
-	solve(0, N - 1, N);
-	for(int i = 0; i < N; i++) {
-		for(int j = 0; j < 2 * N - 1; j++) {
+	tri.assign(N + 1, vector<char>(2 * N, ' '));
+	solve(1, N, N);
+	for(int i = 1; i <= N; i++) {
+		for(int j = 1; j <= 2 * N - 1; j++) {
 			cout << tri[i][j];
 		}
 		cout << "\n";
