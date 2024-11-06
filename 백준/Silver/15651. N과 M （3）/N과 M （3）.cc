@@ -2,17 +2,18 @@
 using namespace std;
 
 int N, M;
-vector<int> ans;
+string ans;
 
 void combr(int depth) {
-	if(depth == M) {
-		for(auto& e : ans) cout << e << " ";
-		cout << "\n";
+	if(depth++ == M) {
+		cout << ans << "\n";
 		return;
 	}
 	for(int i = 1; i <= N; i++) {
-		ans.push_back(i);
-		combr(depth + 1);
+		ans.push_back(i + '0');
+		ans.push_back(' ');
+		combr(depth);
+		ans.pop_back();
 		ans.pop_back();
 	}
 }
