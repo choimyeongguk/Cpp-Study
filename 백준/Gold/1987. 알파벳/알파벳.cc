@@ -3,20 +3,21 @@ using namespace std;
 
 bool used[26] = { false };
 char board[20][20], d[2][4] = {{-1, 1, 0, 0},{0, 0, -1, 1}};
-int R, C, ans = 0;
+int R, C;
 
-void dfs(int r, int c, int depth) {
-	int nr, nc, i;
-	ans = ans > depth ? ans : depth;
+int dfs(int r, int c) {
+	int ret = 0, tmp = 0, nr, nc, i;
 	for(i = 0; i < 4; i++) {
 		nr = r + d[0][i];
 		nc = c + d[1][i];
 		if(0 <= nr&&nr < R && 0 <= nc&&nc < C && !used[board[nr][nc]]) {
 			used[board[nr][nc]] = true;
-			dfs(nr, nc, depth + 1);
+			tmp = dfs(nr, nc);
+			ret = ret > tmp ? ret : tmp;
 			used[board[nr][nc]] = false;
 		}
 	}
+	return ret + 1;
 }
 
 int main() {
@@ -35,8 +36,7 @@ int main() {
 		}
 	}
 	used[board[0][0]] = true;
-	dfs(0, 0, 1);
-	cout << ans;
+	cout << dfs(0, 0);
 	
 	return 0;
 }
