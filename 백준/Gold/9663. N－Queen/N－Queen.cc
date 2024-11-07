@@ -2,42 +2,31 @@
 using namespace std;
 
 int N, ans = 0;
-vector<int> chess;
-vector<bool> used;
+bool vertical[15] = { 0 };
+bool diagonal1[30] = { 0 };  // r + c. 우상향 
+bool diagonal2[30] = { 0 };  // r - c. 우하향 
+// r + c 또는 r - c 가 같은 위치 끼리는 같은 대각선상에 있음
 
-void comb(int depth) {
-	if(depth++ == N) {
+void nQueen(int depth) {
+	if(depth == N) {
 		ans++;
 		return;
 	}
-	int i, j, chk;
-	for(i = 0; i < N; i++) {
-		if(used[i]) continue;
-		for(chk = 0, j = 0; j < chess.size(); j++) {
-			if(abs(chess[j] - i) == chess.size() - j) {
-				chk = true;
-				break;
-			}
-		}
-		if(chk) continue;
-		
-		used[i] = true;
-		chess.push_back(i);
-		comb(depth);
-		chess.pop_back();
-		used[i] = false;
+	for(int i = 0; i < N; i++) {
+		if(vertical[i] || diagonal1[depth + i] || diagonal2[depth - i + N - 1]) continue;
+		vertical[i] = true;
+		diagonal1[depth + i] = true;
+		diagonal2[depth - i + N - 1] = true;
+		nQueen(depth + 1);
+		vertical[i] = false;
+		diagonal1[depth + i] = false;
+		diagonal2[depth - i + N - 1] = false;
 	}
 }
 
 int main() {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
-	
 	cin >> N;
-	used.assign(N, false);
-	comb(0);
+	nQueen(0);
 	cout << ans;
-	
 	return 0;
 }
