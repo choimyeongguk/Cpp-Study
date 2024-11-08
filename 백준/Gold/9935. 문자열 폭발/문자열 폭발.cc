@@ -6,18 +6,13 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	string S, bomb;
-	string stack;
+	string S, bomb, stack;
 	
 	cin >> S >> bomb;
-	
 	for(auto& c : S) {
 		stack += c;
-		if(c == bomb[bomb.size() - 1]) {
-			if(stack.size() < bomb.size()) continue;
-			if(stack.substr(stack.size() - bomb.size(), bomb.size()) == bomb) {
-				stack.erase(stack.size() - bomb.size(), bomb.size());
-			}
+		if(c == bomb[bomb.size() - 1] && stack.size() >= bomb.size() && stack.substr(stack.size() - bomb.size(), bomb.size()) == bomb) {
+			stack.erase(stack.size() - bomb.size(), bomb.size());
 		}
 	}
 	cout << (stack.size() ? stack : "FRULA");
