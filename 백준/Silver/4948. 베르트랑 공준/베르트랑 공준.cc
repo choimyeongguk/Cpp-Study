@@ -5,26 +5,28 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
-	
-	bool chk;
+
+	int isPrime[246913];
 	int n, i, j;
-	vector<int> p(1, 2);
 	
-	for(i = 3; i <= 246912; i++) {		
-		for(chk = true, j = 0; p[j]*p[j] <= i; j++) {
-			if(i % p[j] == 0) {
-				chk = false;
-				break;
+	fill(isPrime, isPrime + 246913, 1);
+	isPrime[0] = isPrime[1] = 0;
+	for(i = 2; i <= 246912; i++) {
+		if(isPrime[i]) {
+			for(j = 2; i * j <= 246912; j++) {
+				isPrime[i * j] = 0;
 			}
 		}
-		if(chk) p.push_back(i);
 	}
-	
+	for(i = 3; i <= 246912; i++) {
+		isPrime[i] += isPrime[i - 1];
+	}
 	while(true) {
 		cin >> n;
 		if(!n) break;
-		cout << upper_bound(p.begin(), p.end(), 2 * n) - upper_bound(p.begin(), p.end(), n) << "\n";
+		cout << isPrime[2 * n] - isPrime[n] << "\n";
 	}
+	
 	
 	return 0;
 }
