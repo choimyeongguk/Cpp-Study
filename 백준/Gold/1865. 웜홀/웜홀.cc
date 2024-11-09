@@ -4,10 +4,11 @@ using namespace std;
 
 struct Edge {
 	int s, e, t;
+	bool isWormhole;
 };
 
 bool bellman_ford() {
-	int N, M, W, S, E, T, curNode, nxtNode, cost, i;
+	int N, M, W, S, E, T, i;
 	vector<int> dist;
 	vector<Edge> edge;
 	
@@ -16,24 +17,23 @@ bool bellman_ford() {
 	dist.assign(N + 1, INF);
 	for(i = 0; i < M; i++) {
 		cin >> S >> E >> T;
-		edge.push_back({S, E, T});
-		edge.push_back({E, S, T});
+		edge.push_back({S, E, T, false});
 	}
 	for(i = 0; i < W; i++) {
 		cin >> S >> E >> T;
-		edge.push_back({S, E, -T});
+		edge.push_back({S, E, -T, true});
 	}
 	
 	dist[1] = 0;
 	for(i = 1; i <= N; i++) {
 		for(auto& e : edge) {
-			curNode = e.s;
-			nxtNode = e.e;
-			cost = e.t;
-			
-			if(dist[nxtNode] > dist[curNode] + cost) {
+			if(dist[e.e] > dist[e.s] + e.t) {
 				if(i == N) return true;
-				dist[nxtNode] = dist[curNode] + cost;
+				dist[e.e] = dist[e.s] + e.t;
+			}
+			if(!e.isWormhole && dist[e.s] > dist[e.e] + e.t) {
+				if(i == N) return true;
+				dist[e.s] = dist[e.e] + e.t;
 			}
 		}
 	}
