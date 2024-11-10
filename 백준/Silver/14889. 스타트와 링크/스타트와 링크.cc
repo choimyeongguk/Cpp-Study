@@ -3,14 +3,22 @@ using namespace std;
 
 int N, ans = 0x3f3f3f3f;
 int M[21][21];
-vector<char> player;
+char player[21];
 
 void compare() {
+	vector<int> team0;
+	vector<int> team1;
 	int team[2] = { 0 };
-	for(int i = 0; i < N; i++)
-		for(int j = i + 1; j < N; j++)
-			if(player[i] == player[j])
-				team[player[i]] += M[i][j];
+	for(int i = 0; i < N; i++) {
+		if(player[i]) team1.push_back(i);
+		else team0.push_back(i);
+	}
+	for(int i = 0; i < team0.size(); i++) {
+		for(int j = 0; j < team0.size(); j++) {
+			team[0] += M[team0[i]][team0[j]];
+			team[1] += M[team1[i]][team1[j]];
+		}
+	}
 	ans = min(ans, abs(team[0] - team[1]));
 }
 
@@ -32,13 +40,9 @@ int main() {
 	cout.tie(0);
 	
 	cin >> N;
-	player.resize(N, 0);
 	for(int i = 0; i < N; i++)
 		for(int j = 0; j < N; j++)
 			cin >> M[i][j];
-	for(int i = 0; i < N; i++)
-		for(int j = i + 1; j < N; j++)
-			M[i][j] += M[j][i];
 	comb(0, 0);
 	cout << ans;
 	
