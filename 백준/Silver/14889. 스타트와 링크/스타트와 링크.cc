@@ -10,7 +10,7 @@ void solve(int depth) {
 		if(team0.size() != N / 2) return;
 		int team[2] = { 0 };
 		for(int i = 0; i < N / 2; i++)
-			for(int j = 0; j < N / 2; j++) {
+			for(int j = i + 1; j < N / 2; j++) {
 				team[0] += M[team0[i]][team0[j]];
 				team[1] += M[team1[i]][team1[j]];
 			}
@@ -36,6 +36,9 @@ int main() {
 	for(int i = 0; i < N; i++)
 		for(int j = 0; j < N; j++)
 			cin >> M[i][j];
+	for(int i = 0; i < N; i++)
+		for(int j = i + 1; j < N; j++)
+			M[i][j] += M[j][i];
 	solve(0);
 	cout << ans;
 	
