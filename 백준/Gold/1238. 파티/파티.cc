@@ -1,13 +1,9 @@
 #include <bits/stdc++.h>
 #define INF 0x3f3f3f3f
 using namespace std;
-
 typedef pair<int,int> pii;
 
-int N;
-vector<vector<pii>> graph;  // 소요시간, 끝점 
-
-void dijkstra(int start, vector<int>& dist) {
+void dijkstra(int start, int N, vector<vector<pii>>& graph, vector<int>& dist) {
 	int curCost, curNode;
 	priority_queue<pii, vector<pii>, greater<pii>> pq;
 	
@@ -33,22 +29,27 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int M, X, S, E, T, ans, i;
+	int M, N, X, S, E, T, ans, i;
+	vector<vector<pii>> graph1;  // X to Nodes
+	vector<vector<pii>> graph2;  // Nodes to X
 	vector<int> dist1;
 	vector<int> dist2;
 	
 	cin >> N >> M >> X;
-	graph.resize(N + 1);
+	graph1.resize(N + 1);
+	graph2.resize(N + 1);
 	for(i = 0; i < M; i++) {
 		cin >> S >> E >> T;
-		graph[S].push_back({T, E});
+		graph1[S].push_back({T, E});
+		graph2[E].push_back({T, S});
+		// 각 노드에서 X로 가는 최단 경로는 단방향 간선의 방향을 뒤집었을 때, 
+		// X에서 각 노드로 가는 최단 경로와 같다. 
 	}
 	
-	dijkstra(X, dist1);
-	for(ans = 0, i = 1; i <= N; i++) {
-		dijkstra(i, dist2);
-		ans = max(ans, dist1[i] + dist2[X]);
-	}
+	dijkstra(X, N, graph1, dist1);
+	dijkstra(X, N, graph2, dist2);
+	for(ans = 0, i = 1; i <= N; i++)
+		ans = max(ans, dist1[i] + dist2[i]);
 	cout << ans;
 	
 	return 0;
