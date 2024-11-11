@@ -5,13 +5,13 @@ int N, M[101][101];
 vector<vector<bool>> visited;
 
 void dfs(int r, int c, int h) {
+	visited[r][c] = true;
 	char d[2][4] = {{-1, 1, 0, 0},{0, 0, -1, 1}};
 	int nr, nc;
 	for(int i = 0; i < 4; i++) {
 		nr = r + d[0][i];
 		nc = c + d[1][i];
 		if(0 <= nr&&nr < N && 0 <= nc&&nc < N && M[nr][nc] > h && !visited[nr][nc]) {
-			visited[nr][nc] = true;
 			dfs(nr, nc, h);
 		}
 	}
@@ -38,7 +38,6 @@ int main() {
 			for(j = 0; j < N; j++) {
 				if(M[i][j] > h && !visited[i][j]) {
 					cnt++;
-					visited[i][j] = true;
 					dfs(i, j, h);
 				}
 			}
