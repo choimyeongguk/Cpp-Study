@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int N, S, L, ans = 0;
+int N, S, ans = 0;
 int seq[20];
 
 void solve(int val, int depth) {
@@ -9,8 +9,8 @@ void solve(int val, int depth) {
 		if(val == S) ans++;
 		return;
 	}
-	solve(val + seq[depth], depth + 1);
-	solve(val, depth + 1);
+	solve(val + seq[depth++], depth);
+	solve(val, depth);
 }
 
 int main() {
