@@ -5,8 +5,9 @@ int N, S, ans = 0;
 int seq[20];
 
 void solve(int val, int depth) {
-	if(depth == N) {
+	if(depth == N - 1) {
 		if(val == S) ans++;
+		if(val + seq[depth] == S) ans++;
 		return;
 	}
 	solve(val + seq[depth++], depth);
