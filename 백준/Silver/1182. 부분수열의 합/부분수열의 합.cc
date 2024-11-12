@@ -4,14 +4,13 @@ using namespace std;
 int N, S, L, ans = 0;
 int seq[20];
 
-void solve(int start, int val, int depth) {
-	if(depth == L) {
+void solve(int val, int depth) {
+	if(depth == N) {
 		if(val == S) ans++;
 		return;
 	}
-	for(int i = start; i < N; i++) {
-		solve(i + 1, val + seq[i], depth + 1);
-	}
+	solve(val + seq[depth], depth + 1);
+	solve(val, depth + 1);
 }
 
 int main() {
@@ -23,11 +22,8 @@ int main() {
 	for(int i = 0; i < N; i++) {
 		cin >> seq[i];
 	}
-	
-	for(L = 1; L <= N; L++) {
-		solve(0, 0, 0);
-	}
-	cout << ans;
+	solve(0, 0);
+	cout << (S ? ans : ans - 1);
 	
 	return 0;
 }
