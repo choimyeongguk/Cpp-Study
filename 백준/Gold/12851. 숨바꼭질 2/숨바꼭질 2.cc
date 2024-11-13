@@ -7,7 +7,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, K, min = INF, cnt = 0, n, t;
+	int N, K, n, t;
 	queue<pair<int,int>> q;  // node, time
 	vector<pair<int,int>> visited;  // time, cnt
 	
@@ -19,7 +19,6 @@ int main() {
 		t = q.front().second;
 		q.pop();
 		
-		if(t > min) continue;
 		if(visited[n].first > t) {
 			visited[n] = { t, 1 };
 		} else if(visited[n].first == t) {
