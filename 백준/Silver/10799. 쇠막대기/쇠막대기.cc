@@ -7,24 +7,25 @@ int main() {
 	cout.tie(0);
 	
 	int i, l, ans = 0;
-	string input, stack;
+	string input;
+	vector<int> stack;
 	
 	cin >> input;
-	for(i = 0; i < input.size(); i++) {
-		if(input[i] == '(') {
-			stack += input[i];
+	for(auto& c : input) {
+		if(c == '(') {
+			stack.push_back(0);
 		}
-		if(input[i] == ')') {
-			if(stack.back() == '(') {
-				stack.back() = '|';
+		if(c == ')') {
+			if(!stack.back()) {  // '('인 경우  
+				stack.back() = 1;
 			}
-			else if(stack.back() == '|') {
-				for(l = stack.size() - 1; stack[l] == '|'; l--);
-				ans += stack.size() - l;
-				stack.erase(l, 1);
+			else {  // 숫자인 경우 
+				ans += stack.back() + 1;
+				stack.erase(stack.end() - 2);
 			}
-			else {
-				stack += input[i];
+			if(stack.back() && stack[stack.size() - 2]) {
+				stack[stack.size() - 2] += stack.back();
+				stack.pop_back();
 			}
 		}
 	}
