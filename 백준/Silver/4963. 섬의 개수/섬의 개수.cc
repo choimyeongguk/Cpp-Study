@@ -3,12 +3,12 @@ using namespace std;
 
 int R, C;
 int m[50][50];
+int dr[] = {-1, -1, -1, 0, 1, 1, 1, 0};
+int dc[] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
 void dfs(int r, int c) {
 	m[r][c] = 0;
 	int nr, nc, i;
-	int dr[] = {-1, -1, -1, 0, 1, 1, 1, 0};
-	int dc[] = {-1, 0, 1, 1, 1, 0, -1, -1};
 	for(i = 0; i < 8; i++) {
 		nr = r + dr[i];
 		nc = c + dc[i];
