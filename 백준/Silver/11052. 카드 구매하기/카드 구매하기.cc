@@ -7,21 +7,19 @@ int main() {
 	cout.tie(0);
 	
 	int N, P[1001], i, j;
-	int dp[10001][1001] = { 0 };
+	int dp[1001] = { 0 };
 	
 	cin >> N;
 	for(i = 1; i <= N; i++)
 		cin >> P[i];
 		
-	for(i = 1; i <= N; i++) {
-		for(j = 1; j <= N; j++) {
-			dp[i][j] = dp[i][j - 1];
-			if(i >= j) {
-				dp[i][j] = max(dp[i][j], P[j] + dp[i - j][j]);
-			}
-		}
-	}
-	cout << dp[N][N];
+	// dp[i] = j : i장을 갖기 위해 지불해야 하는 최대금액 j 
+	for(i = 1; i <= N; i++)
+		for(j = 1; j <= i; j++)
+			if(dp[i] < dp[i - j] + P[j])
+				dp[i] = dp[i - j] + P[j];
+				
+	cout << dp[N];
 	
 	return 0;
 }
