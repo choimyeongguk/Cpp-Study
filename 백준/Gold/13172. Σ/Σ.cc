@@ -3,34 +3,26 @@
 using namespace std;
 typedef long long ll;
 
-map<ll,ll> memo;
-
-ll power(ll b, ll x) {
-	if(memo.find(x) != memo.end())
-		return memo[x];
-		
-	ll ret = power(b, x / 2);
-	if(x % 2)	// odd
-		ret = ((ret * ret) % X * b) % X;
-	else			// even
-		ret = (ret * ret) % X;
-	memo[x] = ret;
-	return ret;
-}
-
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 	
-	ll M, N, S, gcd, ans = 0, i;
+	ll M, N, S, E, exp, ans = 0, i;
 	
 	cin >> M;
 	for(i = 0; i < M; i++) {
 		cin >> N >> S;
-		memo.clear();
-		memo[1] = N;
-		ans = (ans + (S * power(N, X - 2))) % X;
+		
+		E = 1, exp = X - 2;	// 기댓값, 지수 
+		while(exp) {
+			if(exp % 2)		// odd
+				E = (E * N) % X;
+			N = (N * N) % X;
+			exp /= 2;
+		}
+		E = (E * S) % X;
+		ans = (ans + E) % X;
 	}
 	cout << ans;
 	
