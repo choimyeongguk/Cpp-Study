@@ -8,18 +8,18 @@ int main() {
 	
 	int N, M, ans = 0, i;
 	string tmp;
-	vector<string> S;
+	unordered_set<string> S;
 	
 	cin >> N >> M;
 	
-	S.resize(N);
-	for(i = 0; i < N; i++)
-		cin >> S[i];
-	sort(S.begin(), S.end());
+	for(i = 0; i < N; i++) {
+		cin >> tmp;
+		S.insert(tmp);
+	}
 	
 	for(i = 0; i < M; i++) {
 		cin >> tmp;
-		if(binary_search(S.begin(), S.end(), tmp))
+		if(S.find(tmp) != S.end())
 			ans++;
 	}
 	cout << ans;
