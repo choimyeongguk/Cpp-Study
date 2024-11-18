@@ -34,9 +34,9 @@ int main() {
 	cin >> M;
 	for(i = 0; i < M; i++) {
 		cin >> N >> S;
-		gcd = getGCD(N, S);
-		N /= gcd;
-		S /= gcd;
+//		gcd = getGCD(N, S);
+//		N /= gcd;
+//		S /= gcd;
 		memo.clear();
 		memo[1] = N;
 		ans = (ans + (S * power(N, X - 2)) % X) % X;
