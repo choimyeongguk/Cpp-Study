@@ -30,7 +30,7 @@ int main() {
 		cin >> N >> S;
 		memo.clear();
 		memo[1] = N;
-		ans = (ans + (S * power(N, X - 2)) % X) % X;
+		ans = (ans + (S * power(N, X - 2))) % X;
 	}
 	cout << ans;
 	
