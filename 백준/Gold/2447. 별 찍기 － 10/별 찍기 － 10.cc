@@ -30,9 +30,9 @@ int main() {
 	cin >> N;
 	image.assign(N, vector<char>(N, ' '));
 	solve(0, 0, N);
-	for(int i = 0; i < N; i++) {
-		for(int j = 0; j < N; j++) {
-			cout << image[i][j];
+	for(auto& r : image) {
+		for(auto& c : r) {
+			cout << c;
 		}
 		cout << "\n";
 	}
