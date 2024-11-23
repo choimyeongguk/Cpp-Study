@@ -6,10 +6,10 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, min, i;
+	int N, i;
 	int l[100001];
 	int p[100001];
-	long long ans = 0;
+	long long min, ans = 0;
 	
 	cin >> N;
 	for(i = 1; i < N; i++)
