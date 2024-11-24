@@ -26,22 +26,13 @@ int main() {
 		}
 	}
 	
-//	for(i = 1; i <= B.size(); i++) {
-//		for(j = 1; j <= A.size(); j++) {
-//			cout << dp[i][j].first << " ";
-//		}
-//		cout << "\n";
-//	}
 	cout << dp[B.size()][A.size()].first << "\n";
-	int ti, tj;
-	i = B.size(), j = A.size();
-	while(i > 0 && j > 0) {
-		if(B[i - 1] == A[j - 1]) {
-			S.push(A[j - 1]);
+	pair<int,int> idx = { B.size(), A.size() };
+	while(idx.first > 0 && idx.second > 0) {
+		if(B[idx.first - 1] == A[idx.second - 1]) {
+			S.push(A[idx.second - 1]);
 		}
-		ti = dp[i][j].second.first;
-		tj = dp[i][j].second.second;
-		i = ti, j = tj;
+		idx = dp[idx.first][idx.second].second;
 	}
 	while(!S.empty()) {
 		cout << S.top();
