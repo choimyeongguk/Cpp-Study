@@ -9,26 +9,21 @@ int main() {
 	int N, M, l, r, i;
 	int seq[2001];
 	bool isPalindrome[2001][2001];
-	// isPalindrome[i][j] = true/false : i에서 j까지 부분수열 팰린드롬 여부 
 	
 	cin >> N;
 	for(i = 1; i <= N; i++) {
 		cin >> seq[i];
 	}
 	
-	for(i = 1; i <= N; i++) {	// 길이 홀수 팰린드롬 
+	for(i = 1; i <= N; i++) {
 		l = r = i;
 		while(1 <= l && r <= N && seq[l] == seq[r]) {
-			isPalindrome[l][r] = true;
-			l--;
-			r++; 
+			isPalindrome[l--][r++] = true;
 		}
 		
 		l = i, r = i + 1;
 		while(1 <= l && r <= N && seq[l] == seq[r]) {
-			isPalindrome[l][r] = true;
-			l--;
-			r++;
+			isPalindrome[l--][r++] = true;
 		}
 	}
 	
