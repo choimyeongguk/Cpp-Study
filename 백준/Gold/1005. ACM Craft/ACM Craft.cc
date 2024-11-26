@@ -17,15 +17,11 @@ void solve() {
 	for(i = 0; i < K; i++) {
 		cin >> X >> Y;
 		graph[X].push_back(Y);
+		degree[Y]++;
 	}
 	cin >> W;
 	
 	// 그래프 위상 정렬 
-	for(i = 1; i <= N; i++) {
-		for(auto& e : graph[i]) {
-			degree[e]++;
-		}
-	}
 	for(i = 1; i <= N; i++) {
 		if(!degree[i]) {
 			q.push(i);
