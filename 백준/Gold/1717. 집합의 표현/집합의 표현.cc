@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int tree[1000001];	// tree[i]=j : i노드의 부모는 j; 
+int tree[1000001];	// tree[i]=j : i노드의 부모는 j;
 
 int root(int x) {
 	if(x == tree[x])
 		return x;
 	else
-		return root(tree[x]);
+		return tree[x] = root(tree[x]);
 }
 
 int main() {
@@ -23,11 +23,13 @@ int main() {
 	}
 	for(i = 0; i < m; i++) {
 		cin >> op >> a >> b;
+		a = root(a);
+		b = root(b);
 		if(op == 0) {
-			tree[root(b)] = root(a);
+			tree[b] = a;
 		}
 		else {
-			if(root(a) == root(b))
+			if(a == b)
 				cout << "YES\n";
 			else
 				cout << "NO\n";
