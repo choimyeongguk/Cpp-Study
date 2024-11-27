@@ -6,8 +6,7 @@ int tree[1000001];	// tree[i]=j : i노드의 부모는 j;
 int root(int x) {
 	if(x == tree[x])
 		return x;
-	else
-		return tree[x] = root(tree[x]);
+	return tree[x] = root(tree[x]);
 }
 
 int main() {
