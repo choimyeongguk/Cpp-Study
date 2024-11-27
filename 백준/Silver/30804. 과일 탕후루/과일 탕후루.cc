@@ -6,7 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, ans, l, r, fl, fr, i;
+	int N, ans, l, r, fl, fr;
 	vector<char> fruit;
 	
 	cin >> N;
@@ -15,12 +15,11 @@ int main() {
 	
 	ans = l = -1;
 	fl = fr = fruit[0];
-	for(i = 0; i < N; i++) {
-		r = i;
-		if(fruit[i] != fl && fruit[i] != fr) {
-			fr = fruit[i];
-			fl = fruit[i - 1];
-			for(l = i; fruit[l] == fl || fruit[l] == fr; l--);
+	for(r = 0; r < N; r++) {
+		if(fruit[r] != fl && fruit[r] != fr) {
+			fr = fruit[r];
+			fl = fruit[r - 1];
+			for(l = r; fruit[l] == fl || fruit[l] == fr; l--);
 		}
 		if(ans < r - l) ans = r - l;
 	}
