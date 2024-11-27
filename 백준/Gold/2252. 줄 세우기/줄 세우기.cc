@@ -8,7 +8,6 @@ int main() {
 	
 	int N, M, A, B, i;
 	vector<int> in_degree;
-	vector<int> order;
 	vector<vector<int>> graph;
 	queue<int> q;
 	
@@ -27,7 +26,7 @@ int main() {
 		}
 	}
 	while(!q.empty()) {
-		order.push_back(q.front());
+		cout << q.front() << " ";
 		for(auto& e : graph[q.front()]) {
 			in_degree[e]--;
 			if(!in_degree[e]) {
@@ -35,10 +34,6 @@ int main() {
 			}
 		}
 		q.pop();
-	}
-	
-	for(auto& e : order) {
-		cout << e << " ";
 	}
 	
 	return 0;
