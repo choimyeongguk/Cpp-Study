@@ -38,11 +38,13 @@ int main() {
 	for(i = N; i >= 0; i--) {
 		if(canMake(i)) {
 			ans = min(ans, digit(i) + N - i);
+			break;
 		}
 	}
 	for(i = N; digit(i) + i - N < ans; i++) {
 		if(canMake(i)) {
 			ans = min(ans, digit(i) + i - N);
+			break;
 		}
 	}
 	cout << ans;
