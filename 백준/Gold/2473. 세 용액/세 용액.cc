@@ -26,12 +26,10 @@ int main() {
 				tL = l;
 				tR = r;
 			}
-			if(sol[i] + sol[l] + sol[r] > 0) {
+			if(sum > 0)
 				r--;
-			}
-			else {
+			else
 				l++;
-			}
 		}
 		if(abs(ans) > abs(absMin)) {
 			ans = absMin;
