@@ -41,7 +41,7 @@ int main() {
 			break;
 		}
 	}
-	for(i = N; digit(i) + i - N < ans; i++) {
+	for(i = N; i <= 1000000; i++) {
 		if(canMake(i)) {
 			ans = min(ans, digit(i) + i - N);
 			break;
