@@ -6,7 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, M, ans, tmp, i, j;
+	int N, M, l, r, tmp, ans = 0, i;
 	int A[10001] = { 0 };
 	
 	cin >> N >> M;
@@ -14,18 +14,10 @@ int main() {
 		cin >> A[i];
 		A[i] += A[i - 1];
 	}
-	for(ans = 0, i = 1; i <= N; i++) {
-		for(j = i - 1; j >= 0; j--) {
-			tmp = A[i] - A[j];
-			if(tmp == M) {
-				ans++;
-				break;
-			}
-			else if(tmp > M)
-				break;
-		}
+	for(i = 1; i <= N; i++) {
+		if(binary_search(A, A + i, A[i] - M))
+			ans++;
 	}
-	
 	cout << ans;
 	
 	return 0;
