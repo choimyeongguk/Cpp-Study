@@ -15,10 +15,8 @@ int main() {
 		pq.push(num);
 	}
 	while(pq.size() > 1) {
-		tmp = pq.top();
-		pq.pop();
-		tmp += pq.top();
-		pq.pop();
+		tmp = pq.top(), pq.pop();
+		tmp += pq.top(), pq.pop();
 		ans += tmp;
 		pq.push(tmp);
 	}
