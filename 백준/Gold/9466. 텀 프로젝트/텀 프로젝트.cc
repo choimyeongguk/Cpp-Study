@@ -21,8 +21,7 @@ void solve() {
 	while(!q.empty()) {
 		cnt++;
 		nxt = stream[q.front()];
-		in_degree[nxt]--;
-		if(!in_degree[nxt]) {
+		if(!--in_degree[nxt]) {
 			q.push(nxt);
 		}
 		q.pop();
