@@ -6,21 +6,20 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int A, B, i;
-	unordered_set<int> used;
+	int A, B, cnt = 0, i;
+	vector<int> N;
 	
 	cin >> A >> B;
 	A += B;
-	for(i = 0; i < A; i++) {
-		cin >> B;
-		if(used.find(B) != used.end()) {
-			used.erase(B);
-		}
-		else {
-			used.insert(B);
-		}
+	N.resize(A);
+	for(auto& e : N)
+		cin >> e;
+	sort(N.begin(), N.end());
+	for(i = 1; i < A; i++) {
+		if(N[i] == N[i - 1])
+			cnt++;
 	}
-	cout << used.size();
+	cout << A - 2*cnt;
 	
 	return 0;
 }
