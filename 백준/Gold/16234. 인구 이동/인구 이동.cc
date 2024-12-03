@@ -54,8 +54,12 @@ int main() {
 									
 				avg = sum / alliance.size();
 				for(auto& e : alliance) {
-					if(area[e.first][e.second] != avg)
+					if(area[e.first][e.second] != avg) {
 						chk = false;
+						break;
+					}
+				}
+				for(auto& e : alliance) {
 					area[e.first][e.second] = avg;
 				}
 			}
