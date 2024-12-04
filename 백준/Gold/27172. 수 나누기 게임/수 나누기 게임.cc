@@ -6,7 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, max = 0, i, j;
+	int N, i, j;
 	int card[100001];
 	int point[1000001] = { 0 };
 	bool used[1000001] = { 0 };
@@ -14,7 +14,6 @@ int main() {
 	cin >> N;
 	for(i = 0; i < N; i++) {
 		cin >> card[i];
-//		max = max > card[i] ? max : card[i];
 		used[card[i]] = true;
 	}
 	for(i = 0; i < N; i++) {
