@@ -6,33 +6,27 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, tmp, i, j;
-	vector<int> point;
-	vector<pair<int,int>> card;
+	int N, max = 0, i, j;
+	int card[100001];
+	int point[1000001] = { 0 };
+	bool used[1000001] = { 0 };
 	
 	cin >> N;
-	point.assign(N, 0);
-	card.resize(N);
 	for(i = 0; i < N; i++) {
-		cin >> tmp;
-		card[i] = { tmp, i };
+		cin >> card[i];
+		max = max > card[i] ? max : card[i];
+		used[card[i]] = true;
 	}
-	sort(card.begin(), card.end());
-	
 	for(i = 0; i < N; i++) {
-		for(j = card[i].first * 2; j <= card[N - 1].first; j += card[i].first) {
-			auto it = lower_bound(card.begin() + i + 1, card.end(), make_pair(j, 0), 
-                [](const pair<int, int>& a, const pair<int, int>& b) {
-					return a.first < b.first;
-					});
-			if(it != card.end() && it->first == j) {
-				point[card[i].second]++;
-				point[it->second]--;
+		for(j = card[i] << 1; j <= max; j += card[i]) {
+			if(used[j]) {
+				point[card[i]]++;
+				point[j]--;
 			}
 		}
 	}
-	for(auto& e : point) {
-		cout << e << " ";
+	for(i = 0; i < N; i++) {
+		cout << point[card[i]] << " ";
 	}
 	
 	return 0;
