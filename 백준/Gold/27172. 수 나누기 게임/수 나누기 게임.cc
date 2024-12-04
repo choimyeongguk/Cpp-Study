@@ -14,11 +14,11 @@ int main() {
 	cin >> N;
 	for(i = 0; i < N; i++) {
 		cin >> card[i];
-		max = max > card[i] ? max : card[i];
+//		max = max > card[i] ? max : card[i];
 		used[card[i]] = true;
 	}
 	for(i = 0; i < N; i++) {
-		for(j = card[i] << 1; j <= max; j += card[i]) {
+		for(j = card[i] << 1; j <= 1000000; j += card[i]) {
 			if(used[j]) {
 				point[card[i]]++;
 				point[j]--;
