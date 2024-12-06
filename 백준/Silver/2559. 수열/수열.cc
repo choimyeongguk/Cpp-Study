@@ -6,22 +6,16 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, K, sum = 0, ans, i;
+	int N, K, ans = -0x3f3f3f3f, i;
 	int temp[100001] = { 0 };
 	
-	cin >> N >> K;
-	for(i = 1; i <= N; i++) {
+	cin >> N >> K >> temp[1];
+	for(i = 2; i <= N; i++) {
 		cin >> temp[i];
+		temp[i] += temp[i - 1];
 	}
-	for(i = 1; i <= K; i++) {
-		sum += temp[i];
-	}
-	ans = sum;
-	int l = 1, r = K;
-	while(r < N) {
-		sum += temp[++r];
-		sum -= temp[l++];
-		ans = max(ans, sum);
+	for(i = K; i <= N; i++) {
+		ans = max(ans, temp[i] - temp[i - K]);
 	}
 	cout << ans;
 	
