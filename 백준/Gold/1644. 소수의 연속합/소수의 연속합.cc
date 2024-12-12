@@ -13,8 +13,8 @@ int main() {
 	
 	for(i = 2; i <= 4000000; i++) {
 		if(!sieve[i]) {
-			for(j = i << 1; j <= 4000000; j += i) {
-				sieve[j] = true;
+			for(j = 2; i * j <= 4000000; j++) {
+				sieve[j * i] = true;
 			}
 			prime.push_back(i);
 		}
