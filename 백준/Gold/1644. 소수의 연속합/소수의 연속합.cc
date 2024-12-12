@@ -25,7 +25,7 @@ int main() {
 	
 	cin >> N;
 	ans = 0, sum = 2, l = 0, r = 0;
-	while(r < prime.size() && prime[r] <= N) {
+	while(r < prime.size()) {
 		if(sum < N) {
 			sum += prime[++r];
 		}
