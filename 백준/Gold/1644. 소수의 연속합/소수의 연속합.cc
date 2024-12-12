@@ -11,13 +11,16 @@ int main() {
 	int N, ans, sum, l, r, i, j;
 	vector<int> prime;
 	
-	for(i = 2; i <= 4000000; i++) {
+	for(i = 2; i * i <= 4000000; i++) {
 		if(!sieve[i]) {
 			for(j = 2; i * j <= 4000000; j++) {
 				sieve[j * i] = true;
 			}
-			prime.push_back(i);
 		}
+	}
+	for(i = 2; i <= 4000000; i++) {
+		if(!sieve[i])
+			prime.push_back(i);
 	}
 	
 	cin >> N;
