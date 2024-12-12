@@ -9,21 +9,21 @@ int main() {
 	cout.tie(0);
 	
 	int N, ans, sum, l, r, i, j;
-	vector<int> prime;
 	
-	for(i = 2; i <= 2000; i++) {
+	cin >> N;
+	for(i = 2; i * i <= N; i++) {
 		if(!sieve[i]) {
-			for(j = i << 1; j <= 4000000; j += i) {
+			for(j = i << 1; j <= N; j += i) {
 				sieve[j] = true;
 			}
 		}
 	}
-	for(i = 2; i <= 4000000; i++) {
+	vector<int> prime;
+	for(i = 2; i <= N; i++) {
 		if(!sieve[i])
-			prime.push_back(i);
+			prime.emplace_back(i);
 	}
 	
-	cin >> N;
 	ans = 0, sum = 2, l = 0, r = 0;
 	while(r < prime.size()) {
 		if(sum < N) {
