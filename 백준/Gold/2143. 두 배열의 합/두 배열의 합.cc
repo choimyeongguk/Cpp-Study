@@ -16,8 +16,10 @@ int main() {
 	for(i = 1; i <= n; i++) {
 		cin >> A[i];
 		A[i] += A[i - 1];
-		for(j = i - 1; j >= 0; j--) {
-			sumA[A[i] - A[j]]++;
+	}
+	for(i = 0; i <= n; i++) {
+		for(j = i + 1; j <= n; j++) {
+			sumA[A[j] - A[i]]++;
 		}
 	}
 	cin >> m;
@@ -27,8 +29,7 @@ int main() {
 		B[i] += B[i - 1];
 	}
 	
-	ans = 0;
-	for(i = 1; i <= m; i++) {
+	for(ans = 0, i = 1; i <= m; i++) {
 		for(j = i - 1; j >= 0; j--) {
 			if(sumA.count(T - B[i] + B[j]))
 				ans += sumA[T - B[i] + B[j]];
