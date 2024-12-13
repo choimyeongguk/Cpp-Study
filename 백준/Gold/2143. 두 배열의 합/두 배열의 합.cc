@@ -9,13 +9,16 @@ int main() {
 	int T, n, m, i, j;
 	long long ans;
 	int A[1001], B[1001];
-	unordered_map<int,long long> sumA, sumB;
+	unordered_map<int,long long> sumA;
 	
 	cin >> T >> n;
 	A[0] = 0;
 	for(i = 1; i <= n; i++) {
 		cin >> A[i];
 		A[i] += A[i - 1];
+		for(j = i - 1; j >= 0; j--) {
+			sumA[A[i] - A[j]]++;
+		}
 	}
 	cin >> m;
 	B[0] = 0;
@@ -23,23 +26,13 @@ int main() {
 		cin >> B[i];
 		B[i] += B[i - 1];
 	}
-		
-	for(i = 0; i <= n; i++) {
-		for(j = i + 1; j <= n; j++) {
-			sumA[A[j] - A[i]]++;
-		}
-	}
-	for(i = 0; i <= m; i++) {
-		for(j = i + 1; j <= m; j++) {
-			sumB[B[j] - B[i]]++;
-		}
-	}
 	
 	ans = 0;
-	for(auto& e : sumA) {
-		auto it = sumB.find(T - e.first);
-		if(it != sumB.end()) {
-			ans += e.second * it->second;
+	for(i = 1; i <= m; i++) {
+		for(j = i - 1; j >= 0; j--) {
+			auto it = sumA.find(T - (B[i] - B[j]));
+			if(it != sumA.end())
+				ans += it->second;
 		}
 	}
 	cout << ans;
