@@ -9,7 +9,7 @@ int main() {
 	int T, n, m, sum, i, j;
 	long long ans;
 	int A[1001], B[1001];
-	map<int,long long> sumA, sumB;
+	unordered_map<int,long long> sumA, sumB;
 	
 	cin >> T >> n;
 	for(i = 0; i < n; i++)
