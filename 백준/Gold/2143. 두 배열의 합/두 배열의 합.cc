@@ -6,7 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int T, n, m, sum, i, j;
+	int T, n, m, i, j;
 	long long ans;
 	int A[1001], B[1001];
 	unordered_map<int,long long> sumA, sumB;
@@ -26,14 +26,12 @@ int main() {
 		
 	for(i = 0; i <= n; i++) {
 		for(j = i + 1; j <= n; j++) {
-			sum = A[j] - A[i];
-			sumA[sum]++;
+			sumA[A[j] - A[i]]++;
 		}
 	}
 	for(i = 0; i <= m; i++) {
 		for(j = i + 1; j <= m; j++) {
-			sum = B[j] - B[i];
-			sumB[sum]++;
+			sumB[B[j] - B[i]]++;
 		}
 	}
 	
