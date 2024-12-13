@@ -30,9 +30,8 @@ int main() {
 	ans = 0;
 	for(i = 1; i <= m; i++) {
 		for(j = i - 1; j >= 0; j--) {
-			auto it = sumA.find(T - (B[i] - B[j]));
-			if(it != sumA.end())
-				ans += it->second;
+			if(sumA.count(T - B[i] + B[j]))
+				ans += sumA[T - B[i] + B[j]];
 		}
 	}
 	cout << ans;
