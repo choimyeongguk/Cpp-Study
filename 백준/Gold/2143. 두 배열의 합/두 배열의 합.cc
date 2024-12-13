@@ -12,21 +12,27 @@ int main() {
 	unordered_map<int,long long> sumA, sumB;
 	
 	cin >> T >> n;
-	for(i = 0; i < n; i++)
+	A[0] = 0;
+	for(i = 1; i <= n; i++) {
 		cin >> A[i];
+		A[i] += A[i - 1];
+	}
 	cin >> m;
-	for(i = 0; i < m; i++)
+	B[0] = 0;
+	for(i = 1; i <= m; i++) {
 		cin >> B[i];
+		B[i] += B[i - 1];
+	}
 		
-	for(i = 0; i < n; i++) {
-		for(sum = 0, j = i; j < n; j++) {
-			sum += A[j];
+	for(i = 0; i <= n; i++) {
+		for(j = i + 1; j <= n; j++) {
+			sum = A[j] - A[i];
 			sumA[sum]++;
 		}
 	}
-	for(i = 0; i < m; i++) {
-		for(sum = 0, j = i; j < m; j++) {
-			sum += B[j];
+	for(i = 0; i <= m; i++) {
+		for(j = i + 1; j <= m; j++) {
+			sum = B[j] - B[i];
 			sumB[sum]++;
 		}
 	}
