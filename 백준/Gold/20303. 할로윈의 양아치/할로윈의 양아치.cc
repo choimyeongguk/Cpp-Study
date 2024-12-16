@@ -1,30 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int candy[30001];
-vector<bool> visited;
-vector<vector<int>> graph;
-vector<pair<int,int>> group;  // 인원 수, 캔디 수 
-
-pair<int,int> dfs(int x) {
-	visited[x] = true;
-	pair<int,int> tmp, ret = { 1, candy[x] };
-	for(auto& e : graph[x]) {
-		if(!visited[e]) {
-			tmp = dfs(e);
-			ret.first += tmp.first;
-			ret.second += tmp.second;
-		}
-	}
-	return ret;
-}
-
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, M, K, a, b, i, j;
+	int N, M, K, a, b, num, sum, i, j;
+	int candy[30001];
+	queue<int> q;
+	vector<bool> visited;
+	vector<vector<int>> graph;
+	vector<pair<int,int>> group;
+	vector<int> dp;
 	
 	cin >> N >> M >> K;
 	for(i = 1; i <= N; i++) {
@@ -38,26 +26,34 @@ int main() {
 	}
 	
 	visited.assign(N + 1, false);
-	group.push_back({0, 0});  // dummy
 	for(i = 1; i <= N; i++) {
-		if(!visited[i]) {
-			group.push_back(dfs(i));
-		}
-	}
-	
-	vector<vector<int>> dp;
-	// dp[i][j]=k : 최대 개수가 i이고, j번째 까지 봤을 때, 최대 캔디 수는 k개 
-	dp.assign(K, vector<int>(group.size(), 0));
-	for(i = 1; i < K; i++) {
-		for(j = 1; j < group.size(); j++) {
-			dp[i][j] = dp[i][j - 1];
-			if(i >= group[j].first) {
-				dp[i][j] = max(dp[i][j], group[j].second + dp[i - group[j].first][j - 1]);
+		if(visited[i]) continue;
+		num = 0, sum = 0;
+		q.push(i);
+		visited[i] = true;
+		while(!q.empty()) {
+			num++;
+			sum += candy[q.front()];
+			for(auto& e : graph[q.front()]) {
+				if(!visited[e]) {
+					q.push(e);
+					visited[e] = true;
+				}
 			}
+			q.pop();
+		}
+		group.push_back({num, sum});
+	}
+	
+	dp.assign(K, 0);
+	for(auto& e : group) {
+		num = e.first;
+		sum = e.second;
+		for(j = K - 1; j >= num; j--) {
+			dp[j] = max(dp[j], sum + dp[j - num]);
 		}
 	}
-	cout << dp[K - 1][group.size() - 1];
-	
+	cout << dp[K - 1];
 	
 	return 0;
 }
