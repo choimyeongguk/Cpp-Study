@@ -1,29 +1,22 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Tree {
-	int pa;
-	int size;
-	int candy;
-};
+int candy[30001];
+vector<bool> visited;
+vector<vector<int>> graph;
+vector<pair<int,int>> group;  // 인원 수, 캔디 수 
 
-vector<Tree> tree;
-
-int root(int x) {
-	while(tree[x].pa != x) {
-		tree[x].pa = tree[tree[x].pa].pa;
-		x = tree[x].pa;
+pair<int,int> dfs(int x) {
+	visited[x] = true;
+	pair<int,int> tmp, ret = { 1, candy[x] };
+	for(auto& e : graph[x]) {
+		if(!visited[e]) {
+			tmp = dfs(e);
+			ret.first += tmp.first;
+			ret.second += tmp.second;
+		}
 	}
-	return x;
-}
-
-void merge(int a, int b) {
-	a = root(a);
-	b = root(b);
-	if(a == b) return;
-	tree[b].pa = a;
-	tree[a].size += tree[b].size;
-	tree[a].candy += tree[b].candy;
+	return ret;
 }
 
 int main() {
@@ -31,33 +24,29 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, M, K, a, b, ans, i, j;
+	int N, M, K, a, b, i, j;
 	
-	cin >> N >> M >>K;
-	tree.resize(N + 1);
+	cin >> N >> M >> K;
 	for(i = 1; i <= N; i++) {
-		tree[i].pa = i;
-		tree[i].size = 1;
-		cin >> tree[i].candy;
+		cin >> candy[i];
 	}
+	graph.resize(N + 1);
 	for(i = 0; i < M; i++) {
 		cin >> a >> b;
-		merge(a, b);
+		graph[a].push_back(b);
+		graph[b].push_back(a);
 	}
 	
-//	for(i = 1; i <= N; i++) {
-//		cout << i << " ,부모: " << tree[i].pa << " ,크기: " << tree[i].size << " ,캔디: " << tree[i].candy << "\n";
-//	}
+	visited.assign(N + 1, false);
+	group.push_back({0, 0});  // dummy
+	for(i = 1; i <= N; i++) {
+		if(!visited[i]) {
+			group.push_back(dfs(i));
+		}
+	}
 	
-	vector<pair<int,int>> group;  // 인원 수, 캔디 수 
 	vector<vector<int>> dp;
 	// dp[i][j]=k : 최대 개수가 i이고, j번째 까지 봤을 때, 최대 캔디 수는 k개 
-	
-	group.push_back({0, 0}); // dummy
-	for(ans = 0, i = 1; i <= N; i++) {
-		if(tree[i].pa == i && tree[i].size < K)
-			group.push_back({tree[i].size, tree[i].candy});
-	}
 	dp.assign(K, vector<int>(group.size(), 0));
 	for(i = 1; i < K; i++) {
 		for(j = 1; j < group.size(); j++) {
@@ -68,6 +57,7 @@ int main() {
 		}
 	}
 	cout << dp[K - 1][group.size() - 1];
+	
 	
 	return 0;
 }
