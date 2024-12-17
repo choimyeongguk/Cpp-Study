@@ -8,6 +8,13 @@ int main(){
 	cout.tie(0);
 	
 	int step, prev, ans, i, j;
+	int cost[5][5]={
+		{1, 2, 2, 2, 2},
+    	{2, 1, 3, 4, 3},
+    	{2, 3, 1, 3, 4},
+    	{2, 4, 3, 1, 3},
+    	{2, 3, 4, 3, 1}
+	};
 	int dp[5][5];
 	for(i = 0; i < 5; i++)
 		for(j = 0; j < 5; j++)
@@ -33,22 +40,8 @@ int main(){
 			int& l = q.front().second.first;
 			int& r = q.front().second.second;
 			
-			if(l == step || r == step) {
-				dp[l][r] = min(dp[l][r], n + 1);
-			}
-			else {
-				// 왼발이 움직일 때
-				if(l == 0)
-					dp[step][r] = min(dp[step][r], n + 2);
-				else
-					dp[step][r] = min(dp[step][r], n + 2 + (abs(step - l) == 2 ? 2 : 1));
-				
-				// 오른발이 움직일 때 
-				if(r == 0)
-					dp[l][step] = min(dp[l][step], n + 2);
-				else
-					dp[l][step] = min(dp[l][step], n + 2 + (abs(step - r) == 2 ? 2 : 1));
-			}
+			dp[step][r] = min(dp[step][r], n + cost[l][step]);
+			dp[l][step] = min(dp[l][step], n + cost[r][step]);
 			q.pop();
 		}
 	}
