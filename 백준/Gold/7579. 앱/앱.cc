@@ -7,23 +7,23 @@ int main() {
 	cout.tie(0);
 	
 	int N, M, i, j;
-	int m[100], c[100], dp[10000000];
-	// dp[i]=j : i바이트 이상을 비워야 할 때 최소 비용 j
+	int m[101], c[101], dp[10100] = { 0 };
+	// dp[i] = j : i비용을 들여 지울 수 있는 최대 메모리 j 
 	
 	cin >> N >> M;
-	for(i = 0; i < N; i++)  cin >> m[i];
-	for(i = 0; i < N; i++)  cin >> c[i];
-	for(i = 1; i <= M; i++) dp[i] = 0x3f3f3f3f;
-	dp[0] = 0;
-	
+	for(i = 0; i < N; i++) cin >> m[i];
+	for(i = 0; i < N; i++) cin >> c[i];
+
 	for(i = 0; i < N; i++) {
-		dp[M] = min(dp[M], c[i] + dp[M - m[i]]);
-		for(j = M - 1; j >= m[i]; j--) {
-			dp[j] = min(dp[j], dp[j + 1]);
-			dp[j] = min(dp[j], c[i] + dp[j - m[i]]);
+		for(j = 10000; j >= 0; j--) {
+			dp[j + c[i]] = max(dp[j + c[i]], dp[j] + m[i]);
 		}
 	}
-	cout << dp[M];
+	for(i = 0; i <= 10000; i++) {
+		if(dp[i] >= M)
+			break;
+	}
+	cout << i;
 	
 	return 0;
-}
+} 
