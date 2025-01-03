@@ -7,15 +7,15 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 	
-	int n, k, coin, i, j;
+	int n, k, c, i, j;
 	int dp[10001] = { 0 };
 	
 	cin >> n >> k;
 	for(i = 1; i <= k; i++) dp[i] = INF;
 	for(i = 0; i < n; i++) {
-		cin >> coin;
-		for(j = 0; j + coin <= k; j++)
-			dp[j + coin] = min(dp[j + coin], dp[j] + 1);
+		cin >> c;
+		for(j = 0; j + c <= k; j++)
+			dp[j + c] = min(dp[j + c], dp[j] + 1);
 	}
 	cout << (dp[k] == INF ? -1 : dp[k]);
 	
