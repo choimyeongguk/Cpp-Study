@@ -10,14 +10,11 @@ int main() {
 	int dp[501][501] = { 0 };
 	// 행렬의 곱셈 [a * b][b * c][c * d]...는 a b c...의 수열로 나타낼 수 있음 
 	// dp[i][j] = k : i번 부터 j번 값의 연산 횟수의 최솟값 k 
-	vector<int> len;
+	int len[501];
 	
-	cin >> N >> a >> b;
-	len.push_back(a);
-	len.push_back(b);
-	for(i = 1; i < N; i++) {
-		cin >> a >> b;
-		len.push_back(b);
+	cin >> N >> len[0] >> len[1];
+	for(i = 2; i <= N; i++) {
+		cin >> a >> len[i];
 	}
 	
 	for(l = 2 ; l <= N + 1 ; l++) {
