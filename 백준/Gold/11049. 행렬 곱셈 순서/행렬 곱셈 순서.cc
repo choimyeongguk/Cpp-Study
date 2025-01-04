@@ -8,11 +8,9 @@ int memo[501][501] = { 0 };
 
 int getCalcMin(int s, int e) {
 	if(memo[s][e] != 0) return memo[s][e];
-	int tmp, i;
 	int ret = len[s] * len[s + 1] * len[e] + getCalcMin(s + 1, e);
-	for(i = s + 2; i < e - 1; i++) {
-		tmp = len[s] * len[i] * len[e] + getCalcMin(s, i) + getCalcMin(i, e);
-		ret = min(ret, tmp);
+	for(int i = s + 2; i < e - 1; i++) {
+		ret = min(ret, len[s] * len[i] * len[e] + getCalcMin(s, i) + getCalcMin(i, e));
 	}
 	ret = min(ret, len[s] * len[e - 1] * len[e] + getCalcMin(s, e - 1));
 	return memo[s][e] = ret;
