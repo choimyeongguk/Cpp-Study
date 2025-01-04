@@ -1,27 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> len;
-int memo[501][501] = { 0 };
-// 행렬의 곱셈 [a * b][b * c][c * d]...는 a b c...의 수열로 나타낼 수 있음 
-// dp[i][j] = k : i번 부터 j번 값의 연산 횟수의 최솟값 k 
-
-int getCalcMin(int s, int e) {
-	if(memo[s][e] != 0) return memo[s][e];
-	int ret = len[s] * len[s + 1] * len[e] + getCalcMin(s + 1, e);
-	for(int i = s + 2; i < e - 1; i++) {
-		ret = min(ret, len[s] * len[i] * len[e] + getCalcMin(s, i) + getCalcMin(i, e));
-	}
-	ret = min(ret, len[s] * len[e - 1] * len[e] + getCalcMin(s, e - 1));
-	return memo[s][e] = ret;
-}
-
 int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 	
-	int N, a, b, i;
+	int N, a, b, l, i, j;
+	int dp[501][501] = { 0 };
+	// 행렬의 곱셈 [a * b][b * c][c * d]...는 a b c...의 수열로 나타낼 수 있음 
+	// dp[i][j] = k : i번 부터 j번 값의 연산 횟수의 최솟값 k 
+	vector<int> len;
 	
 	cin >> N >> a >> b;
 	len.push_back(a);
@@ -30,11 +19,16 @@ int main() {
 		cin >> a >> b;
 		len.push_back(b);
 	}
-	for(i = 2; i <= N; i++) {
-		memo[i - 2][i] = len[i - 2] * len[i - 1] * len[i];
-	}
 	
-	cout << getCalcMin(0, N); 
+	for(l = 2 ; l <= N + 1 ; l++) {
+        for(i = 0 ; i + l <= N ; i++) {
+        	dp[i][i + l] = len[i] * len[i + 1] * len[i + l] + dp[i + 1][i + l];
+        	for(j = i + 2; j < i + l; j++)
+        		dp[i][i + l] = min(dp[i][i + l], len[i] * len[j] * len[i + l] + dp[i][j] + dp[j][i + l]);
+        }
+    }
+	
+	cout << dp[0][N];
 	
 	return 0;
 }
