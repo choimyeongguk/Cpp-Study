@@ -6,10 +6,7 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 
-	int N, K, i, j;
-	int dp[201] = { 0 };
-	// int dp[201][201] = { 0 };
-	// dp[i][j]=k : 0부터 N까지의 정수 i개를 더해서 그 합이 j이 되는 경우의 수 k
+	int N, K, i, j, dp[201] = { 0 };
 	
 	cin >> N >> K;
 	dp[0] = 1;
