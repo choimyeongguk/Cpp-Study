@@ -11,7 +11,6 @@ int main() {
 	char M[1000][1000];
 	int num[1000][1000] = { 0 };	// 방 번호 
 	int size[1000000] = { 0 };		// 각 방번호 별 크기 
-	bool visited[1000][1000];
 	queue<pair<int,int>> q;
 	unordered_set<int> nearbyroom;
 	
@@ -29,26 +28,18 @@ int main() {
 			if(M[i][j] || num[i][j]) continue;
 			
 			while(!q.empty()) q.pop();
-			for(k = 0; k < R; k++) {
-				for(l = 0; l < C; l++) {
-					visited[k][l] = false;
-				}
-			}
-			
 			q.push({ i, j });
-			visited[i][j] = true;
+			num[i][j] = roomNum;
 			while(!q.empty()) {
 				int& r = q.front().first;
 				int& c = q.front().second;
-				num[r][c] = roomNum;
 				size[roomNum]++;
 				for(k = 0; k < 4; k++) {
 					nr = r + d[0][k];
 					nc = c + d[1][k];
-					if(nr < 0 || nr == R || nc < 0 || nc == C || visited[nr][nc]) continue;
-					if(M[nr][nc] || num[nr][nc]) continue;
+					if(nr < 0 || nr == R || nc < 0 || nc == C || M[nr][nc] || num[nr][nc] != 0) continue;
 					q.push({ nr, nc });
-					visited[nr][nc] = true;
+					num[nr][nc] = roomNum;
 				}
 				q.pop();
 			}
