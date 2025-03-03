@@ -15,7 +15,7 @@ int main() {
 	graph.resize(N + 1);
 	for(i = 0; i < M; i++) {
 		cin >> A >> B;
-		graph[A].push_back(B);
+		graph[A].emplace_back(B);
 		in_degree[B]++;
 	}
 	
