@@ -9,9 +9,9 @@ int main() {
 	int N, lemon, ans = 0, i;
 	
 	cin >> N;
-	for(i = 0; i < N; i++) {
+	for(i = N; i > 0; i--) {
 		cin >> lemon;
-		ans = max(ans, lemon - N + i);
+		ans = max(ans, lemon - i);
 	}
 	cout << ans;
 	
