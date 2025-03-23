@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	string str;
+	int tmp;
+	
+	getline(cin, str);
+	for(auto& e : str) {
+		if(!isalpha(e)) continue;
+		if(e < 'a') {	// 대문자 
+			tmp = e - 'A';
+			tmp = (tmp + 13) % 26;
+			e = tmp + 'A';
+		}
+		else {
+			tmp = e - 'a';
+			tmp = (tmp + 13) % 26;
+			e = tmp + 'a';
+		}
+	}
+	cout << str;
+	
+	return 0;
+}
