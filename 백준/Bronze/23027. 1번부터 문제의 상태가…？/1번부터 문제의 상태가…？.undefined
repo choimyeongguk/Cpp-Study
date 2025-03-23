@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	bool used['Z' + 1] = { 0 };
+	string str;
+	
+	cin >> str;
+	for(auto& c : str) {
+		used[c] = true;
+	}
+	if(used['A']) {
+		for(auto& c : str) {
+			if(c == 'B' || c == 'C' || c == 'D' || c == 'F') {
+				c = 'A';
+			}
+		}
+	}
+	else if(used['B']) {
+		for(auto& c : str) {
+			if(c == 'C' || c == 'D' || c == 'F') {
+				c = 'B';
+			}
+		}
+	}
+	else if(used['C']) {
+		for(auto& c : str) {
+			if(c == 'D' || c == 'F') {
+				c = 'C';
+			}
+		}
+	}
+	else {
+		for(auto& c : str) {
+			c = 'A';
+		}
+	}
+	cout << str;
+	
+	return 0;
+}
