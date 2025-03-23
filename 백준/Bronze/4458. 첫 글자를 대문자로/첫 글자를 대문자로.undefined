@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int T;
+	string str;
+	
+	cin >> T;
+	getline(cin, str);
+	while(T--) {
+		getline(cin, str);
+		str.front() = toupper(str.front());
+		cout << str << "\n";
+	}
+	
+	return 0;
+}
