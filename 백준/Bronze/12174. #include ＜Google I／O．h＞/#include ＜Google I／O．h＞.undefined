@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve(int t) {
+	int byte, i, j;
+	char c;
+	string str, result;
+	
+	cin >> byte >> str;
+	for(i = 0; i < byte; i++) {
+		for(c = 0, j = 0; j < 8; j++) {
+			if(str[i * 8 + j] == 'O') {
+				c <<= 1;
+			}
+			else {
+				c = (c << 1) | 1;
+			}
+		}
+		result += c;
+	}
+	cout << "Case #" << t << ": " << result << "\n";
+	
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int T;
+	cin >> T;
+	for(int i = 1; i <= T; i++)
+		solve(i);
+	
+	return 0;
+}
