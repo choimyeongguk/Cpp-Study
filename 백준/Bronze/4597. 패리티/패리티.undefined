@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	int cnt;
+	string str;
+	
+	while(true) {
+		cin >> str;
+		if(str == "#") break;
+		cnt = 0;
+		for(auto& e : str) {
+			if(e == '1') cnt++;
+		}
+		if(cnt % 2 == 0 && str.back() == 'e' || cnt % 2 == 1 && str.back() == 'o') {
+			str.back() = '0';
+		}
+		else str.back() = '1';
+		cout << str << "\n";
+	}
+	
+	return 0;
+}
