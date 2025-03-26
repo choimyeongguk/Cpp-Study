@@ -1,0 +1,13 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int M, D;
+	int mon[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+	string day[7] = { "Wednesday", "Thursday", "Friday", "Saturday", "Sunday","Monday", "Tuesday" };
+	
+	cin >> D >> M;
+    for(int i = 1; i < M; i++)
+		D += mon[i];
+    cout << day[D % 7];
+}
