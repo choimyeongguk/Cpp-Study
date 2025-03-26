@@ -1,0 +1,17 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	time_t now = time(nullptr);
+	tm* localTime = localtime(&now);
+	
+	char buffer[100];
+	strftime(buffer, sizeof(buffer), "%Y-%m-%d", localTime);
+	cout << buffer;
+	
+	return 0;
+}
