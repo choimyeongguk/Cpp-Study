@@ -1,0 +1,159 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef pair<ll, ll> pll;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+const ll mod = 1'000'000'007;
+template <ll mod=mod>
+struct mint{
+    ll x;
+    mint():x(){}
+    mint(ll x):x((x%mod+mod)%mod){}
+    mint operator-() const { return mint(-x);}
+    mint& operator+=(const mint a) {
+        if((x += a.x) >= mod) x -= mod;
+        return *this;
+    }
+    mint& operator-=(const mint a) {
+        if((x += mod-a.x) >= mod) x -= mod;
+        return *this;
+    }
+    mint& operator*=(const mint a) {
+        (x *= a.x) %= mod;
+        return *this;
+    }
+    mint& operator/=(const mint a) {
+        return (*this) *= a.inv();
+    }
+    mint operator+(const mint a) const {
+        mint res(*this);
+        return res+=a;
+    }
+    mint operator-(const mint a) const {
+        mint res(*this);
+        return res-=a;
+    }
+    mint operator*(const mint a) const {
+        mint res(*this);
+        return res*=a;
+    }
+    mint operator/(const mint a) const {
+        mint res(*this);
+        return res/=a;
+    }
+    mint inv() const {
+        return modinverse(x, mod);
+    }
+    friend ostream& operator<<(ostream& os, const mint& a) {
+        return os << a.x;
+    }
+    friend istream& operator>>(istream& is, mint& a) {
+        ll t;
+        is >> t;
+        a = mint<mod>(t);
+        return is;
+    }
+    operator ll() const { return x; }
+    operator string() const { return to_string(x); }
+};
+
+vector<vector<mint<mod>>> dp(2501, vector<mint<mod>>(2501, 0));
+vector<mint<mod>> ans(2501, 0);
+// mint dp[2501][2501];
+// mint ans[2501];
+// dp[i][j] = k : 길이 i인 괄호 문자열의 덩어리 개수가 j일 때 경우의 수 k
+
+void preprocess() {
+    ll i, j, k;
+
+    dp[0][0] = 1;
+    ll num;
+    for (i = 1; i <= 2500; i++) {
+        num = 0;
+        for (j = i; j >= 1; j--) {
+            num += dp[i - 1][j - 1];
+            dp[i][j] = num;
+        }
+    }
+    for (i = 1; i <= 2500; i++) {
+        for (j = 1; j <= i; j++) {
+            ans[i] += dp[i][j];
+        }
+    }
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll n;
+    // for (i = 1; i <= 10; i++) {
+    //     for (j = 1; j <= 10; j++) {
+    //         cout << dp[i][j] << " ";
+    //     }
+    //     cout << "\n";
+    // }
+    cin >> n;
+    if (n % 2 == 0)
+        cout << ans[n >> 1] << "\n";
+    else cout << 0 << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
