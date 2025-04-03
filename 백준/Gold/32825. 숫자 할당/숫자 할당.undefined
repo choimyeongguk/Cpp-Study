@@ -67,13 +67,13 @@ void solve(ll testcase){
     for (auto& e : sum) cin >> e;
     for (i = 1; i <= 13; i++) {     // d
         if (i >= sum[3] || sum[3] == (i << 1)) continue;
-        used[i] = true; sum[4] -= i;
-        used[sum[3] - i] = true; sum[5] -= sum[3] - i;
+        used[i] = used[sum[3] - i] = true;
+        sum[4] -= i; sum[5] -= sum[3] - i;
 
         for (j = 1; j <= 13; j++) {
             if (used[j] || used[sum[7] - j] || j >= sum[7] || sum[7] == (j << 1)) continue;
-            used[j] = true; sum[0] -= j;
-            used[sum[7] - j] = true; sum[1] -= sum[7] - j;
+            used[j] = used[sum[7] - j] = true;
+            sum[0] -= j; sum[1] -= sum[7] - j;
 
             arr.clear();
             for (k = 1; k <= 13; k++)
@@ -94,12 +94,12 @@ void solve(ll testcase){
                 ans++;
             } while (next_permutation(arr.begin(), arr.end()));
 
-            used[j] = false; sum[0] += j;
-            used[sum[7] - j] = false; sum[1] += sum[7] - j;
+            used[j] = used[sum[7] - j] = false;
+            sum[0] += j; sum[1] += sum[7] - j;
         }
 
-        used[i] = false; sum[4] += i;
-        used[sum[3] - i] = false; sum[5] += sum[3] - i;
+        used[i] = used[sum[3] - i] = false;
+        sum[4] += i; sum[5] += sum[3] - i;
     }
 
     cout << ans;
