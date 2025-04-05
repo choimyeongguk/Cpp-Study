@@ -65,16 +65,13 @@ void solve(ll testcase){
     vector<ll> arr(N);
     for (auto& e : arr) cin >> e;
     sort(all(arr));
-    vector<ll> ord(N);
-    iota(all(ord), 0);
 
     do {
-        for (i = 0; i < M; i++) {
-            cout << arr[ord[i]] << " ";
-        }
+        for (i = 0; i < M; i++)
+            cout << arr[i] << " ";
         cout << "\n";
-        reverse(ord.begin() + M, ord.end());
-    } while (next_permutation(ord.begin(), ord.end()));
+        reverse(arr.begin() + M, arr.end());
+    } while (next_permutation(arr.begin(), arr.end()));
 }
 
 int main() {
