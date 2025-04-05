@@ -70,11 +70,11 @@ void solve(ll testcase){
     vector<bool> visited(n + 1, false);
     for (i = 1; i <= n; i++) {
         if (visited[i]) continue;
+        cnt++;
         cur = start = i;
         do {
             visited[cur] = true;
             cur = arr[cur];
-            if (cur == start) cnt++;
         } while (!visited[cur]);
     }
     cout << cnt << "\n";
