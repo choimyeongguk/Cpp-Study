@@ -75,7 +75,7 @@ void solve(ll testcase){
         do {
             visited[cur] = true;
             cur = arr[cur];
-        } while (!visited[cur]);
+        } while (cur != start);
     }
     cout << cnt << "\n";
 }
