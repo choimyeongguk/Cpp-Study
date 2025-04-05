@@ -63,19 +63,12 @@ ll n, ans;
 vector<ll> arr;
 
 void makePartition(ll sum, ll max) {
-    if (sum == 0) {             // 분할수 완성
-        bitset<101> sumComb = 1;         // 0은 만들 수 있음
-        bitset<101> newComb;
+    if (sum == 0) {                 // 분할수 완성
+        bitset<101> sumComb = 1;    // 0은 만들 수 있음
         for (auto& e : arr) {
-            newComb.reset();
-            for (ll i = 0; i <= n; i++) {
-                if (sumComb[i]) {
-                  newComb[i + e] = 1;
-                }
-            }
-            sumComb |= newComb;
+            sumComb |= sumComb << e;
         }
-        if ((sumComb & point) == point)   // sumComb가 point를 포함하는지 판별
+        if ((sumComb & point) == point)
             ans = arr.size();
         return;
     }
@@ -98,7 +91,7 @@ void solve(ll testcase){
         point.reset();  // 만들어야 하는 점수 조합들을 비트로 표현
         for (i = 0; i < str.size(); i++)
             if (str[i] == 'o')
-                point[i] = 1;
+                point.set(i);
         ans = 7;        // 1, 2, 4, 8, 16, 32, 64 조합으로 100이하의 모든 수 만들 수 있음
         arr.clear();
         makePartition(n, n);
