@@ -1,0 +1,118 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef pair<ll, ll> pll;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+bitset<101> point;
+ll n, ans;
+vector<ll> arr;
+
+void makePartition(ll sum, ll max) {
+    if (sum == 0) {             // 분할수 완성
+        bitset<101> sumComb = 1;         // 0은 만들 수 있음
+        bitset<101> newComb;
+        for (auto& e : arr) {
+            newComb.reset();
+            for (ll i = 0; i <= n; i++) {
+                if (sumComb[i]) {
+                  newComb[i + e] = 1;
+                }
+            }
+            sumComb |= newComb;
+        }
+        if ((sumComb & point) == point)   // sumComb가 point를 포함하는지 판별
+            ans = arr.size();
+        return;
+    }
+    // 분할수 생성
+    if (arr.size() + 1 >= ans) return;    // 현재 arr에 값을 하나 추가해서 길이가 이미 구한 ans와 같아지면 무의미
+    for (max = min(max, sum); max > 0; max--) {
+        arr.push_back(max);
+        makePartition(sum - max, max);
+        arr.pop_back();
+    }
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    string str;
+    while (true) {
+        cin >> n;
+        if (!n) break;
+        cin >> str;
+        point.reset();  // 만들어야 하는 점수 조합들을 비트로 표현
+        for (i = 0; i < str.size(); i++)
+            if (str[i] == 'o')
+                point[i] = 1;
+        ans = 7;        // 1, 2, 4, 8, 16, 32, 64 조합으로 100이하의 모든 수 만들 수 있음
+        arr.clear();
+        makePartition(n, n);
+        cout << ans << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+//    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
