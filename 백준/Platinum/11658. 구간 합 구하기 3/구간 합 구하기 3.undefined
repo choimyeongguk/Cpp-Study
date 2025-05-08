@@ -67,7 +67,7 @@ void preprocess() {
 struct segTree2D {
     ll n, sz;
     vector<vector<ll>> data, tree;
-    segTree2D(ll n): n(n), sz(n<<2), data(n, vector<ll>(n)), tree(n<<2, vector<ll>(n<<2)) {};
+    segTree2D(ll n): n(n), sz(2*pow(2,ceil(log2(n)))), data(n, vector<ll>(n)), tree(sz, vector<ll>(sz)) {};
     void segInit1D(ll i, ll cs, ll ce, ll idx, ll r) {
         if (cs==ce) {
             tree[idx][i] = data[r][cs];
