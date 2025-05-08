@@ -64,88 +64,72 @@ void preprocess() {
 
 }
 
-struct segTree_2D {
-    struct segTree {
-        ll n;
-        vector<ll> data, tree;
-        segTree(ll n): n(n), data(n), tree(n<<2) {};
-        void segInit(ll i, ll s, ll e) {
-            if (s==e) {
-                tree[i] = data[s];
-                return;
-            }
-            ll m = (s+e)>>1;
-            segInit(i<<1, s, m);
-            segInit(i<<1|1, m+1, e);
-            tree[i] = tree[i<<1]+tree[i<<1|1];
-        }
-        void init(const vector<ll>& arr) {
-            data = arr;
-            segInit(1, 0, n-1);
-        }
-        void segUpdate(ll i, ll s, ll e, ll pos, ll dif) {
-            if (s>pos || e<pos) return;
-            tree[i] += dif;
-            if (s==e) return;
-            ll m = (s+e)>>1;
-            segUpdate(i<<1, s, m, pos, dif);
-            segUpdate(i<<1|1, m+1, e, pos, dif);
-        }
-        void update(ll pos, ll dif) {
-            segUpdate(1, 0, n-1, pos, dif);
-        }
-        ll segQuery(ll i, ll s, ll e, ll l, ll r) {
-            if (s>r || e<l) return 0;
-            if (l<=s && e<=r) return tree[i];
-            ll m = (s+e)>>1;
-            return segQuery(i<<1, s, m, l, r)+segQuery(i<<1|1, m+1, e, l, r);
-        }
-        ll query(ll l, ll r) {
-            return segQuery(1, 0, n-1, l, r);
-        }
-    };
-
-    ll n;
-    vector<vector<ll>> data;
-    vector<segTree> tree;
-    segTree_2D(ll n): n(n), data(n, vector<ll>(n)), tree(n<<2, segTree(n)) {};
-    void segInit(ll i, ll s, ll e) {
-        if (s==e) {
-            tree[i].init(data[s]);
+struct segTree2D {
+    ll n, sz;
+    vector<vector<ll>> data, tree;
+    segTree2D(ll n): n(n), sz(n<<2), data(n, vector<ll>(n)), tree(n<<2, vector<ll>(n<<2)) {};
+    void segInit1D(ll i, ll cs, ll ce, ll idx, ll r) {
+        if (cs==ce) {
+            tree[idx][i] = data[r][cs];
             return;
         }
-        ll m = (s+e)>>1;
-        segInit(i<<1, s, m);
-        segInit(i<<1|1, m+1, e);
-        vector<ll> tmp(n);
-        for (ll j=0; j<n; j++)
-            tmp[j] = tree[i<<1].data[j]+tree[i<<1|1].data[j];
-        tree[i].init(tmp);
+        ll m = (cs+ce)>>1;
+        segInit1D(i<<1, cs, m, idx, r);
+        segInit1D(i<<1|1, m+1, ce, idx, r);
+        tree[idx][i] = tree[idx][i<<1]+tree[idx][i<<1|1];
+    }
+    void segInit2D(ll i, ll rs, ll re) {
+        if (rs==re) {
+            segInit1D(1, 0, n-1, i, rs);
+            return;
+        }
+        ll m = (rs+re)>>1;
+        segInit2D(i<<1, rs, m);
+        segInit2D(i<<1|1, m+1, re);
+        ll l=i<<1, r=i<<1|1;
+        for (ll j=1; j<sz; j++)
+            tree[i][j] = tree[l][j]+tree[r][j];
     }
     void init(const vector<vector<ll>>& arr) {
         data = arr;
-        segInit(1, 0, n-1);
+        segInit2D(1, 0, n-1);
     }
-    void segUpdate(ll i, ll s, ll e, ll r, ll c, ll dif) {
-        if (s>r || e<r) return;
-        tree[i].update(c, dif);
-        if (s==e) return;
-        ll m = (s+e)>>1;
-        segUpdate(i<<1, s, m, r, c, dif);
-        segUpdate(i<<1|1, m+1, e, r, c, dif);
+
+    void segUpdate1D(ll i, ll cs, ll ce, ll r, ll pos, ll dif) {
+        if (cs>pos || ce<pos) return;
+        tree[r][i] += dif;
+        if (cs==ce) return;
+        ll m = (cs+ce)>>1;
+        segUpdate1D(i<<1, cs, m, r, pos, dif);
+        segUpdate1D(i<<1|1, m+1, ce, r, pos, dif);
+    }
+    void segUpdate2D(ll i, ll rs, ll re, ll r, ll c, ll dif) {
+        if (rs>r || re<r) return;
+        segUpdate1D(1, 0, n-1, i, c, dif);
+        if (rs==re) return;
+        ll m = (rs+re)>>1;
+        segUpdate2D(i<<1, rs, m, r, c, dif);
+        segUpdate2D(i<<1|1, m+1, re, r, c, dif);
     }
     void update(ll r, ll c, ll dif) {
-        segUpdate(1, 0, n-1, r, c, dif);
+        segUpdate2D(1, 0, n-1, r, c, dif);
     }
-    ll segQuery(ll i, ll s, ll e, ll r1, ll c1, ll r2, ll c2) {
-        if (s>r2 || e<r1) return 0;
-        if (r1<=s && e<=r2) return tree[i].query(c1, c2);
-        ll m = (s+e)>>1;
-        return segQuery(i<<1, s, m, r1, c1, r2, c2)
-             + segQuery(i<<1|1, m+1, e, r1, c1, r2, c2);
+
+    ll segQuery1D(ll i, ll cs, ll ce, ll r, ll c1, ll c2) {
+        if (cs>c2 || ce<c1) return 0;
+        if (c1<=cs && ce<=c2) return tree[r][i];
+        ll m = (cs+ce)>>1;
+        return segQuery1D(i<<1, cs, m, r, c1, c2)+segQuery1D(i<<1|1, m+1, ce, r, c1, c2);
+    }
+    ll segQuery2D(ll i, ll rs, ll re, ll r1, ll c1, ll r2, ll c2) {
+        if (rs>r2 || re<r1) return 0;
+        if (r1<=rs && re<=r2) return segQuery1D(1, 0, n-1, i, c1, c2);
+        ll m = (rs+re)>>1;
+        return segQuery2D(i<<1, rs, m, r1, c1, r2, c2)
+            + segQuery2D(i<<1|1, m+1, re, r1, c1, r2, c2);
     }
     ll query(ll r1, ll c1, ll r2, ll c2) {
-        return segQuery(1, 0, n-1, r1, c1, r2, c2);
+        return segQuery2D(1, 0, n-1, r1, c1, r2, c2);
     }
 };
 
@@ -154,17 +138,18 @@ void solve(ll testcase){
     ll N, Q; cin >> N >> Q;
     vector<vector<ll>> arr(N, vector<ll>(N));
     for (auto&e:arr) for (auto&v:e) cin >> v;
-    segTree_2D tree(N);
+    segTree2D tree(N);
     tree.init(arr);
 
     ll w, r, c, val, r1, c1, r2, c2;
-    for (i = 0; i < Q; i++) {
+    for (i=0; i<Q; i++) {
         cin >> w;
         switch (w) {
             case 0:
                 cin >> r >> c >> val;
-                tree.update(r-1, c-1, val-arr[r-1][c-1]);
-                arr[r-1][c-1] = val;
+                --r, --c;
+                tree.update(r, c, val-arr[r][c]);
+                arr[r][c] = val;
                 break;
             case 1:
                 cin >> r1 >> c1 >> r2 >> c2;
