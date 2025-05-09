@@ -81,7 +81,7 @@ void solve(ll testcase){
 
     vector<ll> real_lis(fake_lis.size());
     ll idx = fake_lis.size()-1;
-    for (i=N-1; i>=0; --i) {
+    for (i=N-1; idx>=0; --i) {
         if (record[i]==idx) {
             real_lis[idx--] = arr[i];
         }
