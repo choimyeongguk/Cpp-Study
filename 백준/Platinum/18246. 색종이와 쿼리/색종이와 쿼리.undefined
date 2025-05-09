@@ -64,12 +64,13 @@ void preprocess() {
 
 }
 const ll MAX = 1501;
+ll sz = 2*pow(2,ceil(log2(MAX)));
 
 struct segTree2D {
     vector<vector<ll>>& data;
     vector<vector<ll>> tree;
     segTree2D(vector<vector<ll>>& arr):
-        data(arr), tree(MAX<<2, vector<ll>(MAX<<2)) {
+        data(arr), tree(sz, vector<ll>(sz)) {
         init();
     }
     void segInitX(ll yi, ll ys, ll ye, ll xi, ll xs, ll xe) {
