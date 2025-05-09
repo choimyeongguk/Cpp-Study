@@ -1,0 +1,146 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef pair<ll, ll> pll;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+template<typename T> using ordered_set
+    = tree<T, null_type, less<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+template<typename T> using ordered_multiset
+    = tree<T, null_type, less_equal<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+const ll MAX = 1501;
+
+struct segTree2D {
+    vector<vector<ll>>& data;
+    vector<vector<ll>> tree;
+    segTree2D(vector<vector<ll>>& arr):
+        data(arr), tree(MAX<<2, vector<ll>(MAX<<2)) {
+        init();
+    }
+    void segInitX(ll yi, ll ys, ll ye, ll xi, ll xs, ll xe) {
+        if (xs==xe) {
+            if (ys==ye) tree[yi][xi] = data[ys][xs];
+            else tree[yi][xi] = max(tree[yi<<1][xi], tree[yi<<1|1][xi]);
+            return;
+        }
+        ll m = (xs+xe)>>1;
+        segInitX(yi, ys, ye, xi<<1, xs, m);
+        segInitX(yi, ys, ye, xi<<1|1, m+1, xe);
+        tree[yi][xi] = max(tree[yi][xi<<1], tree[yi][xi<<1|1]);
+    }
+    void segInitY(ll yi, ll ys, ll ye) {
+        if (ys!=ye) {
+            ll m = (ys+ye)>>1;
+            segInitY(yi<<1, ys, m);
+            segInitY(yi<<1|1, m+1, ye);
+        }
+        segInitX(yi, ys, ye, 1, 0, MAX-1);
+    }
+    void init() { segInitY(1, 0, MAX-1); }
+    ll segQueryX(ll yi, ll xi, ll xs, ll xe, ll x1, ll x2) {
+        if (xs>x2 || xe<x1) return 0;
+        if (x1<=xs && xe<=x2) return tree[yi][xi];
+        ll m = (xs+xe)>>1;
+        return max(segQueryX(yi, xi<<1, xs, m, x1, x2),
+            segQueryX(yi, xi<<1|1, m+1, xe, x1, x2));
+    }
+    ll segQueryY(ll yi, ll ys, ll ye, ll y1, ll x1, ll y2, ll x2) {
+        if (ys>y2 || ye<y1) return 0;
+        if (y1<=ys && ye<=y2) return segQueryX(yi, 1, 0, MAX-1, x1, x2);
+        ll m = (ys+ye)>>1;
+        return max(segQueryY(yi<<1, ys, m, y1, x1, y2, x2),
+            segQueryY(yi<<1|1, m+1, ye, y1, x1, y2, x2));
+    }
+    ll query(ll y1, ll x1, ll y2, ll x2) { return segQueryY(1, 0, MAX-1, y1, x1, y2, x2); }
+};
+
+void solve(ll testcase){
+    ll i, j, k, x, y;
+    ll N, Q; cin >> N >> Q;
+    vector<vector<ll>> arr(MAX, vector<ll>(MAX, 0));
+
+    ll y1, x1, y2, x2;
+    while (N--) {
+        cin >> y1 >> x1 >> y2 >> x2;
+        arr[y1][x1]++, arr[y2][x2]++;
+        arr[y1][x2]--, arr[y2][x1]--;
+    }
+    for (x=1; x<MAX; x++)
+        for (y=0; y<MAX; y++)
+            arr[y][x] += arr[y][x-1];
+    for (y=1; y<MAX; y++)
+        for (x=0; x<MAX; x++)
+            arr[y][x] += arr[y-1][x];
+
+    segTree2D tree(arr);
+    while (Q--) {
+        cin >> y1 >> x1 >> y2 >> x2;
+        cout << tree.query(y1, x1, y2-1, x2-1) << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
