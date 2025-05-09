@@ -106,11 +106,10 @@ void solve(ll testcase){
     priority_queue<pll, vector<pll>, greater<>> pq;
     pq.push({D[s], s});
 
-    ll cost, node, h;
+    ll h;
     vector<ll> arr;
     while (!pq.empty()) {
-        cost = pq.top().first;
-        node = pq.top().second;
+        auto [cost, node] = pq.top();
         pq.pop();
         if (D[node]<cost) continue;
         arr = hsah(node);
