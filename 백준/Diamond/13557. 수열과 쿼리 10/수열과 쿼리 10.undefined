@@ -62,12 +62,11 @@ void preprocess() {
     ll i, j, k;
 
 }
-
+struct Node {
+    ll ans, sum, l, r;
+};
 // 구간합의 최댓값
 struct SegTree {
-    struct Node {
-        ll ans, sum, l, r;
-    };
     ll n;
     vector<ll>& data;
     vector<Node> tree;
@@ -117,6 +116,7 @@ void solve(ll testcase){
 
     ll Q; cin >> Q;
     ll x1, y1, x2, y2, ans, t1, t2, t3;
+    Node query;
     while (Q--) {
         cin >> x1 >> y1 >> x2 >> y2;
         --x1, --y1, --x2, --y2;
@@ -124,17 +124,20 @@ void solve(ll testcase){
         if (y1<x2) {    // 1구간과 2구간이 겹치지 않는 경우
             ans = tree.query(x1, y1).r+tree.query(y1+1, x2-1).sum+tree.query(x2, y2).l;
         } else if (x1==x2) {    // 2구간이 1구간을 완전히 포함하는 경우
-            t1 = tree.query(x1, y1).ans;
-            t2 = tree.query(x1, y1).r+tree.query(y1+1, y2).l;
+            query = tree.query(x1, y1); 
+            t1 = query.ans;
+            t2 = query.r+tree.query(y1+1, y2).l;
             ans = max(t1, t2);
         } else if (y1==y2) {    // 1구간이 2구간을 완전히 포함하는 경우
-            t1 = tree.query(x2, y2).ans;
-            t2 = tree.query(x1, x2-1).r+tree.query(x2, y2).l;
+            query = tree.query(x2, y2);
+            t1 = query.ans;
+            t2 = tree.query(x1, x2-1).r+query.l;
             ans = max(t1, t2);
         } else if (x2<=y1) {    // 2구간이 1구간 오른쪽에 겹치는 경우
+            query = tree.query(x2, y1);
             t1 = tree.query(x1, x2-1).r+tree.query(x2, y2).l;
-            t2 = tree.query(x2, y1).ans;
-            t3 = tree.query(x2, y1).r+tree.query(y1+1, y2).l;
+            t2 = query.ans;
+            t3 = query.r+tree.query(y1+1, y2).l;
             ans = max({t1, t2, t3});
         }
         cout << ans << "\n";
