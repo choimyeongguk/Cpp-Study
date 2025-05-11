@@ -92,7 +92,6 @@ void solve(ll testcase){
     vector<Line> line(N);
     vector<ll> pa(N); iota(all(pa), 0);
     vector<ll> sz(N, 1);
-    vector<bool> visited(N);
     function<ll(ll)> root = [&pa, &root](ll x) {
         if (pa[x]==x) return x;
         return pa[x] = root(pa[x]);
@@ -108,22 +107,20 @@ void solve(ll testcase){
     };
     for (i=0; i<N; i++) {
         cin >> line[i].a.first >> line[i].a.second >> line[i].b.first >> line[i].b.second;
-        fill(all(visited), false);
         for (j=0; j<i; j++) {
-            if (visited[root(j)]) continue;
             if (intersect(line[i].a, line[i].b, line[j].a, line[j].b)) {
                 merge(i, j);
-                visited[root(j)] = true;
             }
         }
     }
-    ll maxSz = 0;
-    unordered_set<ll> s;
+    ll grpSz = 0, maxSz = 0;
     for (i=0; i<N; i++) {
-        s.insert(root(i));
-        maxSz = max(maxSz, sz[i]);
+        if (pa[i]==i) {
+            grpSz++;
+            maxSz = max(maxSz, sz[i]);
+        }
     }
-    cout << s.size() << "\n" << maxSz;
+    cout << grpSz << "\n" << maxSz;
 }
 
 int main() {
