@@ -125,13 +125,18 @@ struct Simulate {
     }
     pll getNxtLoc(Shark& shark) {
         ll nr = shark.r, nc = shark.c, s = shark.s;
-        while (s--) {
-            if (shark.d==0 && nr==0) shark.d = 1;
-            else if (shark.d==1 && nr==R-1) shark.d = 0;
-            else if (shark.d==2 && nc==C-1) shark.d = 3;
-            else if (shark.d==3 && nc==0) shark.d = 2;
-            nr += d[0][shark.d];
-            nc += d[1][shark.d];
+        if (shark.d<=1) {   // 위아래
+            nr += shark.d==0 ? -s : s;
+            while (nr<0 || nr>=R) {
+                nr = nr<0 ? -nr : ((R-1)<<1)-nr;
+                shark.d ^= 1;
+            }
+        } else {            // 오왼
+            nc += shark.d==2 ? s : -s;
+            while (nc<0 || nc>=C) {
+                nc = nc<0 ? -nc : ((C-1)<<1)-nc;
+                shark.d ^= 1;
+            }
         }
         return {nr, nc};
     }
