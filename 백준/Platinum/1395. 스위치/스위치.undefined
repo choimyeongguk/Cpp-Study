@@ -68,7 +68,7 @@ struct LazySeg {
     vector<ll> tree;
     vector<bool> lazy;
     LazySeg(ll n): n(n), tree(n<<2, 0), lazy(n<<2, false) {}
-    void push(ll i, ll s, ll m, ll e) {
+    void push(ll& i, ll& s, ll& m, ll& e) {
         if (!lazy[i]) return;
         lazy[i] = false;
         lazy[i<<1] = !lazy[i<<1];
