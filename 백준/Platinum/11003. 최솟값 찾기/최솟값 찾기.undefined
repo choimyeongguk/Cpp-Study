@@ -66,22 +66,16 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll N, L; cin >> N >> L;
-    priority_queue<ll, vector<ll>, greater<>> current, deleted;
-    deque<ll> dq;
+    deque<pll> dq;  // idx, value
     ll num;
     for (i=0; i<N; i++) {
         cin >> num;
-        if (dq.size()==L) {
-            deleted.push(dq.back());
+        while (!dq.empty() && dq.back().second>=num)
             dq.pop_back();
-        }
-        current.push(num);
-        dq.push_front(num);
-        while (!deleted.empty() && current.top()==deleted.top()) {
-            current.pop();
-            deleted.pop();
-        }
-        cout << current.top() << " ";
+        dq.push_back({i, num});
+        if (dq.front().first<=i-L)
+            dq.pop_front();
+        cout << dq.front().second << " ";
     }
 }
 
