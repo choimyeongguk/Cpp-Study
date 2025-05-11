@@ -1,0 +1,138 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+template<typename T> using ordered_set
+    = tree<T, null_type, less<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+template<typename T> using ordered_multiset
+    = tree<T, null_type, less_equal<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Line {
+    pll a, b;
+};
+
+ll ccw(pll p1, pll p2, pll p3) {
+    ll ret = p1.first * p2.second + p2.first * p3.second + p3.first * p1.second;
+    ret -= p1.second * p2.first + p2.second * p3.first + p3.second * p1.first;
+    return ret == 0 ? 0 : ret > 0 ? 1 : -1;
+}
+
+bool intersect(pll A, pll B, pll C, pll D) {
+    if (A>B) swap(A, B);
+    if (C>D) swap(C, D);
+    ll l1 = ccw(A, B, C)*ccw(A, B, D);
+    ll l2 = ccw(C, D, A)*ccw(C, D, B);
+    if (!l1 && !l2) {
+        if (A<=D && C <= B)
+            return true;
+    } else if (l1<=0 && l2<=0)
+        return true;
+    return false;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vector<Line> line(N);
+    vector<ll> pa(N); iota(all(pa), 0);
+    vector<ll> sz(N, 1);
+    vector<bool> visited(N);
+    function<ll(ll)> root = [&pa, &root](ll x) {
+        if (pa[x]==x) return x;
+        return pa[x] = root(pa[x]);
+    };
+    function<void(ll,ll)> merge = [&root, &pa, &sz](ll a, ll b) {
+        a = root(a);
+        b = root(b);
+        if (a!=b) {
+            if (sz[a]>sz[b]) swap(a, b);
+            pa[b] = a;
+            sz[a] += sz[b];
+        }
+    };
+    for (i=0; i<N; i++) {
+        cin >> line[i].a.first >> line[i].a.second >> line[i].b.first >> line[i].b.second;
+        fill(all(visited), false);
+        for (j=0; j<i; j++) {
+            if (visited[root(j)]) continue;
+            if (intersect(line[i].a, line[i].b, line[j].a, line[j].b)) {
+                merge(i, j);
+                visited[root(j)] = true;
+            }
+        }
+    }
+    ll maxSz = 0;
+    unordered_set<ll> s;
+    for (i=0; i<N; i++) {
+        s.insert(root(i));
+        maxSz = max(maxSz, sz[i]);
+    }
+    cout << s.size() << "\n" << maxSz;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
