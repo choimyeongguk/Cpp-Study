@@ -67,13 +67,13 @@ struct Line {
     pll a, b;
 };
 
-ll ccw(pll p1, pll p2, pll p3) {
+ll ccw(pll& p1, pll& p2, pll& p3) {
     ll ret = p1.first * p2.second + p2.first * p3.second + p3.first * p1.second;
     ret -= p1.second * p2.first + p2.second * p3.first + p3.second * p1.first;
     return ret == 0 ? 0 : ret > 0 ? 1 : -1;
 }
 
-bool intersect(pll A, pll B, pll C, pll D) {
+bool intersect(pll& A, pll& B, pll& C, pll& D) {
     if (A>B) swap(A, B);
     if (C>D) swap(C, D);
     ll l1 = ccw(A, B, C)*ccw(A, B, D);
