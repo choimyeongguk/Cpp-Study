@@ -71,10 +71,11 @@ void solve(ll testcase){
     for (auto& e : W) for (auto& v : e) cin >> v;
     vector<vector<ll>> dp(N, vector<ll>(1<<N, 0));
     // dp[i][j]=k : 현재 i에 있고, j의 방문상태를 지닌 상태에서 남은 순회 cost 최솟값
-    function<ll(ll,ll)> TSP = [&N, &W, &dp, &TSP](ll here, ll visited){
+    ll full = (1<<N)-1;
+    function<ll(ll,ll)> TSP = [&](ll here, ll visited){
         if (dp[here][visited])
             return dp[here][visited];
-        if (visited == (1<<N)-1)   // 모든 노드 방문. 시작점으로 돌아가야 함
+        if (visited == full)   // 모든 노드 방문. 시작점으로 돌아가야 함
             return W[here][0] ? W[here][0] : INF;
         ll ans = INF;
         for (ll i=0; i<N; i++) {
