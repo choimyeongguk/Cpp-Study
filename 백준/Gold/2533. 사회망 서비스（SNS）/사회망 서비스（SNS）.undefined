@@ -73,34 +73,29 @@ void solve(ll testcase){
         Adj[a].push_back(b);
         Adj[b].push_back(a);
     }
-    vector<bool> visited(N+1, false);
-    vector<vector<ll>> Child(N+1);
-    function<void(ll)> dfs = [&Adj,&visited,&Child,&dfs](ll node) {
-        visited[node] = true;
-        for (auto& e : Adj[node]) {
-            if (visited[e]) continue;
-            Child[node].push_back(e);
-            dfs(e);
-        }
-    };
-    dfs(1);
+    // vector<bool> visited(N+1, false);
+    // vector<vector<ll>> Child(N+1);
+    // function<void(ll)> dfs = [&Adj,&visited,&Child,&dfs](ll node) {
+    //     visited[node] = true;
+    //     for (auto& e : Adj[node]) {
+    //         if (visited[e]) continue;
+    //         Child[node].push_back(e);
+    //         dfs(e);
+    //     }
+    // };
+    // dfs(1);
     vector<vector<ll>> dp(N+1, vector<ll>(2));
-    function<void(ll)> treeDP = [&Child,&dp,&treeDP](ll node) {
-        if (!Child[node].size()) {
-            dp[node][0] = 0;
-            dp[node][1] = 1;
-            return;
-        }
-        for (auto& e : Child[node]) {
-            treeDP(e);
-        }
+    function<void(ll,ll)> treeDP = [&Adj,&dp,&treeDP](ll node, ll pa) {
+        dp[node][0] = 0;
         dp[node][1] = 1;
-        for (auto& e : Child[node]) {
+        for (auto& e : Adj[node]) {
+            if (e==pa) continue;
+            treeDP(e, node);
             dp[node][1] += min(dp[e][0], dp[e][1]);
             dp[node][0] += dp[e][1];
         }
     };
-    treeDP(1);
+    treeDP(1, 0);
     cout << min(dp[1][0], dp[1][1]);
 }
 
