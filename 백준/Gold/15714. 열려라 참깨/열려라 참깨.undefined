@@ -75,33 +75,34 @@ void solve(ll testcase){
 
     ll ans = 0, tmp;
     bool isPlus;
-    stack<ll> st;
+    ll st = -1;
     for (i=0; i<N; i++) {
-        if (st.empty()) {
+        if (st<0) {
             if (!arr[i]) continue;
-            st.push(abs(arr[i]));
+            st = abs(arr[i]);
             isPlus = arr[i]>0;
             continue;
         }
         if (!arr[i] || arr[i]>0!=isPlus) {
-            ans += st.top(); st.pop();
+            ans += st; st = -1;
             if (arr[i]) {
-                st.push(abs(arr[i]));
+                st = abs(arr[i]);
                 isPlus = arr[i]>0;
             }
         }
         else {
-            if (st.top()>abs(arr[i])) {
-                ans += st.top()-abs(arr[i]); st.pop();
-                st.push(abs(arr[i]));
+            tmp = abs(arr[i]);
+            if (st>tmp) {
+                ans += st-tmp;
+                st = tmp;
             }
             else {
-                st.pop(); st.push(abs(arr[i]));
+                st = tmp;
             }
         }
     }
-    if (!st.empty())
-        ans += st.top(); st.pop();
+    if (st>0)
+        ans += st;
     cout << ans;
 }
 
