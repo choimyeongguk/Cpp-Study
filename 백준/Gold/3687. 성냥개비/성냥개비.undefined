@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+template<typename T> using ordered_set
+    = tree<T, null_type, less<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+template<typename T> using ordered_multiset
+    = tree<T, null_type, less_equal<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+vector<string> dpMAX(101);
+vector<vector<string>> dpMIN(101, vector<string>(10, ""));
+vector<string> minans(101, "");
+vector<ll> num = {6, 2, 5, 5, 4, 5, 6, 3, 7, 6};
+
+void preprocess() {
+    ll i, j, k;
+    dpMAX[2] = "1"; dpMAX[3] = "7";
+    for (i=4; i<=100; i++) {
+        dpMAX[i] = dpMAX[i-2]+"1";
+    }
+
+    string tmp;
+    for (i=2; i<=100; i++) {    // 성냥 개수
+        for (j=0; j<=9; j++) {  // 현재 끝 숫자
+            if (num[j]>i) continue;
+            for (k=0; k<=9; k++) {  // 이전 끝 숫자
+                if (i-num[j] && dpMIN[i-num[j]][k]=="") continue;
+                tmp = to_string(j) + dpMIN[i-num[j]][k];
+                if (dpMIN[i][j]==""
+                    || dpMIN[i][j].size()>tmp.size()
+                    || dpMIN[i][j].size()==tmp.size()&&dpMIN[i][j]>tmp)
+                    dpMIN[i][j] = tmp;
+            }
+        }
+    }
+    string ans;
+    for (i=2; i<=100; i++) {    // 성냥 개수
+        ans = "";
+        for (j=1; j<=9; j++) {
+            if (dpMIN[i][j]=="") continue;
+            if (ans==""
+                || ans.size()>dpMIN[i][j].size()
+                || ans.size()==dpMIN[i][j].size() && ans>dpMIN[i][j])
+                ans = dpMIN[i][j];
+        }
+        minans[i] = ans;
+    }
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    cout << minans[N] << " " << dpMAX[N] << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
