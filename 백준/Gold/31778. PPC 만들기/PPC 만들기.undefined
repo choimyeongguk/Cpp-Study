@@ -76,12 +76,10 @@ void solve(ll testcase){
         swap(str[lC], str[rP]);
     }
 
-    vector<ll> numP(N, 0);
+    vector<ll> numP(N);
     numP[0] = str[0]=='P' ? 1 : 0;
-    for (i=1; i<N; i++) {
-        numP[i] += numP[i-1];
-        if (str[i]=='P') numP[i]++;
-    }
+    for (i=1; i<N; i++)
+        numP[i] = numP[i-1] + ll(str[i]=='P');
     ll P = numP[N-1];
 
     ll ans = 0;
