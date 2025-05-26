@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#include <immintrin.h>
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+
+
+// #define debug if constexpr (!ndebug) cout << "[DEBUG] "
+// #define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+// #define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    int i, j, k;
+
+}
+
+// __m256i vzero = _mm256_setzero_si256();
+// 한 번에 몇 바이트 계산할래? 32바이트 -> int 8개 한 번에 계산: 시간복잡도 /8, short는 16, char는 32
+// 캐스팅이 더 느림. short로 저장 후 int로 합 더해야지~~ -> 더 느림
+
+alignas(32) int arr[100'000], tmp[8];   // 8의 배수. 참조하면 안되는 메모리 참조하는 경우 생길 수도 있음
+// 주소값의 시작점을 32의 배수에서 시작해야 함. 32바이트씩 계산하기 때문
+void solve(int testcase){
+    int i, j, k;
+    int n, m;
+    cin >> n >> m;
+    // vector<int> arr(n);
+    // for (auto& x : arr) cin >> x;
+    for (i=0; i<n; i++) {
+        cin >> arr[i];
+    }
+    for (i=0; i<m; i++) {
+        int l, r;
+        cin >> l >> r;
+        // l=5, r=99
+        // 5, 6, 7 => 직접 계산
+        // 96, 97, 98, 99 => 직접 계산
+        // [8-]
+        l--;
+        int ans = 0;
+        while (l&7 && l<r) ans += arr[l++]; // 8의 배수일때만 false
+        while (r&7 && l<r) ans += arr[--r];
+        __m256i sum = _mm256_setzero_si256();
+        while (l<r) {
+            __m256i a = _mm256_loadu_si256((__m256i*)(arr+l));
+            sum = _mm256_add_epi32(sum, a);
+            l += 8;
+        }
+        // template으로 외우자
+        _mm256_store_si256((__m256i*)tmp, sum);
+        for (j=0; j<8; j++) {
+            ans += tmp[j];
+        }
+        // int ans = 0;
+        // for (j=l; j<r; j++) {
+        //     ans += arr[j];
+        // }
+        cout << ans << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    int t = 1;
+    // cin >> t;
+    for (int testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
