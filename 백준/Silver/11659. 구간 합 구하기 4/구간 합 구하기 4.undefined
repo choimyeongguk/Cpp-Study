@@ -33,7 +33,7 @@ void preprocess() {
 
 }
 
-// __m256i vzero = _mm256_setzero_si256();
+
 // 한 번에 몇 바이트 계산할래? 32바이트 -> int 8개 한 번에 계산: 시간복잡도 /8, short는 16, char는 32
 // 캐스팅이 더 느림. short로 저장 후 int로 합 더해야지~~ -> 더 느림
 
@@ -42,6 +42,7 @@ alignas(32) int arr[100'000], tmp[8];   // 8의 배수. 참조하면 안되는 �
 void solve(int testcase){
     int i, j, k;
     int n, m;
+    __m256i vzero = _mm256_setzero_si256();
     cin >> n >> m;
     // vector<int> arr(n);
     // for (auto& x : arr) cin >> x;
