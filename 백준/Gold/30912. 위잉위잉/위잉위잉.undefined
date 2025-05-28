@@ -71,6 +71,21 @@ inline ll diff(ld lhs, ld rhs) {
 
 struct Point {
     ll x, y;
+    ll dist2() const {
+        return x*x + y*y;
+    }
+    ll pos() const {
+        if (x>=0 && y>=0) return 1;
+        if (x<=0 && y>=0) return 2;
+        if (x<=0 && y<=0) return 3;
+        if (x>=0 && y<=0) return 1;
+    }
+    bool operator<(Point r) const {
+        if (pos() != r.pos()) return pos() < r.pos();
+        ll ccw = x*r.y - y*r.x;
+        if (!ccw) return dist2()<r.dist2();
+        return 0<ccw;
+    }
 };
 
 inline ll quadrant(Point pt) {
@@ -99,18 +114,22 @@ void solve(ll testcase){
         y -= my;
     }
 
-    sort(pt.begin(), pt.end(), [&](const Point& a, const Point& b) {
-        if (quadrant(a)==quadrant(b)) {
-            ll ccw = a.x*b.y - a.y*b.x;
-            if (ccw>0) return true;
-            if (ccw<0) return false;
-            return dist2(a)<dist2(b);
-        }
-        return quadrant(a)<quadrant(b);
-    });
+    sort(pt.begin(), pt.end());
+    // sort(pt.begin(), pt.end(), [&](const Point& a, const Point& b) {
+    //     if (quadrant(a)==quadrant(b)) {
+    //         ll ccw = a.x*b.y - a.y*b.x;
+    //         if (ccw>0) return true;
+    //         if (ccw<0) return false;
+    //         return dist2(a)<dist2(b);
+    //     }
+    //     return quadrant(a)<quadrant(b);
+    // });
     for (auto& [x, y] : pt) {
         cout << x+mx << " " << y+my << "\n";
     }
+    // for (auto& [x, y] : pt) {
+    //     cout << x << " " << y << "\n";
+    // }
 }
 
 int main() {
