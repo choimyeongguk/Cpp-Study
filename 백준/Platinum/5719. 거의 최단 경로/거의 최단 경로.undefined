@@ -1,0 +1,145 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+typedef unsigned long long ull;
+typedef __float128 LD;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<ll, ll> pii;
+typedef vector<ll> vi;
+typedef vector<ll> vl;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace __gnu_pbds;
+template<typename T> using ordered_set
+    = tree<T, null_type, less<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+template<typename T> using ordered_multiset
+    = tree<T, null_type, less_equal<>, rb_tree_tag,
+        tree_order_statistics_node_update>;
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define rep(i,a,b) for (auto i = (a); i < (b); i++)
+#define each(x, a) for (auto& x: a)
+
+#define debug if constexpr (!ndebug) cout << "[DEBUG] "
+#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
+#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
+ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
+pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll V, ll E){
+    ll i, j, k;
+    ll S, D; cin >> S >> D;
+    vector<vector<pll>> Adj(V);
+    ll u, v, p;
+    for (i=0; i<E; i++) {
+        cin >> u >> v >> p;
+        Adj[u].emplace_back(p, v);
+    }
+
+    // 최단 경로 탐색
+    ll INF = 1e10;
+    vector<ll> Dist(V, INF);
+    vector<vector<ll>> Prev(V);
+    vector<vector<bool>> Used(V, vector<bool>(V, false));
+    priority_queue<pll,vector<pll>,greater<>> pq;
+    Dist[S] = 0;
+    pq.emplace(0, S);
+    while (!pq.empty()) {
+        auto [c, n] = pq.top(); pq.pop();
+        if (Dist[n]<c) continue;
+        for (auto& [nc, nn] : Adj[n]) {
+            if (Dist[nn] > c+nc) {
+                Dist[nn] = c+nc;
+                Prev[nn].clear();
+                Prev[nn].emplace_back(n);
+                pq.emplace(Dist[nn], nn);
+            }
+            else if (Dist[nn] == c+nc) {
+                Prev[nn].emplace_back(n);
+            }
+        }
+    }
+
+    // 최단 경로 역추적
+    function<void(ll)> dfs = [&](ll node) {
+        if (node == S) return;
+        for (auto& prev : Prev[node]) {
+            if (Used[prev][node]) continue;
+            Used[prev][node] = true;
+            dfs(prev);
+        }
+    };
+    dfs(D);
+
+    // 거의 최단 경로 계산
+    fill(Dist.begin(), Dist.end(), INF);
+    Dist[S] = 0;
+    pq.emplace(0, S);
+    while (!pq.empty()) {
+        auto [c,n] = pq.top(); pq.pop();
+        if (Dist[n] < c) continue;
+        for (auto& [nc,nn] : Adj[n]) {
+            if (Used[n][nn]) continue;
+            if (Dist[nn] > c+nc) {
+                Dist[nn] = c+nc;
+                pq.emplace(Dist[nn], nn);
+            }
+        }
+    }
+    cout << (Dist[D]==INF ? -1 : Dist[D]) << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll V, E;
+    while (true) {
+        cin >> V >> E;
+        if (!V && !E) break;
+        solve(V, E);
+    }
+
+    // ll t = 1;
+    // // cin >> t;
+    // for (ll testcase = 1; testcase <= t; testcase++){
+    //     solve(testcase);
+    // }
+    return 0;
+}
