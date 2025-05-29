@@ -68,14 +68,11 @@ struct SegTree {
     SegTree(): n(500'000), tree(n<<2) {}
     void segUpdate(ll i, ll s, ll e, ll x) {
         if (s>x || e<x) return;
-        if (s==e) {
-            tree[i]++;
-            return;
-        }
+        tree[i]++;
+        if (s==e) return;
         ll m = (s+e)>>1;
         segUpdate(i<<1, s, m, x);
         segUpdate(i<<1|1, m+1, e, x);
-        tree[i] = tree[i<<1]+tree[i<<1|1];
     }
     void update(ll x) {
         segUpdate(1, 0, n-1, x);
