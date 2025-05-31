@@ -67,38 +67,16 @@ void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
     vector<string> arr(N);
-    for (auto& e : arr) {
+    for (auto& e : arr)
         cin >> e;
-    }
-    function<bool(string,string)> cmp = [](const string& a, const string& b) {
+    sort(arr.begin(), arr.end(), [](const string& a, const string& b) {
         return a+b > b+a;
-        // ll idx = 0;
-        // if (a[idx]!=b[idx]) return a[idx]>b[idx];
-        // idx++;
-        // while (idx<10) {
-        //     if (a[idx]==b[idx]) {
-        //         idx++;
-        //         continue;
-        //     }
-        //     if (a[idx]=='.') {
-        //         return a[0]>b[idx];
-        //     }
-        //     if (b[idx]=='.') {
-        //         return b[0]<a[idx];
-        //     }
-        //     return a[idx]>b[idx];
-        // }
-        // return false;
-    };
-
-    sort(arr.begin(), arr.end(), cmp);
+    });
     string ans;
     for (auto& e : arr) {
         for (auto& v : e) {
-            // cout << v;
             ans += v;
         }
-        // cout << "\n";
     }
     if (ans[0]=='0') cout << 0;
     else cout << ans;
