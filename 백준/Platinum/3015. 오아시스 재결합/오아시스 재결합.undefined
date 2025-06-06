@@ -68,33 +68,23 @@ void solve(ll testcase){
     ll N; cin >> N;
     stack<pll> st; // 값, 개수
     ll num, ans = 0;
-    while (N--) {
+    cin >> num; st.emplace(num, 1);
+    while (--N) {
         cin >> num;
-        if (st.empty()) {
-            st.emplace(num, 1);
+        ll tmp = 1;
+        while (!st.empty() && st.top().first < num) {
+            ans += st.top().second;
+            st.pop();
         }
-        else {
-            ll tmp = 1;
-            if (st.top().first > num) { // 새로 들어온 수가 작다면
-                ans++; // 바로 앞 사람과는 무조건 마주볼 수 있음
-            }
-            else {
-                while (!st.empty() && st.top().first < num) {
-                    ans += st.top().second;
-                    st.pop();
-                }
-                if (!st.empty() && st.top().first == num) {
-                    tmp += st.top().second;
-                    ans += st.top().second;
-                    st.pop();
-                }
-                if (!st.empty()) {
-                    ans++;
-                }
-            }
-            st.emplace(num, tmp);
+        if (!st.empty() && st.top().first == num) {
+            tmp += st.top().second;
+            ans += st.top().second;
+            st.pop();
         }
-        // cout << "top : " << st.top().first << " " << st.top().second <<"\n";
+        if (!st.empty()) {
+            ans++;
+        }
+        st.emplace(num, tmp);
     }
     cout << ans;
 }
