@@ -67,26 +67,31 @@ void solve(ll testcase){
     ll i, j, k, l;
     ll N; cin >> N;
     vector<vector<ll>> dp(N, vector<ll>(N, 1e10));
+    vector<vector<ll>> opt(N, vector<ll>(N, 0));
     vector<ll> arr(N+1);
     for (i=0; i<N; i++) {
         cin >> arr[i+1];
         arr[i+1] += arr[i];
         dp[i][i] = 0;
+        opt[i][i] = i;
     }
     for (l=1; l<N; l++) {
         for (i=0; i+l<N; i++) {
-            for (k=i; k<i+l; k++) {
-                dp[i][i+l] = min(dp[i][i+l], dp[i][k]+dp[k+1][i+l]+arr[i+l+1]-arr[i]);
+            j = i+l;
+            // knuth 최적화. opt로 범위 제한
+            ll start = opt[i][j-1];
+            ll end = opt[i+1][j];
+            if (start>end) swap(start, end);
+            for (k=start; k<=end&&k<j; k++) {
+                ll cost = dp[i][k] + dp[k+1][j] + arr[j+1]-arr[i];
+                if (dp[i][j] > cost) {
+                    dp[i][j] = cost;
+                    opt[i][j] = k;
+                }
             }
         }
     }
     cout << dp[0][N-1] << "\n";
-    // for (auto& e : dp) {
-    //     for (auto& v : e) {
-    //         cout << v << " ";
-    //     }
-    //     cout << "\n";
-    // }
 }
 
 int main() {
