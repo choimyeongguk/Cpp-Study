@@ -66,7 +66,7 @@ void preprocess() {
 void solve(ll testcase) {
     ll i, j, k;
     ll N; cin >> N;
-    set<ll> s;
+    unordered_set<ll> s;
     vector<ll> line(N);
     for (auto& e : line) {
         cin >> e;
@@ -76,20 +76,18 @@ void solve(ll testcase) {
     ll ans = 0;
     for (auto& e : s) {
         vector<ll> deleted;
-        for (i=0; i<N; i++) {
-            if (line[i] == e) continue;
-            deleted.emplace_back(line[i]);
-        }
+        for (i=0; i<N; i++)
+            if (line[i] != e)
+                deleted.emplace_back(line[i]);
         ll cur = 1, max = 1;
         for (i=1; i<deleted.size(); i++) {
-            if (deleted[i] == deleted[i-1]) {
-                cur++;
-                max = max > cur ? max : cur;
-            }
+            if (deleted[i] == deleted[i-1]) cur++;
             else {
+                max = max > cur ? max : cur;
                 cur = 1;
             }
         }
+        max = max > cur ? max : cur;
         ans = ans > max ? ans : max;
     }
     cout << ans;
