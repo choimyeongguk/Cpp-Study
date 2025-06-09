@@ -78,7 +78,7 @@ void solve(ll testcase){
         cin >> h >> o;
         if (h > o) swap(h, o);
     }
-    sort(line.begin(), line.end());
+    // sort(line.begin(), line.end());
     set<Line> point; // 위치, 번호
     for (i=0; i<N; i++) {
         auto& [h,o] = line[i];
