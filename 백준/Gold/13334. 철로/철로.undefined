@@ -66,37 +66,24 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
-    ll h, o;
-    priority_queue<pll,vector<pll>,greater<>> pq;   // 위치, 번호
-    for (i=0; i<N; i++) {
+    vector<pll> line(N);    // 시작, 끝
+    for (auto& [h,o] : line) {
         cin >> h >> o;
-        pq.emplace(h, i);
-        pq.emplace(o, i);
+        if (h > o) swap(h, o);
     }
+    sort(line.begin(), line.end(), [](const pll& a, const pll& b) {
+       return a.second < b.second;
+    });
     ll d; cin >> d;
 
-    ll ans = 0;
-    unordered_set<ll> imsi;
-    unordered_set<ll> include;
-    queue<pll> rail;
-    while (!pq.empty()) {
-        auto [loc,num] = pq.top(); pq.pop();
-        rail.emplace(loc, num);
-        while (loc - rail.front().first > d) {
-            if (imsi.contains(rail.front().second)) {
-                imsi.erase(rail.front().second);
-            }
-            else if (include.contains(rail.front().second)) {
-                include.erase(rail.front().second);
-            }
-            rail.pop();
-        }
-        if (imsi.contains(num)) {
-            imsi.erase(num);
-            include.insert(num);
-        }
-        else imsi.insert(num);
-        ans = max(ans, (ll)include.size());
+    ll ans = 0, l, r;
+    priority_queue<pll,vector<pll>,greater<>> pq;
+    for (r=0; r<N; r++) {
+        l = line[r].second - d;
+        pq.push(line[r]);
+        while (!pq.empty() && pq.top().first < l)
+            pq.pop();
+        ans = max(ans, (ll)pq.size());
     }
     cout << ans;
 }
