@@ -63,51 +63,40 @@ void preprocess() {
 
 }
 
-struct Line {
-    ll loc, num, status;
-    bool operator<(const Line &o) const {
-        return loc==o.loc ? num==o.num ? status<o.status : num<o.num : loc<o.loc;
-    }
-};
-
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
-    vector<pll> line(N);
-    for (auto& [h,o] : line) {
-        cin >> h >> o;
-        if (h > o) swap(h, o);
-    }
-    // sort(line.begin(), line.end());
-    set<Line> point; // 위치, 번호
+    ll h, o;
+    priority_queue<pll,vector<pll>,greater<>> pq;   // 위치, 번호
     for (i=0; i<N; i++) {
-        auto& [h,o] = line[i];
-        point.insert({h, i, 0});
-        point.insert({o, i, 1});
+        cin >> h >> o;
+        pq.emplace(h, i);
+        pq.emplace(o, i);
     }
     ll d; cin >> d;
 
-    // for (auto& [loc, num, status] : point) {
-    //     cout << loc << " " << num << " " << status << "\n";
-    // }
-    // cout << "\n";
-
     ll ans = 0;
-    auto l = point.begin(), r = point.begin();
+    unordered_set<ll> imsi;
     unordered_set<ll> include;
-    while (r != point.end()) {
-        while (r->loc - l->loc > d) {
-            if (include.contains(l->num)) include.erase(l->num);
-            l++;
+    queue<pll> rail;
+    while (!pq.empty()) {
+        auto [loc,num] = pq.top(); pq.pop();
+        rail.emplace(loc, num);
+        while (loc - rail.front().first > d) {
+            if (imsi.contains(rail.front().second)) {
+                imsi.erase(rail.front().second);
+            }
+            else if (include.contains(rail.front().second)) {
+                include.erase(rail.front().second);
+            }
+            rail.pop();
         }
-        // r값에 위치한 line 번호 : r->second
-        // line[r->second]
-        if (r->status == 1 && l->loc<=line[r->num].first) {   // 끝나는 지점
-            include.insert(r->num);
+        if (imsi.contains(num)) {
+            imsi.erase(num);
+            include.insert(num);
         }
-        // cout << "l 위치 : " << l->loc << ", r 위치 : " << r->loc << ", 개수 : " << include.size() << "\n";
+        else imsi.insert(num);
         ans = max(ans, (ll)include.size());
-        r++;
     }
     cout << ans;
 }
