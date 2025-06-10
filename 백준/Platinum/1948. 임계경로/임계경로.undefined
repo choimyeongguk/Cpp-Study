@@ -79,7 +79,7 @@ void solve(ll testcase){
     vector<ll> Max(V+1, 0);
     vector<vector<ll>> Prev(V+1);
     queue<ll> q;
-    q.push(S);
+    q.emplace(S);
     while (!q.empty()) {
         auto& n = q.front();
         for (auto& [c,nn] : Adj[n]) {
@@ -87,28 +87,18 @@ void solve(ll testcase){
                 Prev[nn].emplace_back(n);
             else if (Max[nn] <= Max[n]+c) {
                 Max[nn] = Max[n] + c;
-                Prev[nn].clear();
-                Prev[nn].emplace_back(n);
+                Prev[nn] = { n };
             }
             in_degree[nn]--;
             if (!in_degree[nn])
-                q.push(nn);
+                q.emplace(nn);
         }
         q.pop();
     }
 
-    // for (i=1; i<=V; i++) {
-    //     cout << i << " : ";
-    //     for (auto& e : Prev[i]) {
-    //         cout << e << " ";
-    //     }
-    //     cout << "\n";
-    // }
-
     ll ans = 0;
     vector<ll> visited(V+1, false);
     function<void(ll)> dfs = [&](ll n) {
-        // cout << n << "방문!\n";
         for (auto& nn : Prev[n]) {
             ans++;
             if (!visited[nn]) {
@@ -118,7 +108,6 @@ void solve(ll testcase){
         }
     };
     dfs(T);
-    // for (auto& e : )
     cout << Max[T] << "\n" << ans;
 }
 
