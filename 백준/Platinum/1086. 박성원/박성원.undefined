@@ -73,13 +73,6 @@ void solve(ll testcase){
     // 00...0 ~ 11...1 까지 상태의 개수 +1
     ll MAX = pow(2, N);
 
-    // 각 조합별 길이 계산
-    vector<ll> sz(MAX, 0);
-    for (i=0; i<MAX; i++)
-        for (j=0; j<N; j++)
-            if (i & 1<<j)
-                sz[i] += (ll)num[j].size();
-
     // 각 숫자 나머지 계산
     vector<ll> rem(N, 0);
     for (i=0; i<N; i++)
@@ -87,20 +80,20 @@ void solve(ll testcase){
             rem[i] = (rem[i]*10 + c-'0') %K;
 
     // 10의 제곱꼴의 나머지 계산 50*15 = 750
-    vector<ll> rem10(750, 0);
+    vector<ll> rem10(51, 0);
     rem10[0] = 1;
-    for (i=1; i<750; i++) {
+    for (i=1; i<51; i++) {
         rem10[i] = rem10[i-1] * 10 %K;
     }
 
     // dp[i][j] = i조합으로 만든 숫자 순열들 중, 나머지가 j인 순열의 개수
     vector<vector<ll>> dp(MAX, vector<ll>(K, 0));
     dp[0][0] = 1;
-    for (i=0; i<MAX; i++) {         // status
-        for (k=0; k<N; k++) {
+    for (i=0; i<MAX; i++) {             // status
+        for (k=0; k<N; k++) {           // adding num
             if (!(i & 1<<k)) {
-                for (j=0; j<K; j++) {
-                    ll remainder = (j + rem[k] * rem10[sz[i]] %K) %K;
+                for (j=0; j<K; j++) {   // remainder
+                    ll remainder = (rem[k] + j * rem10[num[k].size()] %K) %K;
                     dp[i | 1<<k][remainder] += dp[i][j];
                 }
             }
