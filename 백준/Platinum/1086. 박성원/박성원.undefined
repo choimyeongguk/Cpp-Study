@@ -97,9 +97,9 @@ void solve(ll testcase){
     vector<vector<ll>> dp(MAX, vector<ll>(K, 0));
     dp[0][0] = 1;
     for (i=0; i<MAX; i++) {         // status
-        for (j=0; j<K; j++) {       // remainder
-            for (k=0; k<N; k++) {   // adding num
-                if (!(i & 1<<k)) {  // 추가할 수 있으면
+        for (k=0; k<N; k++) {
+            if (!(i & 1<<k)) {
+                for (j=0; j<K; j++) {
                     ll remainder = (j + rem[k] * rem10[sz[i]] %K) %K;
                     dp[i | 1<<k][remainder] += dp[i][j];
                 }
