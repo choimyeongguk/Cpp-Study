@@ -119,16 +119,6 @@ void solve(ll testcase){
         tree[v].emplace_back(d, u);
     }
     LCA lca(N, tree);
-
-    vector<ll> dist(N+1, 0);
-    function<void(ll,ll,ll)> dfs = [&](ll node, ll pa, ll cost) {
-        dist[node] = dist[pa] + cost;
-        for (auto& [d, c] : tree[node]) {
-            if (c == pa) continue;
-            dfs(c, node, d);
-        }
-    };
-    dfs(1, 1, 0);
     ll M; cin >> M;
     ll anc;
     while (M--) {
