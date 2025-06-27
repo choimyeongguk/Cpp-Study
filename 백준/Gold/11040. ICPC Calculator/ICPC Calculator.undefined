@@ -1,0 +1,174 @@
+#include <bits/stdc++.h>
+using namespace  std;
+
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b) {return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){ if (a&&b)return a*(b/gcd(a,b)); return a+b;}
+pll extended_gcd(ll a, ll b) {if (b==0)return{1,0}; auto t = extended_gcd(b,a%b);return {t.second,t.first-t.second*(a/b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first%m+m)%m;}
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct Node {
+    ll level, val;
+};
+
+void solve(ll testcase) {
+    ll i, j, k;
+    while (true) {
+        ll N; cin >> N;
+        if (!N) break;
+
+        stack<Node> st;
+        string input;
+        ll level, val;
+        for (i=0; i<N; i++) {
+            cin >> input;
+            level = (ll)input.size() - 1;
+            switch (input.back()) {
+                case '+': val = -1; break;
+                case '*': val = -2; break;
+                default:  val = input.back() - '0'; break;
+            }
+
+            if (st.empty()) {
+                st.emplace(level, val);
+                // cout << "top : " << st.top().val << "  size : " << st.size() << "\n";
+                // stack<Node> tmp;
+                // while (!st.empty()) {
+                //     cout << st.top().val << ":" << st.top().level << " ";
+                //     tmp.push(st.top());
+                //     st.pop();
+                // }
+                // while (!tmp.empty()) {
+                //     st.push(tmp.top());
+                //     tmp.pop();
+                // }
+                // cout << "\n";
+                continue;
+            }
+            while (st.top().level >= level) {    // 들어오는 level이 더 작음
+                Node top = st.top(); st.pop();
+                Node prev = st.top(); st.pop();
+                if (top.level==level && prev.level!=level) {
+                    st.push(prev);
+                    st.push(top);
+                    break;
+                }
+                if (prev.val < 0)               // operator 면
+                    top.level = prev.level;
+                else if (prev.level == top.level) { // 둘다 레벨 같은 숫자
+                    Node op = st.top();
+                    if (op.val == -1)
+                        top.val += prev.val;
+                    else top.val *= prev.val;
+                }
+                st.push(top);
+                // cout << "top : " << st.top().val << " level : " << st.top().level << "  size : " << st.size() << "\n";
+                // cout << "top : " << st.top().val << "\n";
+                // stack<Node> tmp;
+                // while (!st.empty()) {
+                //     // cout << st.top().val << ":" << st.top().level << " ";
+                //     tmp.push(st.top());
+                //     st.pop();
+                // }
+                // while (!tmp.empty()) {
+                //     st.push(tmp.top());
+                //     tmp.pop();
+                // }
+                // cout << "\n";
+            }
+
+            // cout << "push!~\n";
+
+            if (st.top().level < level || val < 0)  // level 증가거나 operator면
+                st.emplace(level, val);
+            else if (st.top().level == level && st.top().val>=0 && val>=0) {
+                Node top = st.top(); st.pop();
+                Node op = st.top();;
+                if (op.val == -1)
+                    top.val += val;
+                else top.val *= val;
+                st.push(top);
+            }
+
+            // stack<Node> tmp;
+            // while (!st.empty()) {
+            //     cout << st.top().val << ":" << st.top().level << " ";
+            //     tmp.push(st.top());
+            //     st.pop();
+            // }
+            // while (!tmp.empty()) {
+            //     st.push(tmp.top());
+            //     tmp.pop();
+            // }
+            // cout << "\n";
+        }
+        // 입력 완료 후 stack 비우기
+        // cout << "trashcan!\n";
+        while (st.size() > 1) {
+            Node top = st.top(); st.pop();
+            Node prev = st.top(); st.pop();
+            if (prev.val < 0) {     // 연산자라면
+                top.level = prev.level;
+                st.push(top);
+            }
+            else {                  // 숫자라면
+                Node op = st.top(); st.pop();
+                if (op.val == -1)
+                    top.val += prev.val;
+                else top.val *= prev.val;
+                st.push(op);
+                st.push(top);
+            }
+
+            // stack<Node> tmp;
+            // while (!st.empty()) {
+            //     // cout << st.top().val << ":" << st.top().level << " ";
+            //     tmp.push(st.top());
+            //     st.pop();
+            // }
+            // while (!tmp.empty()) {
+            //     st.push(tmp.top());
+            //     tmp.pop();
+            // }
+            // cout << "\n";
+        }
+        cout << st.top().val << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++) {
+        solve(testcase);
+    }
+    return 0;
+}
