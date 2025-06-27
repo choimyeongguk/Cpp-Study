@@ -1,0 +1,123 @@
+#include <bits/stdc++.h>
+using namespace  std;
+
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vector<ll>>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b) {return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){ if (a&&b)return a*(b/gcd(a,b)); return a+b;}
+pll extended_gcd(ll a, ll b) {if (b==0)return{1,0}; auto t = extended_gcd(b,a%b);return {t.second,t.first-t.second*(a/b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first%m+m)%m;}
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll testcase) {
+    ll n;
+    while (1){
+        cin>>n;
+        vl a(n+1);
+        if (n==0) return;
+        for (ll i=0;i<n;i++) {
+            string s;
+            cin>>s;
+            a[i]=s.length();
+            //cout<<a[i]<<endl;
+        }
+        vl f(n+1),s(n+1);
+        for (ll i=0;i<n;i++) {
+            ll five=0,seven=0;
+            for (ll j=i;;j++) {
+                if (five+a[j]>5) {
+                    f[i]=-1;
+                    break;
+                }
+                if (five+a[j]==5) {
+                    f[i]=j;
+                    break;
+                }
+                five+=a[j];
+            }
+            for (ll j=i;;j++) {
+                if (seven+a[j]>7) {
+                    s[i]=-1;
+                    break;
+                }
+                if (seven+a[j]==7) {
+                    s[i]=j;
+                    break;
+                }
+                seven+=a[j];
+            }
+        }
+        for (ll i=0;i<n;i++) {
+            //cout<<f[i]<<' '<<s[i]<<'\n';
+        }
+
+        //cout<<"AAAAA"<<'\n';
+        for (ll i=0;i<n;i++) {
+            ll  cnt=0;
+            for (ll j=i;;) {
+                //cout<<i<<' '<<j<<'\n';
+                if (cnt==0 || cnt==2) {
+                    if (f[j]!=-1) {
+                        j=f[j]+1;
+                        cnt++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else if (cnt==1 || cnt==3 || cnt==4) {
+                    if (s[j]!=-1) {
+                        j=s[j]+1;
+                        cnt++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    cout<<i+1<<'\n';
+                    i=n;
+                    break;
+                }
+            }
+        }
+
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++) {
+        solve(testcase);
+    }
+    return 0;
+}
