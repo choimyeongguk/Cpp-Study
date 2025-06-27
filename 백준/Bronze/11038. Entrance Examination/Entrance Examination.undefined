@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace  std;
+
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+ll gcd(ll a, ll b) {return b?gcd(b,a%b):a;}
+ll lcm(ll a, ll b){ if (a&&b)return a*(b/gcd(a,b)); return a+b;}
+pll extended_gcd(ll a, ll b) {if (b==0)return{1,0}; auto t = extended_gcd(b,a%b);return {t.second,t.first-t.second*(a/b)};}
+ll modinverse(ll a, ll m){return (extended_gcd(a, m).first%m+m)%m;}
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll testcase) {
+    ll i, j, k;
+    while (true) {
+        ll m, nmin, nmax; cin>>m>>nmin>>nmax;
+        if (!m) break;
+        ll prev, ans=-1;
+        for (i=0;i<nmin;i++) cin>>prev;
+        ll max_gap = 0;
+        for (i=nmin;i<=nmax;i++) {
+            ll n; cin>>n;
+            ll gap = prev - n;
+            // cout<<gap<<endl;
+            if (gap >= max_gap) {
+                max_gap = gap;
+                ans = i;
+            }
+            prev = n;
+        }
+        for (i=nmax+1;i<m;i++) cin>>prev;
+        cout<<ans<<'\n';
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++) {
+        solve(testcase);
+    }
+    return 0;
+}
