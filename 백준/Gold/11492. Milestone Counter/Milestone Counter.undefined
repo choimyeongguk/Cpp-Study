@@ -1,0 +1,111 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize ("O3, unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+
+}
+
+ll gcd(ll a, ll b) {
+    return b ? gcd(b, a%b) : a;
+}
+ll lcm(ll a, ll b) {
+    if (a&&b) return a*(b/gcd(a,b));
+    return a+b;
+}
+
+void solve(ll testcase) {
+    ll i, j, k;
+    ll M, N; cin >> M >> N;
+
+    ll prev, next;
+    vector<ll> car;
+    cin >> prev;
+    for (i=1; i<M; i++) {
+        cin >> next;
+        car.emplace_back(next - prev);
+        prev = next;
+    }
+
+    vector<ll> milestone;
+    cin >> prev;
+    for (i=1; i<N; i++) {
+        cin >> next;
+        milestone.emplace_back(next - prev);
+        prev = next;
+    }
+
+    ll l = car.size();
+
+    // for (auto& e : car) cout << e << " ";
+    // cout << "\n";
+    // for (auto& e : milestone) cout << e << " ";
+
+    if (l == 1) {
+        cout << milestone.size() << "\n";
+        for (auto& e : milestone) cout << e << " ";
+        return;
+    }
+
+
+    set<ll> ans;
+    for (i=0; i<=milestone.size()-l; i++) {
+        ll LCM = lcm(car[0], milestone[i]);
+        ll forCar = LCM / car[0];
+        ll forMile = LCM / milestone[i];
+        bool flag = true;
+        for (j=0; j<l; j++) {
+            if (car[j]*forCar != milestone[i+j]*forMile) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            // cout << milestone[i+1] - milestone[i] << " 를 넣음!\n";
+            ans.insert(milestone[i]);
+        }
+    }
+    // sort(ans.begin(), ans.end());
+    cout << ans.size() << "\n";
+    for (auto& e : ans) cout << e << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase<=t; testcase++) {
+        solve(testcase);
+    }
+    return 0;
+}
