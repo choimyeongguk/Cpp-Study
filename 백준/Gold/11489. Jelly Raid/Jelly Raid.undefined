@@ -4,7 +4,7 @@
 #pragma GCC optimize ("O3, unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -43,10 +43,10 @@ void solve(ll testcase) {
     // start, end 좌표 입력
     string input;
     ll sr, sc, tr, tc;
-    cin >> input; sr = stoll(input.substr(1));
-    cin >> input; sc = stoll(input.substr(0, input.size()-1));
-    cin >> input; tr = stoll(input.substr(1));
-    cin >> input; tc = stoll(input.substr(0, input.size()-1));
+    cin >> input; sr = stoi(input.substr(1));
+    cin >> input; sc = stoi(input.substr(0, input.size()-1));
+    cin >> input; tr = stoi(input.substr(1));
+    cin >> input; tc = stoi(input.substr(0, input.size()-1));
     sr--, sc--, tr--, tc--;
 
     // map 입력
@@ -63,8 +63,8 @@ void solve(ll testcase) {
         ll num; cin >> num;
         for (j=0; j<num; j++) {
             pair<ll,ll> tmp;
-            cin >> input; tmp.first = stoll(input.substr(1)) - 1;
-            cin >> input; tmp.second = stoll(input.substr(0, input.size()-1)) - 1;
+            cin >> input; tmp.first = stoi(input.substr(1)) - 1;
+            cin >> input; tmp.second = stoi(input.substr(0, input.size()-1)) - 1;
             Ploc[i].emplace_back(tmp);
         }
         for (j=(ll)Ploc[i].size()-2; j>=1; j--)
