@@ -101,10 +101,6 @@ void solve(ll testcase) {
         ans++; t = (t + 1) %T;
         for (i=0; i<num; i++) {
             auto& [r,c] = q.front();
-            if (r==tr && c==tc) {
-                cout << ans;
-                return;
-            }
             if (Mt[t][r][c] == '.' && !visited[t][r][c]) {
                 q.emplace(r, c);
                 visited[t][r][c] = true;
