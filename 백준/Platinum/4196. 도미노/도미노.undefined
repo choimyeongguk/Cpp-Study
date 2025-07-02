@@ -81,7 +81,7 @@ void solve(ll testcase){
 
     SCC scc(G);
     ll numScc = scc.cnt;
-    vl sccIdx = scc.scc;
+    vl& sccIdx = scc.scc;
     vl in_degree(numScc, 0);
     for (i=0; i<V; i++) {
         for (auto& j : G[i]) {
