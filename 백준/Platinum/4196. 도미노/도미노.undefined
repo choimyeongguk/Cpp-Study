@@ -82,13 +82,11 @@ void solve(ll testcase){
     SCC scc(G);
     ll numScc = scc.cnt;
     vl sccIdx = scc.scc;
-    vvl Gnew(numScc);
     vl in_degree(numScc, 0);
     for (i=0; i<V; i++) {
         for (auto& j : G[i]) {
             ll ii = sccIdx[i], jj = sccIdx[j];
             if (ii != jj) {
-                Gnew[ii].emplace_back(jj);
                 in_degree[jj]++;
             }
         }
