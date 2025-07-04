@@ -1,0 +1,107 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct SCC {
+    ll n, time = 0, cnt = 0;
+    vl scc, num, low;
+    vvl graph;
+    stack<ll> st;
+    SCC(vvl& G):
+    n(G.size()-1), scc(n+1, 0), num(n+1, 0), low(n+1, 0), graph(G) {
+        for (ll i=1; i<=n; i++)
+            if (!num[i])
+                dfs(i);
+    }
+    void dfs(ll node) {
+        st.emplace(node);
+        num[node] = low[node] = ++time;
+        for (auto& nxt: graph[node]) {
+            if (!num[nxt]) {
+                dfs(nxt);
+                low[node] = min(low[node], low[nxt]);
+            }
+            else if (!scc[nxt]) {
+                low[node] = min(low[node], num[nxt]);
+            }
+        }
+        if (num[node] == low[node]) {
+            ll x;
+            cnt++;
+            do {
+                x = st.top(); st.pop();
+                scc[x] = cnt;
+            } while (x != node);
+        }
+    }
+};
+
+inline ll _not(ll x) {
+    return x%2 ? x+1 : x-1;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, M; cin >> N >> M;
+    vvl sat2((N<<2)+1);
+    for (i=0; i<M; i++) {
+        cin >> j >> k;
+        j = j>0 ? (j<<1)-1 : -j<<1;
+        k = k>0 ? (k<<1)-1 : -k<<1;
+        sat2[_not(j)].emplace_back(k);
+        sat2[_not(k)].emplace_back(j);
+    }
+    vl scc = SCC(sat2).scc;
+    for (i=1; i<=N; i++) {
+        if (scc[(i<<1)-1] == scc[i<<1]) {
+            cout << 0;
+            return;
+        }
+    }
+    cout << 1;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
