@@ -1,0 +1,206 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+const ld eps = 1e-9;
+inline ll diff(ld lhs, ld rhs) {
+    if (lhs-eps<rhs && rhs<lhs+eps) return 0;
+    return lhs<rhs ? -1 : 1;
+}
+inline bool is_between(ld check, ld a, ld b) {
+    if (a<b) return a-eps<check && check<b+eps;
+    return b-eps<check && check<a+eps;
+}
+struct Point {
+    ld x, y;
+    bool operator==(const Point& o) const {
+        return diff(x,o.x)==0 && diff(y, o.y)==0;
+    }
+    Point operator+(const Point& o) const {
+        return Point{ x+o.x, y+o.y };
+    }
+    Point operator -(const Point& o) const {
+        return Point{ x-o.x, y-o.y };
+    }
+    Point operator*(ld t) const {
+        return Point{ x*t, y*t };
+    }
+    friend istream& operator>>(istream& is, Point& p) {
+        return is >> p.x >> p.y;
+    }
+};
+struct Line {
+    Point pos, dir;
+    Line() = default;
+    Line(const Point& a, const Point& b): pos(a), dir(b - a) {}
+    friend istream& operator>>(istream& is, Line& l) {
+        Point p1, p2;
+        is >> p1 >> p2;
+        l.pos = p1;
+        l.dir = Point{ p2.x - p1.x, p2.y - p1.y };
+        return is;
+    }
+};
+inline ld outer(const Point& a, const Point& b) {
+    return a.x*b.y-a.y*b.x;
+}
+bool get_segment_cross(const Line& a, const Line& b) {
+    ld mdet = outer(b.dir, a.dir);
+    if (diff(mdet, 0) == 0) return false;
+    ld t1 = -outer(b.pos-a.pos, b.dir)/mdet;
+    ld t2 = outer(a.dir, b.pos-a.pos)/mdet;
+    if (!is_between(t1, 0, 1) || !is_between(t2, 0, 1)) return false;
+    return true;
+}
+
+struct SCC {
+    ll n, time = 0, cnt = 0;
+    vl scc_idx, num, low;
+    vvl graph;
+    stack<ll> st;
+    SCC(vvl& G):    // 1-base graph
+    n(G.size()-1), scc_idx(n+1, 0), num(n+1, 0), low(n+1, 0), graph(G) {
+        for (ll i=1; i<=n; i++)
+            if (!num[i])
+                dfs(i);
+    }
+    void dfs(ll node) {
+        st.emplace(node);
+        num[node] = low[node] = ++time;
+        for (auto& nxt: graph[node]) {
+            if (!num[nxt]) {
+                dfs(nxt);
+                low[node] = min(low[node], low[nxt]);
+            }
+            else if (!scc_idx[nxt])
+                low[node] = min(low[node], num[nxt]);
+        }
+        if (num[node] == low[node]) {
+            ll x; cnt++;
+            do {
+                x = st.top(); st.pop();
+                scc_idx[x] = cnt;
+            } while (x != node);
+        }
+    }
+};
+
+inline ll neg(ll x) { return x%2 ? x+1 : x-1; }
+inline ll lit(ll x) { return x>0 ? (x<<1)-1 : -x<<1; }
+struct TwoSAT {
+    ll N;          // # boolean variables
+    vvl g;         // 1-based, size = 2*N+1
+    vl assignment; // final truth values: +1=true, -1=false
+
+    TwoSAT(ll vars) : N(vars), g((N<<1)+1), assignment(N+1, 0) {}
+
+    void addImp(ll u, ll v) {
+        g[u].push_back(v);
+    }
+
+    void addOr(ll x, ll y) {
+        addImp(neg(x), y);
+        addImp(neg(y), x);
+    }
+
+    void addTrue(ll x) {
+        addImp(neg(x), x);
+    }
+
+    bool solve() {
+        SCC scc(g);
+        auto& comp = scc.scc_idx;
+        for (ll i=1; i<=N; i++)
+            if (comp[(i<<1)-1] == comp[i<<1])
+                return false;
+        for (ll i=1; i<=N; i++)
+            assignment[i] = comp[(i<<1)-1]<comp[i<<1] ? +1 : -1;
+        return true;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    TwoSAT sat(N*3);
+    vector<Line> line(N*3+1);
+    Line l1, l2, l3;
+    for (i=1; i<=N; i++) {
+        cin >> l1;
+        for (j=i*3-3; j>=1; j--)
+            if (get_segment_cross(l1, line[j]))
+                sat.addOr(neg(lit(i*3-2)), neg(lit(j)));
+        line[i*3-2] = l1;
+        cin >> l2;
+        for (j=i*3-2; j>=1; j--)
+            if (get_segment_cross(l2, line[j]))
+                sat.addOr(neg(lit(i*3-1)), neg(lit(j)));
+        line[i*3-1] = l2;
+        cin >> l3;
+        for (j=i*3-1; j>=1; j--)
+            if (get_segment_cross(l3, line[j]))
+                sat.addOr(neg(lit(i*3)), neg(lit(j)));
+        line[i*3] = l3;
+
+        sat.addOr(lit(i*3-2), lit(i*3-1));
+        sat.addOr(lit(i*3-1), lit(i*3));
+        sat.addOr(lit(i*3), lit(i*3-2));
+    }
+    if (sat.solve()) {
+        ll K = 0;
+        vl removed;
+        for (i=1; i<=sat.N; i++) {
+            if (sat.assignment[i] == -1) {
+                K++;
+                removed.emplace_back(i);
+            }
+        }
+        cout << K << "\n";
+        for (auto& e : removed) cout << e << " ";
+    } else cout << "-1";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
