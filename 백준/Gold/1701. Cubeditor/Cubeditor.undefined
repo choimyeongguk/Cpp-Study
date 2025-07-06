@@ -38,7 +38,6 @@ void preprocess() {
 
 void getSuffixArray(string& str, vl& SA, vl& rank) {
     ll n = str.size();
-    vl tmp(n);
     SA.resize(n), rank.resize(n);
     for (ll i=0; i<n; i++)
         SA[i] = i, rank[i] = str[i];
@@ -51,7 +50,7 @@ void getSuffixArray(string& str, vl& SA, vl& rank) {
             return ra < rb;
         };
         sort(SA.begin(), SA.end(), cmp);
-        tmp[SA[0]] = 0;
+        vl tmp(n, 0);   // tmp[SA[0]] = 0;
         for (ll i=1; i<n; i++)
             tmp[SA[i]] = tmp[SA[i-1]] + (cmp(SA[i-1], SA[i]) ? 1 : 0);
         rank = tmp;
@@ -60,14 +59,10 @@ void getSuffixArray(string& str, vl& SA, vl& rank) {
 }
 
 void getLCP (string& str, vl& LCP) {
-    ll n = str.size();
+    ll n = str.size(); LCP.resize(n);
     vl SA, rank; getSuffixArray(str, SA, rank);
-    LCP.resize(n);
     for (ll cnt=0, i=0; i<n; i++) {
-        if (!rank[i]) {
-            cnt = 0;
-            continue;
-        }
+        if (!rank[i]) { cnt = 0; continue; }
         ll j = SA[rank[i] - 1];
         while (i+cnt<n && j+cnt<n && str[i+cnt]==str[j+cnt]) cnt++;
         LCP[rank[i]] = cnt;
