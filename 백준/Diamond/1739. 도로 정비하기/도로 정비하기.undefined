@@ -1,0 +1,180 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+//Usage: SCC scc(V, graph); vl component = scc.scc_idx;
+// O(V+E)
+// memo: the order of scc_idx constitutes a reverse topological sort
+struct SCC {
+    ll n,vtime,scc_cnt;
+    vvl graph;
+    vl up, visit,scc_idx,stk;
+
+    SCC(ll n, vvl& graph):
+    n(n),graph(graph),up(n),visit(n,0),scc_idx(n,0),vtime(0),scc_cnt(0) {
+        for (ll i=0;i<n;++i)
+            if (visit[i]==0) dfs(i);
+    }
+
+    void dfs(ll node){
+        up[node] = visit[node] = ++vtime;
+        stk.push_back(node);
+        for (ll next : graph[node]){
+            if (visit[next] == 0) {
+                dfs(next);
+                up[node] = min(up[node], up[next]);
+            }
+            else if (scc_idx[next] == 0)
+                up[node] = min(up[node], visit[next]);
+        }
+        if (up[node]==visit[node]){
+            ++scc_cnt;
+            ll t;
+            do{
+                t = stk.back();
+                stk.pop_back();
+                scc_idx[t] = scc_cnt;
+            } while (!stk.empty() && t != node);
+        }
+    }
+};
+
+// Usage: operation(lit(x), lit(y)); bool satisfiable = TwoSAT.solve()
+// memo : 1-based variable
+// O(N + M)  N:#variable M:#relation
+inline ll neg(ll x) { return x%2 ? x+1 : x-1; }
+inline ll lit(ll x) { return x>0 ? (x<<1)-1 : -x<<1; }
+struct TwoSAT {
+    ll N;                    // # boolean variables
+    vvl g;                   // 1-based, size = 2*N+1
+    vector<bool> assignment; // final truth values: +1=true, -1=false
+    vl comp;
+
+    TwoSAT(ll vars): N(vars), g((N << 1) + 1), assignment(N + 1, 0) {}
+
+    void addImp(ll u, ll v) {
+        g[u].push_back(v);
+    }
+    void addOr(ll x, ll y) {
+        addImp(neg(x), y);
+        addImp(neg(y), x);
+    }
+    void addTrue(ll x) {
+        addImp(neg(x), x);
+    }
+    bool satisfiable() {
+        SCC scc(g.size(), g);    // 0-index SCC
+        comp = scc.scc_idx;
+        for (ll i=1; i<=N; i++)
+            if (comp[(i<<1)-1] == comp[i<<1])
+                return false;
+        return true;
+    }
+    bool solve(ll x) {
+        return comp[(x<<1)-1] < comp[x<<1];
+    }
+    void solveAll() {
+        for (ll i=1; i<=N; i++)
+            assignment[i] = comp[(i<<1)-1]<comp[i<<1];
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, M, K; cin >> N >> M >> K;
+    TwoSAT sat(N+M);
+    ll A, B, C, D, lA, lB, lC, lD, nA, nB, nC, nD;
+    while (K--) {
+        cin >> A >> B >> C >> D;
+        lA = lit(A), lB = lit(N+B), lC = lit(C), lD = lit(N+D);
+        nA = neg(lA), nB = neg(lB), nC = neg(lC), nD = neg(lD);
+        if (B < D) {
+            if (A > C) {
+                sat.addOr(lA, nB);
+                sat.addOr(lA, lC);
+                sat.addOr(nD, nB);
+                sat.addOr(nD, lC);
+            }
+            else if (A == C) {
+                sat.addTrue(lA);
+            }
+            else {  // A < C
+                sat.addOr(lA, lB);
+                sat.addOr(lA, lC);
+                sat.addOr(lD, lB);
+                sat.addOr(lD, lC);
+            }
+        }
+        else if (B == D) {
+            if (A > C) {
+                sat.addTrue(nB);
+            }
+            else if (A < C) {
+                sat.addTrue(lB);
+            }
+        }
+        else {  // B > D
+            if (A > C) {
+                sat.addOr(nA, nB);
+                sat.addOr(nA, nC);
+                sat.addOr(nD, nB);
+                sat.addOr(nD, nC);
+            }
+            else if (A == C) {
+                sat.addTrue(nA);
+            }
+            else {  // A < C
+                sat.addOr(nA, lB);
+                sat.addOr(nA, nC);
+                sat.addOr(lD, lB);
+                sat.addOr(lD, nC);
+            }
+        }
+    }
+    cout << (sat.satisfiable() ? "Yes\n" : "No\n");
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
