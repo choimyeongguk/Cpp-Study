@@ -1,0 +1,135 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+inline ll dist2(ll r1, ll c1, ll r2, ll c2) {
+    return (r1-r2)*(r1-r2) + (c1-c2)*(c1-c2);
+}
+ll GCD(ll x, ll y) {
+    return y ? GCD(y, x%y) : x;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    while (true) {
+        ll n, d, m; cin >> n >> d >> m;
+        ll N = n + 2*d;
+        if (!n && !d && !m) break;
+        vector<vvl> M(11, vvl(N, vl(N, 0)));
+        ll r, c, t, T = 0;
+        while (m--) {
+            cin >> r >> c >> t;
+            M[t][r+d][c+d] = 1;
+            T = max(T, t);
+        }
+        vvl before(N, vl(N, 0));
+        vvl after(N, vl(N, 0));
+        ll nr, nc, dr, dc, dd = d*d, tmp, gcd;
+
+        // for (t=1; t<=T; t++) {
+        //     for (auto& e : M[t]) {
+        //         for (auto& v : e) {
+        //             cout << v << " ";
+        //         }
+        //         cout << "\n";
+        //     }
+        //     cout << "\n";
+        // }
+        // cout << "\n";
+
+        for (t=1; t<=T; t++) {
+            for (r=0; r<N; r++)
+                for (c=0; c<N; c++)
+                    after[r][c] = 0;
+            for (r=0; r<N; r++) {
+                for (c=0; c<N; c++) {
+
+                    for (nr=0; nr<N; nr++) {
+                        for (nc=0; nc<N; nc++) {
+                            if (dist2(r, c, nr, nc) > dd) continue;
+
+                            tmp = 0;
+                            if (r == nr)
+                                for (i=min(c,nc); i<=max(c,nc); i++)
+                                    tmp += M[t][r][i];
+                            else if (c == nc)
+                                for (i=min(r,nr); i<=max(r,nr); i++)
+                                    tmp += M[t][i][c];
+                            else {
+                                dr = nr-r, dc = nc-c;
+                                gcd = GCD(abs(dr), abs(dc));
+                                dr /= gcd, dc /= gcd;
+                                for (i=r,j=c; i!=nr; i+=dr,j+=dc)
+                                    tmp += M[t][i][j];
+                                tmp += M[t][nr][nc];
+                            }
+                            after[nr][nc] = max(after[nr][nc], before[r][c]+tmp);
+
+                        }
+                    }
+
+                }
+            }
+            before = after;
+            // for (auto& e : before) {
+            //     for (auto& v : e) {
+            //         cout << v << " ";
+            //     }
+            //     cout << "\n";
+            // }
+            // cout << "\n";
+        }
+        ll ans = 0;
+        for (r=d; r<d+n; r++) {
+            for (c=d; c<d+n; c++) {
+                ans = max(ans, before[r][c]);
+            }
+        }
+        cout << ans << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
