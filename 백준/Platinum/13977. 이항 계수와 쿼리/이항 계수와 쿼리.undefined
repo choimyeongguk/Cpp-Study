@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+ll MOD = 1'000'000'007;
+vl fact(4'000'001);
+
+pll extended_gcd(ll a, ll b) {
+    if (b==0) return {1, 0};
+    auto t=extended_gcd(b, a%b);
+    return {t.second, t.first-t.second*(a/b)};
+}
+
+ll modinverse(ll a, ll m) {
+    return (extended_gcd(a, m).first%m+m)%m;
+}
+
+void preprocess() {
+    ll i, j, k;
+    fact[0] = 1;
+    for (i=1; i<=4'000'000; i++)
+        fact[i] = (fact[i-1]*i) %MOD;
+}
+
+ll C(ll N, ll K) {
+    ll bunja = fact[N];
+    ll bunmo = (fact[K] * fact[N-K]) %MOD;
+    return (bunja * modinverse(bunmo, MOD)) %MOD;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll M; cin >> M;
+    ll N, K;
+    while (M--) {
+        cin >> N >> K;
+        cout << C(N, K) << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
