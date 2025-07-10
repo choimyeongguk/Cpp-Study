@@ -49,13 +49,14 @@ void solve(ll testcase){
     }
 
     vl color(N+1, 0);
-    vector<bool> linked(N+1);
+    // vector<bool> linked(N+1);
     queue<ll> q;
     color[1] = 1;
     q.emplace(1);
     while (!q.empty()) {
         ll& cur = q.front();
-        fill(linked.begin(), linked.end(), false);
+        vector<bool> linked(N+1, false);
+        // fill(linked.begin(), linked.end(), false);
         for (auto& e : G[cur])
             linked[e] = true;
         for (ll nxt=1; nxt<=N; nxt++) {
