@@ -75,6 +75,7 @@ void solve(ll testcase){
             if (eng >= depth[cur] - depth[anc[j][cur]]) {
                 eng -= depth[cur] - depth[anc[j][cur]];
                 cur = anc[j][cur];
+                if (!eng) break;
             }
         }
         cout << cur << "\n";
