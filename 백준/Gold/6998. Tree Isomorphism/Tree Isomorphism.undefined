@@ -1,0 +1,129 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll, ll>;
+using ld = long double;
+using pld = pair<ld, ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll, ll, ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    } else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+string getCanonical(ll node, ll parent, vvl &T) {
+    vector<string> label;
+    for (auto &ch: T[node]) {
+        if (ch == parent) continue;
+        label.emplace_back(getCanonical(ch, node, T));
+    }
+    sort(label.begin(), label.end());
+    return "(" + accumulate(label.begin(), label.end(), string()) + ")";
+}
+
+void solve(ll testcase) {
+    ll i, j, k;
+
+    // string str, buffer;
+    // getline(cin, str);
+    // cout << "tree1 : " << str << "\n";
+    //
+    // getline(cin, str);
+    // cout << "tree2 : " << str << "\n";
+
+    ll cnt = 0;
+    vvl tree1;
+    stack<ll> st;
+    string str;
+    getline(cin, str);
+    tree1.emplace_back();
+    st.emplace(cnt++);
+    for (i = 1; i < str.size(); i++) {
+        if (str[i] == ' ') continue;
+        if (str[i] == '#') st.pop();
+        else {
+            tree1.emplace_back();
+            tree1[st.top()].emplace_back(cnt);
+            st.emplace(cnt++);
+        }
+    }
+    // cout << "tree1 : " << str << "\n";
+
+    cnt = 0;
+    vvl tree2;
+    getline(cin, str);
+    tree2.emplace_back();
+    st.emplace(cnt++);
+    for (i = 1; i < str.size(); i++) {
+        if (str[i] == ' ') continue;
+        if (str[i] == '#') st.pop();
+        else {
+            tree2.emplace_back();
+            tree2[st.top()].emplace_back(cnt);
+            st.emplace(cnt++);
+        }
+    }
+    // cout << "tree2 : " << str << "\n";
+
+    // cout << "tree1 : \n";
+    // i = 0;
+    // for (auto& e : tree1) {
+    //     cout << i++ << " : ";
+    //     for (auto& v : e) {
+    //         cout << v << " ";
+    //     }
+    //     cout << "\n";
+    // }
+    // cout << "\n";
+    // cout << "tree2 : \n";
+    // i = 0;
+    // for (auto& e : tree2) {
+    //     cout << i++ << " : ";
+    //     for (auto& v : e) {
+    //         cout << v << " ";
+    //     }
+    //     cout << "\n";
+    // }
+    // cout << "\n";
+
+    cout << "The two trees are ";
+    if (getCanonical(0, 0, tree1) != getCanonical(0, 0, tree2))
+        cout << "not ";
+    cout << "isomorphic.\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    string buffer;
+    getline(cin, buffer);
+    for (ll testcase = 1; testcase <= t; testcase++) {
+        solve(testcase);
+    }
+    return 0;
+}
