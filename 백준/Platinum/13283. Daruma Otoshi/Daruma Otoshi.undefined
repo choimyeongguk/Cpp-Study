@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+// #pragma warning(disdable:4996)
+// #pragma comment(linker, "/STACK:336777216")
+// #pragma GCC optimize ("O3, unroll-loops")
+// #pragma GCC target ("avx, avx2, fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+    ll i, j, k;
+    ll n;
+    while (true) {
+        cin >> n; if (!n) break;
+        vl W(n); for (auto& e : W) cin >> e;
+        vvl dp(n, vl(n, 0));
+        for (i=0; i<n; i++) {
+            for (j=i-1; j>=0; j--) {
+                // 포함하지 않는 경우
+                dp[j][i] = dp[j][i-1];
+
+                // 포함하는 경우
+                for (ll m=i-1; m>j; m--) {
+                    if (abs(W[i]-W[m]) < 2)
+                        dp[j][i] = max(dp[j][i], dp[m][i]+dp[j][m-1]);
+                }
+                if (abs(W[i]-W[j]) < 2) {
+                    if (dp[j+1][i-1] == i-j-1)
+                        dp[j][i] = max(dp[j][i], 2+dp[j+1][i-1]);
+                }
+            }
+        }
+        // for (auto& e : dp) {
+        //     for (auto& v : e) {
+        //         cout << v << " ";
+        //     }
+        //     cout << "\n";
+        // }
+        cout << dp[0][n-1] << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
