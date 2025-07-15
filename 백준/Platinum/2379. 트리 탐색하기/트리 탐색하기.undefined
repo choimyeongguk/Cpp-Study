@@ -1,0 +1,138 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct TreeIsomorphism {
+    ll id = 1;
+    vl root1, root2;
+    vvl& tree1, tree2;
+    map<vl,ll> isoClass;
+
+    TreeIsomorphism(vvl& T1, vvl& T2)
+        : tree1(T1), tree2(T2) {
+        root1 = findCenter(T1);
+        root2 = findCenter(T2);
+    }
+    TreeIsomorphism(vvl& T1, ll r1, vvl& T2, ll r2)
+        : tree1(T1), tree2(T2), root1({r1}), root2({r2}) {}
+
+    vector<ll> findCenter(const vvl &tree) {
+        ll n = tree.size();
+        vl degree(n), leaves;
+        for (ll i=0; i<n; i++) {
+            degree[i] = tree[i].size();
+            if (degree[i] <= 1)
+                leaves.emplace_back(i);
+        }
+        ll removed = leaves.size();
+        while (removed < n) {
+            vl newLeaves;
+            for (ll u : leaves)
+                for (ll v : tree[u])
+                    if (--degree[v] == 1)
+                        newLeaves.push_back(v);
+            removed += newLeaves.size();
+            leaves = move(newLeaves);
+        }
+        return leaves;
+    }
+
+    ll getID(const vvl& tree, ll node, ll pa) {
+        vl childID;
+        for (auto& ch : tree[node])
+            if (ch != pa)
+                childID.emplace_back(getID(tree, ch, node));
+        sort(childID.begin(), childID.end());
+        if (!isoClass.contains(childID))
+            isoClass[childID] = id++;
+        return isoClass[childID];
+    }
+
+    bool isTreeIsomorphic() {
+        if (tree1.size() <= 1 || tree2.size() <= 1)
+            return tree1.size() == tree2.size();
+        ll id1 = getID(tree1, root1[0], -1);
+        for (auto& r : root2)
+            if (id1 == getID(tree2, r, -1))
+                return true;
+        return false;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+
+    string path;
+    ll cur = 0, n = 0;
+    cin >> path;
+    vvl tree1(1);
+    for (auto& c : path) {
+        if (c == '0') {
+            tree1.emplace_back(); n++;
+            tree1[cur].emplace_back(n);
+            tree1[n].emplace_back(cur);
+            cur = n;
+        }
+        else cur = tree1[cur][0];
+    }
+    cur = 0, n = 0;
+    cin >> path;
+    vvl tree2(1);
+    for (auto& c : path) {
+        if (c == '0') {
+            tree2.emplace_back(); n++;
+            tree2[cur].emplace_back(n);
+            tree2[n].emplace_back(cur);
+            cur = n;
+        }
+        else cur = tree2[cur][0];
+    }
+
+    TreeIsomorphism ti(tree1, 0, tree2, 0);
+    cout << ti.isTreeIsomorphic() << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
