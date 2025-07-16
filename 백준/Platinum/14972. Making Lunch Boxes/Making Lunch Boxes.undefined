@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+// #pragma warning(disable:4996)
+// #pragma comment(linker, "/STACK:336777216")
+// #pragma GCC optimize("O3, unroll-loops")
+// #pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+    ll i, j, k;
+    while (true) {
+        ll N, M; cin >> N >> M;
+        if (!N && !M) break;
+        unordered_map<bitset<500>,ll> mp;    // 사용한 재료, 메뉴 수
+
+        string tmp;
+        mp[0] = 0;
+        cin >> tmp;
+        mp[bitset<500>(tmp)] = 1;
+
+        for (i=1; i<N; i++) {
+            cin >> tmp;
+            bitset<500> menu(tmp);
+            vector<pair<bitset<500>,ll>> s;
+            for (auto& [mask,cnt] : mp)
+                s.emplace_back(mask^menu, cnt+1);
+
+            for (auto& [mask,cnt] : s) {
+                if (mp.contains(mask)) {
+                    if (mp[mask] < cnt)
+                        mp[mask] = cnt;
+                }
+                else mp[mask] = cnt;
+            }
+
+            // for (auto& [mask,cnt] : mp) {
+            //     cout <<
+            // }
+        }
+        cout << mp[0] << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
