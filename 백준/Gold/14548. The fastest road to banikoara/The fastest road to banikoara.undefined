@@ -1,0 +1,105 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma GCC comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+
+unordered_map<string,ll> st2id;
+vector<string> id2st;
+ll id=0;
+
+void f(string a) {
+    if (st2id.find(a)==st2id.end()) {
+        st2id[a]=id++;
+        id2st.push_back(a);
+    }
+}
+
+vl dijk(ll n, ll s, vector<vector<pll>>& adj) {
+    const ll INF=1e18;
+    vl dis(n,INF);
+    vector<bool> visit(n,false);
+    priority_queue<pll,vector<pll>,greater<pll>> q;
+    dis[s]=0;
+    q.push({dis[s],s});
+    while (!q.empty()) {
+        while (!q.empty() && visit[q.top().second]) q.pop();
+        if (q.empty()) break;
+        ll next=q.top().second; q.pop();
+        visit[next]=1;
+        for (ll i=0;i<adj[next].size();i++) {
+            if (dis[adj[next][i].first] > dis[next] + adj[next][i].second) {
+                dis[adj[next][i].first] = dis[next] + adj[next][i].second;
+                q.push({dis[adj[next][i].first], adj[next][i].first});
+            }
+        }
+    }
+    for (ll i=0;i<n;i++) if (dis[i]==INF) dis[i]=-1;
+    return dis;
+}
+
+
+void solve(ll test) {
+    ll n;
+    cin>>n;
+    string a,b;
+    cin>>a>>b;
+    f(a);f(b);
+    ll s=st2id[a];
+    ll e=st2id[b];
+    vector<vector<pll>> adj(1000000);
+    for (ll i=0;i<n;i++) {
+        string p,q;
+        ll w;
+        cin>>p>>q>>w;
+        f(p);f(q);
+        adj[st2id[p]].push_back({st2id[q],w});
+        adj[st2id[q]].push_back({st2id[p],w});
+    }
+    vl ans = dijk(id,s,adj);
+    cout<<a<<" "<<b<<" ";
+    cout<<ans[e]<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
