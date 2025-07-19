@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma GCC comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+ll n,m;
+ll a,b,c,d;
+ll dx[4]={0,0,1,-1},dy[4]={1,-1,0,0};
+
+ll safe(ll x,ll y){return x>=0&&x<n&&y>=0&&y<m;}
+
+void dfs(ll x,ll y,ll target,ll& suc,vvl& visited,vvl& arr) {
+    //cout<<x<<" "<<y<<'\n';
+    visited[x][y]=1;
+
+    if (x==c && y==d) {
+        suc=1;
+        return;
+    }
+
+    for (ll i=0;i<4;i++) {
+        ll nx,ny;
+        nx=x+dx[i];
+        ny=y+dy[i];
+
+        if (safe(nx,ny) && visited[nx][ny]==0 && arr[nx][ny]==target) {
+            visited[x][y]=1;
+            dfs(nx,ny,target,suc,visited,arr);
+        }
+    }
+}
+
+
+void solve(ll test) {
+    cin>>n>>m>>a>>b>>c>>d;
+    swap(n,m);
+    swap(a,b); a=(n-a); b--;
+    swap(c,d); c=(n-c); d--;
+    //cout<<n<<m<<a<<b<<c<<d<<'\n';
+
+    vvl arr(n,vl(m));
+    for (ll i=0;i<n;i++) {
+        for (ll j=0;j<m;j++) {
+            char x;
+            cin>>x;
+            if (x=='+')
+                arr[i][j]=0;
+            else
+                arr[i][j]=1;
+        }
+    }
+
+    if (arr[a][b]!=arr[c][d]) {
+        cout<<"NO"<<'\n';
+        return;
+    }
+
+    ll target=arr[a][b];
+
+    ll suc=0;
+    vvl visited(n,vl(m,0));
+    dfs(a,b,target,suc,visited, arr);
+
+    if (suc==0) {
+        cout<<"NO"<<'\n';
+    }
+    else {
+        cout<<"YES"<<'\n';
+    }
+
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
