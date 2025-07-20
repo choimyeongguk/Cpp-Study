@@ -49,8 +49,8 @@ void solve(ll test){
     // sort(L.begin(), L.end());
     // sort(R.begin(), R.end());
 
-    ll ans, l = 0, r = 0;
-    while ((N-l*2)*M + (M-r*2)*N > 0)
+    ll ans, d, l = 0, r = 0;
+    while ((d=(N-l*2)*M + (M-r*2)*N) > 0)
         ans = L[l] < R[r] ? L[l++] : R[r++];
     cout << ans << ".0\n";
 }
