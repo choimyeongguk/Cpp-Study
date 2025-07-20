@@ -39,11 +39,16 @@ void preprocess() {
 void solve(ll test){
     ll i, j, k;
     ll N, M; cin >> N >> M;
-    vl L(N), R(M);
+    long long L[N];
+    long long R[M];
+    // vl L(N), R(M);
     for (auto& e : L) cin >> e;
-    sort(L.begin(), L.end());
     for (auto& e : R) cin >> e;
-    sort(R.begin(), R.end());
+    sort(L, L+N);
+    sort(R, R+M);
+    // sort(L.begin(), L.end());
+    // sort(R.begin(), R.end());
+
     ll ans, l = 0, r = 0;
     while ((N-l*2)*M + (M-r*2)*N > 0)
         ans = L[l] < R[r] ? L[l++] : R[r++];
