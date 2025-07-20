@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma optimize("O3,unroll-loops")
+#pragma target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+// struct Point {
+//     ll x, y;
+//     Point operator+(const Point other) const {
+//         return Point(x+other.x, y+other.y);
+//     }
+//     Point operator-(const Point other) const {
+//         return Point(x-other.x, y-other.y);
+//     }
+//     bool operator==(const Point other) const {
+//         return x==other.x && y==other.y;
+//     }
+//     bool operator<(const Point other) const {
+//         if (x!=other.x) return x<other.x;
+//         return y<other.y;
+//     }
+// };
+
+void solve(ll test) {
+    ll i, j, k;
+    ll n; cin>>n;
+    vector<set<ll>> vs(20005);
+    set<pll> s;
+    for (i=0;i<n;i++) {
+        pll p; cin>>p.first>>p.second;
+        vs[p.first+10000].insert(p.second);
+        s.insert(p);
+    }
+    ll ans=0;
+    for (auto &p1: s) {
+        for (auto &p2: s) {
+            if (p1==p2 || p1<p2) continue;
+            ll dx = p2.first - p1.first;
+            ll dy = p2.second - p1.second;
+            pll p3 = {p2.first + dy, p2.second - dx};
+            pll p4 = {p3.first - dx, p3.second - dy};
+            if (p3.first<-10000 || p3.first>10000) continue;
+            if (p4.first<-10000 || p4.first>10000) continue;
+            if (vs[p3.first+10000].contains(p3.second) && vs[p4.first+10000].contains(p4.second)) {
+                ans = max(ans, dx*dx + dy*dy);
+            }
+        }
+    }
+    cout<<ans<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll test = 1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
