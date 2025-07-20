@@ -43,8 +43,8 @@ void solve(ll test){
     long long R[M];
     // vl L(N), R(M);
     for (auto& e : L) cin >> e;
-    for (auto& e : R) cin >> e;
     sort(L, L+N);
+    for (auto& e : R) cin >> e;
     sort(R, R+M);
     // sort(L.begin(), L.end());
     // sort(R.begin(), R.end());
