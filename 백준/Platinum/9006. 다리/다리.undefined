@@ -46,22 +46,12 @@ void solve(ll test){
     sort(R.begin(), R.end());
 
     ll l = 0, r = 0;
-    ll ans = 0, cur;
-    ll d = N*M*2;
+    ll ans, d = 1;
     while (d > 0) {
-        if (L[l] < R[r]) {
-            cur = L[l];
-            l++;
-        }
-        else {
-            cur = R[r];
-            r++;
-        }
-        d = (N-l*2)*M + (M-r*2)*N;ans = cur;
-
-        // cout << "l : " << l << " , r : " << r << " , d : " << d << " , cur : " << cur << "\n";
+        ans = L[l] < R[r] ? L[l++] : R[r++];
+        d = (N-l*2)*M + (M-r*2)*N;
     }
-    cout << fixed << setprecision(1) << (ld)ans << "\n";
+    cout << ans << ".0\n";
 }
 
 int main() {
