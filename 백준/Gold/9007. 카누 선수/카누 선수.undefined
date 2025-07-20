@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 #pragma warning(disable:4996)
-#pragma comment(linker,"/STACK:336777216")
-#pragma optimize("O3,unroll-loops")
-#pragma target("avx,avx2,fma")
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
 using namespace std;
 using ll = long long;
 using pll = pair<ll,ll>;
@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 void setup() {
-    if (!ndebug) {
+    if(!ndebug) {
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
     }
@@ -33,72 +33,52 @@ void setup() {
 
 void preprocess() {
     ll i, j, k;
+
 }
 
-void solve(ll test) {
-    ll k,n;
-    cin>>k>>n;
+void solve(ll testcase){
+    ll i, j, k;
+    ll K, N; cin >> K >> N;
+    vl arr(N), sum1(N*N), sum2(N*N);
 
-    vvl a(4,vl(n));
-    for (ll i=0;i<4;i++) {
-        for (ll j=0;j<n;j++) {
-            cin>>a[i][j];
-        }
+    ll num;
+    for (auto& e : arr) cin >> e;
+    for (k=0,i=0; i<N; i++) {
+        cin >> num;
+        for (j=0; j<N; j++)
+            sum1[k++] = arr[j] + num;
     }
 
-    vl p,q;
-    for (ll i=0;i<n;i++) {
-        for (ll j=0;j<n;j++) {
-            p.push_back(a[0][i]+a[1][j]);
+    for (auto& e : arr) cin >> e;
+    for (k=0,i=0; i<N; i++) {
+        cin >> num;
+        for (j=0; j<N; j++)
+            sum2[k++] = arr[j] + num;
+    }
+    sum2.emplace_back(-1e10);
+    sum2.emplace_back(1e10);
+    sort(sum2.begin(), sum2.end());
+    // sum2.erase(unique(sum2.begin(), sum2.end()), sum2.end());
+
+    ll target, ans, sumin = 1e10, diff, sum;
+    for (auto& e : sum1) {
+        target = K - e;
+        auto it = lower_bound(sum2.begin(), sum2.end(), target);
+        sum = *it + e;
+        diff = abs(target - *it);
+        if (sumin > diff || (sumin == diff && ans > sum)) {
+            sumin = diff;
+            ans = sum;
+        }
+        --it;
+        sum = *it + e;
+        diff = abs(target - *it);
+        if (sumin > diff || (sumin == diff && ans > sum)) {
+            sumin = diff;
+            ans = sum;
         }
     }
-    for (ll i=0;i<n;i++) {
-        for (ll j=0;j<n;j++) {
-            q.push_back(a[2][i]+a[3][j]);
-        }
-    }
-    q.push_back(-1e15);
-    q.push_back(1e15);
-    sort(q.begin(),q.end());
-    q.erase(unique(q.begin(),q.end()),q.end());
-
-    // cout<<"P: ";
-    // for (ll x:p) cout<<x<<' ';
-    // cout<<'\n';
-    // cout<<"Q: ";
-    // for (ll x:q) cout<<x<<' ';
-    // cout<<'\n';
-
-    ll mm=LLONG_MAX;
-    ll val=LLONG_MAX;
-    for (ll i=0;i<p.size();i++) {
-        ll target=k-p[i];
-        //cout<<"target: "<<target<<endl;
-        ll lb = lower_bound(q.begin(),q.end(),target)-q.begin();
-
-        //cout<<"lb-1: "<<lb-1<<"q[lb-1]: "<<q[lb-1]<<endl;
-        //cout<<"lb: "<<lb<<"q[lb]: "<<q[lb]<<endl;
-
-        if (mm>=abs(k-p[i]-q[lb])) {
-            if (mm==abs(k-p[i]-q[lb]))
-                val=min(val,p[i]+q[lb]);
-            else {
-                val=p[i]+q[lb];
-            }
-            mm=abs(k-p[i]-q[lb]);
-        }
-        if (mm>=abs(k-p[i]-q[lb-1])) {
-            if (mm==abs(k-p[i]-q[lb-1])) {
-                val=min(val,p[i]+q[lb-1]);
-            }
-            else {
-                val=p[i]+q[lb-1];
-            }
-            mm=abs(k-p[i]-q[lb-1]);
-
-        }
-    }
-    cout<<val<<'\n';
+    cout << ans << "\n";
 }
 
 int main() {
@@ -106,8 +86,8 @@ int main() {
     preprocess();
     ll t = 1;
     cin >> t;
-    for (ll test = 1; test<=t; test++) {
-        solve(test);
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
     }
     return 0;
 }
