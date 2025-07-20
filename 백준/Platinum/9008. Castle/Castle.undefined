@@ -59,10 +59,10 @@ void solve(ll testcase){
         return a.first==b.first ? a.second<b.second : a.first<b.first;
     }); // x 기준 정렬
     vector<Edge> vertical;
-    for (i=0; i<N-1; i++) {
-        if (pt[i].first == pt[i+1].first) {
-            vertical.emplace_back(pt[i], pt[i+1]);
-            i++;
+    for (i=N-1; i>0; i--) {
+        if (pt[i].first == pt[i-1].first) {
+            vertical.emplace_back(pt[i-1], pt[i]);
+            i--;
         }
         else {
             cout << "NO\n";
@@ -73,10 +73,10 @@ void solve(ll testcase){
         return a.second==b.second ? a.first<b.first : a.second<b.second;
     }); // y 기준 정렬
     vector<Edge> horizontal;
-    for (i=0; i<N-1; i++) {
-        if (pt[i].second == pt[i+1].second) {
-            horizontal.emplace_back(pt[i], pt[i+1]);
-            i++;
+    for (i=N-1; i>0; i--) {
+        if (pt[i].second == pt[i-1].second) {
+            horizontal.emplace_back(pt[i-1], pt[i]);
+            i--;
         }
         else {
             cout << "NO\n";
