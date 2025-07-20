@@ -38,9 +38,9 @@ void preprocess() {
 
 void solve(ll test){
     ll i, j, k;
-    ll N, M; cin >> N >> M;
-    long long L[N];
-    long long R[M];
+    int N, M; cin >> N >> M;
+    int L[N];
+    int R[M];
     // vl L(N), R(M);
     for (auto& e : L) cin >> e;
     sort(L, L+N);
@@ -49,7 +49,8 @@ void solve(ll test){
     // sort(L.begin(), L.end());
     // sort(R.begin(), R.end());
 
-    ll ans, d, l = 0, r = 0;
+    int ans;
+    ll d, l = 0, r = 0;
     while ((d=(N-l*2)*M + (M-r*2)*N) > 0)
         ans = L[l] < R[r] ? L[l++] : R[r++];
     cout << ans << ".0\n";
