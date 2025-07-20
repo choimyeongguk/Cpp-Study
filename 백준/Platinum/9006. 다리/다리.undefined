@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 #pragma warning(disable:4996)
-#pragma comment(linker,"/STACK:336777216")
-#pragma optimize("O3,unroll-loops")
-#pragma target("avx,avx2,fma")
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
 using namespace std;
 using ll = long long;
 using pll = pair<ll,ll>;
@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 void setup() {
-    if (!ndebug) {
+    if(!ndebug) {
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
     }
@@ -33,27 +33,35 @@ void setup() {
 
 void preprocess() {
     ll i, j, k;
+
 }
 
-void solve(ll test) {
+void solve(ll test){
     ll i, j, k;
-    ll n, m; cin>>n>>m;
-    vl a(n), b(m), cand(n+m);
-    for (i=0;i<n;i++) cin>>a[i], cand[i]=a[i];
-    for (i=0;i<m;i++) cin>>b[i], cand[i+n]=b[i];
-    sort(a.rbegin(), a.rend());
-    sort(b.rbegin(), b.rend());
-    sort(cand.rbegin(), cand.rend());
-    ll w=0, x=0, y=n, z=m;
-    ll t=-1;
-    for (i=0;i<n+m;i++) {
-        t=cand[i];
-        // cout<<w<<' '<<x<<' '<<y<<' '<<z<<endl;
-        if (b[x]==t) x++, z--;
-        if (a[w]==t) w++, y--;
-        if (w*x>y*z) break;
+    ll N, M; cin >> N >> M;
+    vl L(N), R(M);
+    for (auto& e : L) cin >> e;
+    for (auto& e : R) cin >> e;
+    sort(L.begin(), L.end());
+    sort(R.begin(), R.end());
+
+    ll l = 0, r = 0;
+    ll ans = 0, cur;
+    ll d = N*M*2;
+    while (d > 0) {
+        if (L[l] < R[r]) {
+            cur = L[l];
+            l++;
+        }
+        else {
+            cur = R[r];
+            r++;
+        }
+        d = (N-l*2)*M + (M-r*2)*N;ans = cur;
+
+        // cout << "l : " << l << " , r : " << r << " , d : " << d << " , cur : " << cur << "\n";
     }
-    cout<<t<<".0\n";
+    cout << fixed << setprecision(1) << (ld)ans << "\n";
 }
 
 int main() {
@@ -61,7 +69,7 @@ int main() {
     preprocess();
     ll t = 1;
     cin >> t;
-    for (ll test = 1; test<=t; test++) {
+    for (ll test = 1; test <= t; test++){
         solve(test);
     }
     return 0;
