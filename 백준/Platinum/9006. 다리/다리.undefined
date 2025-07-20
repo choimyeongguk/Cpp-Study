@@ -41,16 +41,12 @@ void solve(ll test){
     ll N, M; cin >> N >> M;
     vl L(N), R(M);
     for (auto& e : L) cin >> e;
-    for (auto& e : R) cin >> e;
     sort(L.begin(), L.end());
+    for (auto& e : R) cin >> e;
     sort(R.begin(), R.end());
-
-    ll l = 0, r = 0;
-    ll ans, d = 1;
-    while (d > 0) {
+    ll ans, l = 0, r = 0;
+    while ((N-l*2)*M + (M-r*2)*N > 0)
         ans = L[l] < R[r] ? L[l++] : R[r++];
-        d = (N-l*2)*M + (M-r*2)*N;
-    }
     cout << ans << ".0\n";
 }
 
