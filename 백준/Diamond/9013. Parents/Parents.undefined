@@ -1,0 +1,100 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = int;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    vector<vvl> dp(N, vvl(2, vl(K+1, -1e9)));
+    for (i=0; i<N; i++) {
+        dp[i][false][0] = 0;
+        cin >> dp[i][true][1];
+    }
+    vvl G(N);
+    ll p;
+    for (i=1; i<N; i++) {
+        cin >> p;
+        G[p].emplace_back(i);
+    }
+    vl sz(N, 1);
+
+    function<void(ll)> getSz = [&](ll node) {
+        for (auto& ch : G[node]) {
+            getSz(ch);
+            sz[node] += sz[ch];
+        }
+    };
+    getSz(0);
+    function<void(ll)> treeDP = [&](ll node) {
+        for (auto& ch : G[node]) {
+            treeDP(ch);
+
+            // 사용하지 않는 경우
+            ll iter = min(K, sz[node]);
+            for (ll i=iter; i>0; i--) {   // 사용 개수
+                for (ll j=1; j<=i; j++) {
+                    ll tmp = max(dp[ch][false][j], dp[ch][true][j]);
+                    dp[node][false][i] = max(dp[node][false][i], dp[node][false][i-j] + tmp);
+                }
+            }
+
+            // 사용하는 경우
+            for (ll i=iter; i>0; i--) {
+                for (ll j=1; j<=i; j++) {
+                    dp[node][true][i] =
+                        max(dp[node][true][i], dp[node][true][i-j] + dp[ch][false][j]);
+                }
+            }
+        }
+    };
+    treeDP(0);
+
+    ll ans = -1e9;
+    for (i=1; i<=K; i++)
+        ans = max({ans, dp[0][false][i], dp[0][true][i]});
+    cout << ans << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
