@@ -61,23 +61,18 @@ void solve(ll testcase){
     function<void(ll)> treeDP = [&](ll node) {
         for (auto& ch : G[node]) {
             treeDP(ch);
-
-            // 사용하지 않는 경우
+            
             ll I = min(K, sz[node]);
             for (ll i=I; i>0; i--) {   // 사용 개수
                 ll J = min(i, sz[ch]);
                 for (ll j=1; j<=J; j++) {
+                    // 사용하지 않는 경우
                     ll tmp = max(dp[ch][false][j], dp[ch][true][j]);
                     dp[node][false][i] = max(dp[node][false][i], dp[node][false][i-j] + tmp);
-                }
-            }
-
-            // 사용하는 경우
-            for (ll i=I; i>0; i--) {
-                ll J = min(i, sz[ch]);
-                for (ll j=1; j<=J; j++)
+                    // 사용하는 경우
                     dp[node][true][i] =
                         max(dp[node][true][i], dp[node][true][i-j] + dp[ch][false][j]);
+                }
             }
         }
     };
