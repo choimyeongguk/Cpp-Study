@@ -39,11 +39,23 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll a, b; cin >> a >> b;
-    ll ans = 1;
-    for (i=0; i<b; i++) {
-        ans = ans * a %10;
+    vl cycle; cycle.emplace_back(a%10);
+    ll tmp;
+    while (cycle.size()<10) {
+        tmp = cycle.back()*a%10;
+        if (tmp == cycle[0] || tmp == cycle.back()) break;
+        cycle.emplace_back(tmp);
     }
-    cout << (!ans ? 10 : ans) << "\n";
+    // cout << "cycle : ";
+    // for (auto& e : cycle) cout << e << " ";
+    // cout << "\n";
+    tmp = cycle[(b-1)%cycle.size()];
+    cout << (!tmp ? 10 : tmp) << "\n";
+    // ll ans = 1;
+    // for (i=0; i<b; i++) {
+    //     ans = ans * a %10;
+    // }
+    // cout << (!ans ? 10 : ans) << "\n";
 }
 
 int main() {
