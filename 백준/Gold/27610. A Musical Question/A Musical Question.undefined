@@ -43,8 +43,9 @@ void solve(ll testcase){
     // dp[i][j] = 1 := CD1에 i만큼 넣을 때, CD2에는 j만큼 넣는게 가능하다
 
     dp[0][0] = 1;
+    ll num;
     for (i=0; i<N; i++) {
-        ll num; cin >> num;
+        cin >> num;
         auto prev = dp;
         // CD1에 넣는 경우
         for (j=C; j>=num; j--)
