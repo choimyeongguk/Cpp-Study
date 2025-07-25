@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll C, N; cin >> C >> N;
+    vector<bitset<1001>> dp(C+1, 0);
+    // dp[i][j] = 1 := CD1에 i만큼 넣을 때, CD2에는 j만큼 넣는게 가능하다
+
+    dp[0][0] = 1;
+    for (i=0; i<N; i++) {
+        ll num; cin >> num;
+        auto prev = dp;
+        // CD1에 넣는 경우
+        for (j=C; j>=num; j--)
+            dp[j] |= prev[j-num];
+        // CD2에 넣는 경우
+        for (j=0; j<=C; j++)
+            dp[j] |= prev[j]<<num;
+    }
+
+    ll ans = -1e10, diff = 1e10, A, B;
+    for (i=0; i<=C; i++) {
+        for (j=0; j<=C; j++) {
+            if (!dp[i][j]) continue;
+            if (ans < i+j || (ans == i+j && diff > abs(i-j))) {
+                ans = i+j;
+                diff = abs(i-j);
+                A = i, B = j;
+            }
+        }
+    }
+    if (A < B) swap(A, B);
+    cout << A << " " << B << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
