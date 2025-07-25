@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216");
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+    ll i, j, k;
+    string s; cin>>s;
+    ll n=s.size();
+    vector<array<ll, 4>> sarr(n+1);
+    for (i=0;i<n;i++) {
+        for (j=0;j<4;j++) {
+            sarr[i+1][j] = sarr[i][j]+(s[i]=="ATGC"[j]);
+        }
+    }
+    // for (i=0;i<=n;i++) {
+    //     for (j=0;j<4;j++) {
+    //         cout<<sarr[i][j]<<' ';
+    //     }
+    //     cout<<endl;
+    // }
+    ll m; cin>>m;
+    while (m--) {
+        ll l, r; cin>>l>>r;
+        ll acnt = sarr[r][0]-sarr[l-1][0];
+        ll tcnt = sarr[r][1]-sarr[l-1][1];
+        ll gcnt = sarr[r][2]-sarr[l-1][2];
+        ll ccnt = sarr[r][3]-sarr[l-1][3];
+        vector<array<ll, 3>> ans(4);
+        ans[0] = {-acnt, 0, 'A'};
+        ans[1] = {-tcnt, 1, 'T'};
+        ans[2] = {-gcnt, 2, 'G'};
+        ans[3] = {-ccnt, 3, 'C'};
+        sort(ans.begin(), ans.end());
+        for (auto &[a, b, c]: ans) cout<<(char)c;
+        // for (auto &[a, b, c]: ans) {
+        //     cout<<a<<' '<<b<<' '<<(char)c<<endl;
+        // }
+        cout<<'\n';
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test = 1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
