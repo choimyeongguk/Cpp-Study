@@ -1,0 +1,230 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216");
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+// Usage: TreeIsomorphism ti(T1, T2) or ti(T1, r1, T2, r2)
+//        bool isIso = ti.isIsomorphic
+//        ti.isTreeIsomorphicMap => ti.mapping[i]=j := T1의 i노드는 T2의 j노드와 대응
+// O(NlogN)
+struct TreeIsomorphism {
+    ll id = 1;
+    vl root1, root2, mapping;
+    vvl tree1, tree2;
+    map<vl,ll> isoClass;
+
+    TreeIsomorphism(const vvl& T1, const vvl& T2)
+        : tree1(T1), tree2(T2) {
+        root1 = findCenter(T1);
+        root2 = findCenter(T2);
+    }
+    TreeIsomorphism(const vvl& T1, ll r1, const vvl& T2, ll r2)
+        : tree1(T1), tree2(T2), root1({r1}), root2({r2}) {}
+
+    vector<ll> findCenter(const vvl &tree) {
+        ll n = tree.size();
+        vl degree(n), leaves;
+        for (ll i=0; i<n; i++) {
+            degree[i] = tree[i].size();
+            if (degree[i] <= 1)
+                leaves.emplace_back(i);
+        }
+        ll removed = leaves.size();
+        while (removed < n) {
+            vl newLeaves;
+            for (ll u : leaves)
+                for (ll v : tree[u])
+                    if (--degree[v] == 1)
+                        newLeaves.push_back(v);
+            removed += newLeaves.size();
+            leaves = move(newLeaves);
+        }
+        return leaves;
+    }
+
+    ll getID(const vvl& tree, ll node, ll pa) {
+        vl childID; childID.emplace_back(node);
+        for (auto& ch : tree[node])
+            if (ch != pa)
+                childID.emplace_back(getID(tree, ch, node));
+        sort(childID.begin(), childID.end());
+        if (!isoClass.contains(childID))
+            isoClass[childID] = id++;
+        return isoClass[childID];
+    }
+
+    bool isTreeIsomorphic() {
+        if (tree1.size() <= 1 || tree2.size() <= 1)
+            return tree1.size() == tree2.size();
+        ll id1 = getID(tree1, root1[0], -1);
+        for (auto& r : root2)
+            if (id1 == getID(tree2, r, -1))
+                return true;
+        return false;
+    }
+
+    void mapSubtree(ll node1, ll pa1, ll node2, ll pa2) {
+        mapping[node1] = node2;
+        vector<pll> ch1, ch2;
+        for (auto& ch : tree1[node1])
+            if (ch != pa1)
+                ch1.emplace_back(getID(tree1, ch, node1), ch);
+        for (auto& ch : tree2[node2])
+            if (ch != pa2)
+                ch2.emplace_back(getID(tree2, ch, node2), ch);
+        sort(ch1.begin(), ch1.end());
+        sort(ch2.begin(), ch2.end());
+        for (ll i=0; i<ch1.size(); i++)
+            mapSubtree(ch1[i].second, node1, ch2[i].second, node2);
+    }
+
+    bool isTreeIsomorphicMap() {
+        if (tree1.size() <= 1 || tree2.size() <= 1) {
+            if (tree1.size() != tree2.size()) return false;
+            mapping.assign(tree1.size(), 0);
+            return true;
+        }
+        ll id1 = getID(tree1, root1[0], -1);
+        for (auto& r : root2) {
+            if (id1 == getID(tree2, r, -1)) {
+                mapping.assign(tree1.size(), -1);
+                mapSubtree(root1[0], -1, r, -1);
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+void solve(ll test) {
+    ll i, j, k;
+
+    map<string,ll> s2idx; ll idx = 0;
+
+    // tree1 입력
+    vector<vl> tree1(200'005);  // 노드 문자열, 자식
+    string S1; getline(cin, S1);
+    S1.push_back(' ');
+    stack<string> st;
+    string buffer;
+    for (auto& c : S1) {
+        if (c == ' ' || c == '(') {
+            if (!buffer.empty()) {
+                st.emplace(buffer);
+                buffer = "";
+            }
+            continue;
+        }
+        if (c == ')') {
+            if (buffer != "") {
+                st.emplace(buffer);
+                buffer = "";
+            }
+
+            string ch = st.top(); st.pop();
+            string pa = st.top();
+            ll chIdx, paIdx;
+            if (s2idx.contains(ch))
+                chIdx = s2idx[ch];
+            else chIdx = s2idx[ch] = idx++;
+            if (s2idx.contains(pa))
+                paIdx = s2idx[pa];
+            else paIdx = s2idx[pa] = idx++;
+            tree1[paIdx].emplace_back(chIdx);
+            tree1[chIdx].emplace_back(paIdx);
+            continue;
+        }
+        buffer += c;
+    }
+    ll root1;
+    if (s2idx.contains(st.top()))
+        root1 = s2idx[st.top()];
+    else root1 = s2idx[st.top()] = idx++;
+
+    // tree2 입력
+    vector<vl> tree2(200'005);  // 노드 문자열, 자식
+    getline(cin, S1);
+    S1.push_back(' ');
+    while (!st.empty()) st.pop();
+    buffer = "";
+    for (auto& c : S1) {
+        if (c == ' ' || c == '(') {
+            if (!buffer.empty()) {
+                st.emplace(buffer);
+                // cout << "stack에 " << buffer << " 넣음\n";
+            }
+            buffer = "";
+            continue;
+        }
+        if (c == ')') {
+            if (buffer != "") {
+                st.emplace(buffer);
+                buffer = "";
+            }
+
+            string ch = st.top(); st.pop();
+            string pa = st.top();
+            ll chIdx, paIdx;
+            if (s2idx.contains(ch))
+                chIdx = s2idx[ch];
+            else chIdx = s2idx[ch] = idx++;
+            if (s2idx.contains(pa))
+                paIdx = s2idx[pa];
+            else paIdx = s2idx[pa] = idx++;
+            tree2[paIdx].emplace_back(chIdx);
+            tree2[chIdx].emplace_back(paIdx);
+            continue;
+        }
+        buffer += c;
+    }
+    ll root2;
+    if (s2idx.contains(st.top()))
+        root2 = s2idx[st.top()];
+    else root2 = s2idx[st.top()] = idx++;
+
+    TreeIsomorphism ti(tree1, root1, tree2, root2);
+    cout << (ti.isTreeIsomorphic() ? "Yes" : "No");
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test = 1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
