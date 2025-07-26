@@ -1,0 +1,119 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+
+    while (1) {
+        ll n;
+        cin>>n;
+        vvl a(5,vl(n,0));
+        if (!n) break;
+        for (ll i=n-1;i>=0;--i) {
+            for (ll j=0;j<5;j++) {
+                cin>>a[j][i];
+            }
+        }
+
+        ll sum=0;
+        while (1) {
+            // cout<<"debug:"<<'\n';
+            // for (ll i=0;i<5;i++) {
+            //     for (ll j=0;j<n;j++) {
+            //         cout<<a[i][j]<<' ';
+            //     }
+            //     cout<<endl;
+            // }
+            // cout<<"-----"<<'\n';
+
+
+            vvl mask(5,vl(n,0));
+
+            ll realflag=0;
+            for (ll i=0;i<n;i++) {
+                ll flag=0;
+                if (a[0][i]!=0 && a[0][i]==a[1][i]&&a[1][i]==a[2][i]&&a[2][i]==a[3][i]&&a[3][i]==a[4][i]) {
+                    mask[0][i]=mask[1][i]=mask[2][i]=mask[3][i]=mask[4][i] = 1;
+                    flag=1;realflag=1;
+                    sum+=a[0][i]*5;
+                }
+                for (ll j=0;j<2;j++) {
+                    if (!flag&&a[j][i]!=0 && a[j][i]==a[j+1][i]&&a[j+1][i]==a[j+2][i]&&a[j+2][i]==a[j+3][i]) {
+                        mask[j][i]=mask[j+1][i]=mask[j+2][i]=mask[j+3][i]=1;
+                        flag=1;realflag=1;
+                        sum+=a[j][i]*4;
+                    }
+                }
+                for (ll j=0;j<3;j++) {
+                    if (!flag&&a[j][i]!=0 && a[j][i]==a[j+1][i]&&a[j+1][i]==a[j+2][i]) {
+                        mask[j][i]=mask[j+1][i]=mask[j+2][i]=1;
+                        flag=1;realflag=1;
+                        sum+=a[j][i]*3;
+                    }
+                }
+
+
+            }
+            if (realflag==0) break;
+
+            vvl b(5,vl(n,0));
+            for (ll i=0;i<5;i++) {
+                ll cnt=0;
+                for (ll j=0;j<n;j++) {
+                    if (mask[i][j]==0) {
+                        b[i][cnt++]=a[i][j];
+                    }
+                }
+            }
+            a=b;
+
+
+        }
+        cout<<sum<<'\n';
+
+    }
+
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test = 1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
