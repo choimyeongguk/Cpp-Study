@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(string str) {
+    ll i, j, k;
+    vector<string> ans;
+
+    function<void(string,char)> back_track = [&](string s, char c) {
+        if (c == 'a') {
+            ans.emplace_back(s);
+            return;
+        }
+
+        char prev = c-1;
+        // c가 있는 경우
+
+        for (ll i=0; i<s.size(); i++) {
+            if (s[i] == prev) {
+                s[i]++;
+                back_track(s, prev);
+                s[i]--;
+                // break;
+            }
+            if (s[i] == c)
+                break;
+        }
+
+        // c가 없는 경우
+        bool flag = true;
+        for (ll i=0; i<s.size(); i++) {
+            if (s[i] == c) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag)
+            back_track(s, prev);
+    };
+    back_track(str, 'z');
+    sort(ans.begin(), ans.end());
+    cout << ans.size() << "\n";
+    if (ans.size() <= 10) {
+        for (auto& s : ans)
+            cout << s << "\n";
+    }
+    else {
+        for (i=0; i<5; i++)
+            cout << ans[i] << "\n";
+        for (i=ans.size()-5; i<=ans.size()-1; i++)
+            cout << ans[i] << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    while (true) {
+        string str; cin >> str;
+        if (str == "#") break;
+        solve(str);
+    }
+    return 0;
+}
