@@ -1,0 +1,261 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+vector<vector<string>> seg(17);
+
+ll get_seg(string s) {
+    if (s=="1110111") return 0;
+    if (s=="0100100") return 1;
+    if (s=="1011101") return 2;
+    if (s=="1101101") return 3;
+    if (s=="0101110") return 4;
+    if (s=="1101011") return 5;
+    if (s=="1111011") return 6;
+    if (s=="0100101") return 7;
+    if (s=="1111111") return 8;
+    if (s=="1101111") return 9;
+    if (s=="0111111") return 10;
+    if (s=="1111010") return 11;
+    if (s=="1010011") return 12;
+    if (s=="1111100") return 13;
+    if (s=="1011011") return 14;
+    if (s=="0011011") return 15;
+    return 16;
+}
+
+void preprocess() {
+    ll i, j, k;
+    seg[0] = vector<string> {
+        "XXX",
+        "X X",
+        "X X",
+        "   ",
+        "X X",
+        "X X",
+        "XXX",
+    };
+    seg[1] = vector<string> {
+        "   ",
+        "  X",
+        "  X",
+        "   ",
+        "  X",
+        "  X",
+        "   ",
+    };
+    seg[2] = vector<string> {
+        "XXX",
+        "  X",
+        "  X",
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+    };
+    seg[3] = vector<string> {
+        "XXX",
+        "  X",
+        "  X",
+        "XXX",
+        "  X",
+        "  X",
+        "XXX",
+    };
+    seg[4] = vector<string> {
+        "   ",
+        "X X",
+        "X X",
+        "XXX",
+        "  X",
+        "  X",
+        "   ",
+    };
+    seg[5] = vector<string> {
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+        "  X",
+        "  X",
+        "XXX",
+    };
+    seg[6] = vector<string> {
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+    };
+    seg[7] = vector<string> {
+        "XXX",
+        "  X",
+        "  X",
+        "   ",
+        "  X",
+        "  X",
+        "   ",
+    };
+    seg[8] = vector<string> {
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+    };
+    seg[9] = vector<string> {
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+        "  X",
+        "  X",
+        "XXX",
+    };
+    seg[10] = vector<string> {
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+        "X X",
+        "X X",
+        "   ",
+    };
+    seg[11] = vector<string> {
+        "   ",
+        "X  ",
+        "X  ",
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+    };
+    seg[12] = vector<string> {
+        "XXX",
+        "X  ",
+        "X  ",
+        "   ",
+        "X  ",
+        "X  ",
+        "XXX",
+    };
+    seg[13] = vector<string> {
+        "   ",
+        "  X",
+        "  X",
+        "XXX",
+        "X X",
+        "X X",
+        "XXX",
+    };
+    seg[14] = vector<string> {
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+    };
+    seg[15] = vector<string> {
+        "XXX",
+        "X  ",
+        "X  ",
+        "XXX",
+        "X  ",
+        "X  ",
+        "   ",
+    };
+    seg[16] = vector<string> {
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+    };
+}
+
+void solve(ll test) {
+    ll i, j, k;
+    ll f; cin>>f;
+    string s; cin>>s;
+    ll n = s.size();
+    s = string((7-(n%7))%7, '0')+s;
+    i=0;
+    vvl ans(1);
+    ll cnt=0;
+    while (i<s.size()) {
+        if (5*f*cnt+3*f>80) {
+            ans.push_back(vl());
+            cnt=0;
+        }
+        ll t = get_seg(s.substr(i, 7));
+        ans.back().push_back(t);
+        i+=7;
+        cnt++;
+    }
+    // cout<<ans.size()<<endl;
+    // cout<<ans[0].size()<<endl;
+    for (i=0;i<ans.size();i++) {
+        for (k=0;k<7;k++) {
+            for (ll kk=0;kk<f;kk++) {
+                for (j=0;j<ans[i].size();j++) {
+                    for (ll ii=0;ii<3;ii++) {
+                        for (ll jj=0;jj<f;jj++) {
+                            cout<<seg[ans[i][j]][k][ii];
+                        }
+                    }
+                    if (j!=ans[i].size()-1)
+                        for (ll ii=0;ii<f;ii++) cout<<"  ";
+                }
+                cout<<'\n';
+            }
+        }
+        for (k=0;k<f;k++) cout<<'\n';
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test = 1; test <= t; test++) {
+        solve(test);
+    }
+    return 0;
+}
