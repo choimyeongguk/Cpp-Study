@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+// using ld = __float128;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+// istream &operator>>(istream &is, ld &x) {
+//     long double t; is>>t;
+//     x=t;
+//     return is;
+// }
+
+ld pow(ld x, ll n) {
+    ld ret=1;
+    while (n--) ret*=x;
+    return ret;
+}
+
+constexpr ld eps = 1e-8;
+void solve(ll test) {
+    ll i, j, k;
+    ld p; cin>>p;
+
+    ld min_val=1;
+    ll ans=1;
+    for (ll n=2;n<=16;n++) {
+        ld P = pow(1-p, n);
+        ld ET_n = P/n + (1-P);
+        if (ET_n + eps < min_val) {
+            min_val = ET_n;
+            ans = n;
+        }
+        // cout<<n<<": "<<ET_n<<'\n';
+    }
+    cout<<ans<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test = 1; test <= t; test++) {
+        solve(test);
+    }
+    return 0;
+}
