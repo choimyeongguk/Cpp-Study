@@ -34,6 +34,8 @@ void preprocess() {
     ll i, j, k;
 }
 
+ll N;
+
 struct Face {
     ll corner[4];
     string edge[4];
@@ -60,7 +62,7 @@ struct Face {
     }
     bool good(ll x, const Face& o, ll y) const {
         for (ll i=0; i<edge[x].size(); i++) {
-            if (edge[x][i] == o.edge[y][edge[x].size() - 1 - i]) {
+            if (edge[x][i] == o.edge[y][N - 3 - i]) {
                 return false;
             }
         }
@@ -71,7 +73,7 @@ struct Face {
 void solve(ll test) {
     ll i, j, k;
     while (true) {
-        ll N; cin >> N;
+        cin >> N;
         if (!N) break;
         vector<vector<char>> input(N, vector<char>(N));
         vector<Face> face(6);
