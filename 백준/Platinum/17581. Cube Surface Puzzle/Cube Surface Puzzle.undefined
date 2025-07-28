@@ -102,104 +102,56 @@ void solve(ll test) {
                 used[i] = true;     // face[i]를 일단 사용해본다
                 // 현재 상태에서 돌려 봄
                 Face& candi = face[i];
-                for (ll j=0; j<4; j++) {
-                    ll c1, c2, c3, c4;
-                    switch (cur) {
-                        case 'F':
-                            if (ans[0].good(2, candi, 0)) {
-                                ans[1] = candi;
-                                if (back_track('R')) return true;
-                            }
-                            break;
-                        case 'R':
-                            c1 = ans[0].corner[2] + ans[1].corner[1] + candi.corner[0];
-                            if (ans[0].good(1, candi, 0) && ans[1].good(1, candi, 3)
-                                && c1==1) {
-                                ans[2] = candi;
-                                if (back_track('B')) return true;
-                            }
-                            break;
-                        case 'B':
-                            c1 = ans[0].corner[1] + ans[2].corner[1] + candi.corner[0];
-                            if (ans[0].good(0, candi, 0) && ans[2].good(1, candi, 3)
-                                && c1==1) {
-                                ans[3] = candi;
-                                if (back_track('L')) return true;
-                            }
-                            break;
-                        case 'L':
-                            c1 = ans[0].corner[0] + ans[3].corner[1] + candi.corner[0];
-                            c2 = ans[0].corner[3] + ans[1].corner[0] + candi.corner[1];
-                            if (ans[0].good(3, candi, 0) && ans[1].good(3, candi, 1) && ans[3].good(1, candi, 3)
-                                && c1==1 && c2==1) {
-                                ans[4] = candi;
-                                if (back_track('D')) return true;
-                            }
-                            break;
-                        case 'D':
-                            c1 = ans[1].corner[3] + ans[4].corner[2] + candi.corner[0];
-                            c2 = ans[1].corner[2] + ans[2].corner[3] + candi.corner[1];
-                            c3 = ans[2].corner[2] + ans[3].corner[3] + candi.corner[2];
-                            c4 = ans[3].corner[2] + ans[4].corner[3] + candi.corner[3];
-                            if (ans[1].good(2, candi, 0) && ans[2].good(2, candi, 1) && ans[3].good(2, candi, 2) && ans[4].good(2, candi, 3)
-                                && c1==1 && c2==1 && c3==1 && c4==1) {
-                                return true;
-                            }
-                            break;
+                for (ll k=0; k<2; k++) {
+                    for (ll j=0; j<4; j++) {
+                        ll c1, c2, c3, c4;
+                        switch (cur) {
+                            case 'F':
+                                if (ans[0].good(2, candi, 0)) {
+                                    ans[1] = candi;
+                                    if (back_track('R')) return true;
+                                }
+                                break;
+                            case 'R':
+                                c1 = ans[0].corner[2] + ans[1].corner[1] + candi.corner[0];
+                                if (ans[0].good(1, candi, 0) && ans[1].good(1, candi, 3)
+                                    && c1==1) {
+                                    ans[2] = candi;
+                                    if (back_track('B')) return true;
+                                }
+                                break;
+                            case 'B':
+                                c1 = ans[0].corner[1] + ans[2].corner[1] + candi.corner[0];
+                                if (ans[0].good(0, candi, 0) && ans[2].good(1, candi, 3)
+                                    && c1==1) {
+                                    ans[3] = candi;
+                                    if (back_track('L')) return true;
+                                }
+                                break;
+                            case 'L':
+                                c1 = ans[0].corner[0] + ans[3].corner[1] + candi.corner[0];
+                                c2 = ans[0].corner[3] + ans[1].corner[0] + candi.corner[1];
+                                if (ans[0].good(3, candi, 0) && ans[1].good(3, candi, 1) && ans[3].good(1, candi, 3)
+                                    && c1==1 && c2==1) {
+                                    ans[4] = candi;
+                                    if (back_track('D')) return true;
+                                }
+                                break;
+                            case 'D':
+                                c1 = ans[1].corner[3] + ans[4].corner[2] + candi.corner[0];
+                                c2 = ans[1].corner[2] + ans[2].corner[3] + candi.corner[1];
+                                c3 = ans[2].corner[2] + ans[3].corner[3] + candi.corner[2];
+                                c4 = ans[3].corner[2] + ans[4].corner[3] + candi.corner[3];
+                                if (ans[1].good(2, candi, 0) && ans[2].good(2, candi, 1) && ans[3].good(2, candi, 2) && ans[4].good(2, candi, 3)
+                                    && c1==1 && c2==1 && c3==1 && c4==1) {
+                                    return true;
+                                }
+                                break;
+                        }
+                        candi.rotate();
                     }
-                    candi.rotate();
+                    candi.flip();
                 }
-                // 뒤집어서 돌려봄
-                candi = face[i];
-                candi.flip();
-                for (ll j=0; j<4; j++) {
-                    ll c1, c2, c3, c4;
-                    switch (cur) {
-                        case 'F':
-                            if (ans[0].good(2, candi, 0)) {
-                                ans[1] = candi;
-                                if (back_track('R')) return true;
-                            }
-                            break;
-                        case 'R':
-                            c1 = ans[0].corner[2] + ans[1].corner[1] + candi.corner[0];
-                            if (ans[0].good(1, candi, 0) && ans[1].good(1, candi, 3)
-                                && c1==1) {
-                                ans[2] = candi;
-                                if (back_track('B')) return true;
-                            }
-                            break;
-                        case 'B':
-                            c1 = ans[0].corner[1] + ans[2].corner[1] + candi.corner[0];
-                            if (ans[0].good(0, candi, 0) && ans[2].good(1, candi, 3)
-                                && c1==1) {
-                                ans[3] = candi;
-                                if (back_track('L')) return true;
-                            }
-                            break;
-                        case 'L':
-                            c1 = ans[0].corner[0] + ans[3].corner[1] + candi.corner[0];
-                            c2 = ans[0].corner[3] + ans[1].corner[0] + candi.corner[1];
-                            if (ans[0].good(3, candi, 0) && ans[1].good(3, candi, 1) && ans[3].good(1, candi, 3)
-                                && c1==1 && c2==1) {
-                                ans[4] = candi;
-                                if (back_track('D')) return true;
-                            }
-                            break;
-                        case 'D':
-                            c1 = ans[1].corner[3] + ans[4].corner[2] + candi.corner[0];
-                            c2 = ans[1].corner[2] + ans[2].corner[3] + candi.corner[1];
-                            c3 = ans[2].corner[2] + ans[3].corner[3] + candi.corner[2];
-                            c4 = ans[3].corner[2] + ans[4].corner[3] + candi.corner[3];
-                            if (ans[1].good(2, candi, 0) && ans[2].good(2, candi, 1) && ans[3].good(2, candi, 2) && ans[4].good(2, candi, 3)
-                                && c1==1 && c2==1 && c3==1 && c4==1) {
-                                return true;
-                            }
-                            break;
-                    }
-                    candi.rotate();
-                }
-
                 used[i] = false;
             }
             return false;
