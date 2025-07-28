@@ -101,7 +101,7 @@ void solve(ll test) {
                 if (used[i]) continue;
                 used[i] = true;     // face[i]를 일단 사용해본다
                 // 현재 상태에서 돌려 봄
-                Face candi = face[i];
+                Face& candi = face[i];
                 for (ll j=0; j<4; j++) {
                     ll c1, c2, c3, c4;
                     switch (cur) {

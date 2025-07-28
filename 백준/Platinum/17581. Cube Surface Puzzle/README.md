@@ -1,18 +1,18 @@
-# [Platinum V] Cube Surface Puzzle - 17581 
+# [Platinum IV] Cube Surface Puzzle - 17581 
 
 [문제 링크](https://www.acmicpc.net/problem/17581) 
 
 ### 성능 요약
 
-메모리: 2132 KB, 시간: 16 ms
+메모리: 2128 KB, 시간: 12 ms
 
 ### 분류
 
-비트마스킹, 브루트포스 알고리즘, 구현, 시뮬레이션
+구현, 브루트포스 알고리즘, 시뮬레이션, 비트마스킹
 
 ### 제출 일자
 
-2025년 7월 28일 14:27:49
+2025년 7월 28일 14:29:34
 
 ### 문제 설명
 
