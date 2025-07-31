@@ -60,16 +60,14 @@ struct DSU {
         ll newHeavy = _find(heavy);
         ll distL = dist[light], distH = dist[heavy];
         if (newLight == newHeavy) return;
-        if (sz[newLight] >= sz[newHeavy]) {
-            pa[newHeavy] = newLight;
-            dist[newHeavy] = cost - distH + distL;
-            sz[newLight] += sz[newHeavy];
+        ll sign = 1;
+        if (sz[newLight] < sz[newHeavy]) {
+            swap(newLight, newHeavy);
+            sign = -1;
         }
-        else {
-            pa[newLight] = newHeavy;
-            dist[newLight] = -cost + distH - distL;
-            sz[newHeavy] += sz[newLight];
-        }
+        pa[newHeavy] = newLight;
+        dist[newHeavy] = (cost - distH + distL) * sign;
+        sz[newLight] += sz[newHeavy];
     }
 };
 
