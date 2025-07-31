@@ -1,0 +1,150 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+// Usage: LCA lca(V,tree); ll anc = lca.solve(u,v);
+// O(logV)
+// memo : 0-indexed
+
+struct LCA {
+    ll MAXLN;
+    vl depth; vvl anc, minDist, maxDist;
+
+    LCA(ll n, vector<vector<pll>>& tree) {
+        ll root = 0;
+        depth.assign(n,0);
+        MAXLN=1;
+        while ((1<<MAXLN)<=n) ++MAXLN;
+        anc.assign(MAXLN,vl(n));
+        minDist.assign(MAXLN, vl(n, 1e10));
+        maxDist.assign(MAXLN, vl(n, -1e10));
+
+        function<void(ll,ll)> dfs4lca = [&](ll node,ll parent) {
+            for (auto& [next,cost]: tree[node]) {
+                if (next==parent) continue;
+                depth[next]=depth[node]+1;
+                minDist[0][next] = cost;
+                maxDist[0][next] = cost;
+                anc[0][next]=node;
+                dfs4lca(next, node);
+            }
+        };
+
+        dfs4lca(root,-1);
+        anc[0][root]=root;
+        for (ll i=1;i<MAXLN;++i)
+            for (ll j=0;j<n;++j) {
+                anc[i][j] = anc[i-1][anc[i-1][j]];
+                minDist[i][j] = min(minDist[i-1][j], minDist[i-1][anc[i-1][j]]);
+                maxDist[i][j] = max(maxDist[i-1][j], maxDist[i-1][anc[i-1][j]]);
+            }
+        // anc[i][j] = k := j의 2^i번째 조상은 k
+    }
+
+    pll solve(ll u, ll v){
+        ll n1 = u, n2 = v;
+        if (depth[u]<depth[v]) swap(u, v);
+        if (depth[u]>depth[v]) {
+            for (ll i=MAXLN-1;i>=0;--i)
+                if (depth[u]-(1<<i) >= depth[v])
+                    u=anc[i][u];
+        }
+        ll root, minD = 1e10, maxD = -1e10;
+        if (u==v) {
+            root = u;
+        }
+        else {
+            for (ll i=MAXLN-1;i>=0;--i) {
+                if (anc[i][u]!=anc[i][v]) {
+                    u=anc[i][u];
+                    v=anc[i][v];
+                }
+            }
+            root = anc[0][u];
+        }
+
+        for (ll i=MAXLN-1; i>=0; --i) {
+            if (depth[anc[i][n1]] >= depth[root]) {
+                minD = min(minD, minDist[i][n1]);
+                maxD = max(maxD, maxDist[i][n1]);
+                n1 = anc[i][n1];
+            }
+        }
+        for (ll i=MAXLN-1; i>=0; --i) {
+            if (depth[anc[i][n2]] >= depth[root]) {
+                minD = min(minD, minDist[i][n2]);
+                maxD = max(maxD, maxDist[i][n2]);
+                n2 = anc[i][n2];
+            }
+        }
+
+        return {minD, maxD};
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vector<vector<pll>> G(N);
+    ll a, b, c;
+    for (i=1; i<N; i++) {
+        cin >> a >> b >> c;
+        a--, b--;
+        G[a].emplace_back(b, c);
+        G[b].emplace_back(a, c);
+    }
+    LCA lca(N, G);
+    ll Q; cin >> Q;
+    ll d, e;
+    while (Q--) {
+        cin >> d >> e;
+        d--, e--;
+        pll ans = lca.solve(d, e);
+        cout << ans.first << " " << ans.second << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
