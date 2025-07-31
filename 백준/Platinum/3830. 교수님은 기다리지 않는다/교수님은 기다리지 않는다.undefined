@@ -51,10 +51,6 @@ struct DSU {
         dist[x] += dist[pa[x]];
         return pa[x] = newPa;
     }
-    ll _getDist(ll x) {
-        _find(x);
-        return dist[x];
-    }
     void _union(ll light,ll heavy, ll cost) {
         ll newLight = _find(light);
         ll newHeavy = _find(heavy);
@@ -88,7 +84,7 @@ void solve(ll testcase){
                 case '?':
                     if (dsu._find(a) != dsu._find(b))
                         cout << "UNKNOWN\n";
-                    else cout << dsu._getDist(b) - dsu._getDist(a) << "\n";
+                    else cout << dsu.dist[b] - dsu.dist[a] << "\n";
                     break;
             }
         }
