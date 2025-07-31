@@ -37,12 +37,12 @@ void preprocess() {
 }
 
 struct DSU {
-    vl pa, dist;
+    vl pa, dist, sz;
     // pa[x] = y := x의 부모는 y
     // pa[x] = z := x는 부모보다 z만큼 무겁다
 
     DSU(ll n)
-        : pa(n+1), dist(n+1, 0) {
+        : pa(n+1), dist(n+1, 0), sz(n+1, 1) {
         iota(pa.begin(),pa.end(),0);
     }
     ll _find(ll x) {
@@ -59,11 +59,17 @@ struct DSU {
         ll newLight = _find(light);
         ll newHeavy = _find(heavy);
         ll distL = dist[light], distH = dist[heavy];
-        light = newLight;
-        heavy = newHeavy;
-        if (light == heavy) return;
-        pa[heavy] = light;
-        dist[heavy] = cost - distH + distL;
+        if (newLight == newHeavy) return;
+        if (sz[newLight] >= sz[newHeavy]) {
+            pa[newHeavy] = newLight;
+            dist[newHeavy] = cost - distH + distL;
+            sz[newLight] += sz[newHeavy];
+        }
+        else {
+            pa[newLight] = newHeavy;
+            dist[newLight] = -cost + distH - distL;
+            sz[newHeavy] += sz[newLight];
+        }
     }
 };
 
