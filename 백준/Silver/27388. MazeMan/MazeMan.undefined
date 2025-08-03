@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+vvl check(200,vl(200,0));
+ll n,m;
+vl dx={0,0,1,-1},dy={1,-1,0,0};
+
+ll safe(ll x,ll y) {
+    return x>=0&&x<n&&y>=0&&y<m;
+}
+
+void dfs(ll x,ll y,vector<vector<char>>& a,vvl& visited,ll& cnt) {
+    visited[x][y]=1;
+    if (a[x][y]=='.' && check[x][y]==0) {
+        check[x][y]=1;
+        cnt++;
+    }
+    for (ll i=0;i<4;i++) {
+        ll nx,ny;
+        nx=x+dx[i];
+        ny=y+dy[i];
+        if (safe(nx,ny) && a[nx][ny]!='X' && visited[nx][ny]==0) {
+            if ('A'<=a[nx][ny] && a[nx][ny]<='W') continue;
+            dfs(nx,ny,a,visited,cnt);
+        }
+    }
+}
+
+void solve() {
+    cin>>n>>m;
+    cin.ignore();
+    vector<vector<char>> a(n+1,vector<char>(m+1));
+    for (ll i=0;i<n;i++) {
+        string s;
+        getline(cin, s);
+        for (ll j=0;j<m;j++) {
+            a[i][j]=s[j];
+        }
+    }
+    ll tot=0;
+    for (ll i=0;i<n;i++) {
+        for (ll j=0;j<m;j++) {
+            //cout<<a[i][j];
+            if (a[i][j]=='.') {
+                tot++;
+            }
+        }
+        //cout<<endl;
+    }
+    //cout<<"tot: "<<tot<<'\n';
+
+    ll sum=0;
+    ll ccnt=0;
+    for (ll i=0;i<n;i++) {
+        for (ll j=0;j<m;j++) {
+            if ('A'<=a[i][j] && a[i][j]<='W') {
+                ll cnt=0;
+                vvl visited(n+10,vl(m+10,0));
+
+                //cout<<i<<" "<<j<<'\n';
+
+                dfs(i,j,a,visited,cnt);
+
+                sum+=cnt;
+                if (cnt) ccnt++;
+            }
+        }
+    }
+    cout<<ccnt<<' '<<tot-sum;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=t; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
