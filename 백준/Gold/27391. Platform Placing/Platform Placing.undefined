@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -37,15 +37,18 @@ void preprocess() {
 void solve() {
     ll i, j, k;
     ll N, MIN, MAX; cin >> N >> MIN >> MAX;
-    vl arr(N); for (auto& e : arr) cin >> e;
-    for (auto& e : arr) e *= 2;  // 계산 편의 위해 2 곱해줌
+    vl arr(N);
+    for (auto& e : arr) {
+        cin >> e;
+        e <<= 1;    // 계산 편의 위해 2 곱해줌
+    }
     // MIN, MAX는 그대로 두면 MIN, MAX는 팔 길이가 됨
     sort(arr.begin(), arr.end());
-    arr.emplace_back(1e15);
+    arr.emplace_back(1e9+1e5+1);
 
-    ll ans = 0, prev = -1e15;
+    ll ans = 0, prev = -1e6, l;
     for (i=0; i<N; i++) {
-        ll l = min({    // 팔 길이(전체 구간/2)
+        l = min({    // 팔 길이(전체 구간/2)
             MAX,
             arr[i] - prev,
             arr[i+1]-MIN-arr[i]
