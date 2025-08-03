@@ -1,0 +1,71 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = int;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll N, MIN, MAX; cin >> N >> MIN >> MAX;
+    ll arr[N+1];
+    for (i=0; i<N; i++) {
+        cin >> arr[i];
+        arr[i] <<= 1;
+    }
+    // MIN, MAX는 그대로 두면 MIN, MAX는 팔 길이가 됨
+    arr[N] = 1e9+1e5+1;
+    sort(arr, arr+N+1);;
+
+    ll ans = 0, prev = -1e6, l;
+    for (i=0; i<N; i++) {
+        l = min(MAX, min(arr[i]-prev, arr[i+1]-MIN-arr[i]));
+        if (l < MIN) {
+            cout << -1;
+            return;
+        }
+        ans += l;
+        prev = arr[i] + l;
+    }
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=t; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
