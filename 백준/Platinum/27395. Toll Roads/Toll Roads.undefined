@@ -1,0 +1,180 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct LCA {
+    ll MAXLN;
+    vl depth; vvl anc;
+
+    LCA(ll n, vvl& tree, ll rt) {
+        ll root = rt;
+        depth.assign(n, 0);
+        MAXLN = 1;
+        while ((1<<MAXLN)<=n) ++MAXLN;
+        anc.assign(MAXLN, vl(n));
+
+        function<void(ll,ll)> dfs4lca = [&](ll node, ll parent) {
+            for (ll next: tree[node]) {
+                if (next==parent) continue;
+                depth[next] = depth[node] + 1;
+                anc[0][next] = node;
+                dfs4lca(next, node);
+            }
+        };
+
+        dfs4lca(root, -1);
+        anc[0][root] = root;
+        for (ll i=1; i<MAXLN; i++) {
+            for (ll j=0; j<n; j++) {
+                anc[i][j] = anc[i-1][anc[i-1][j]];
+            }
+        }
+    }
+
+    ll solve(ll u, ll v) {
+        if (depth[u]<depth[v]) swap(u, v);
+        if (depth[u]>depth[v]) {
+            for (ll i=MAXLN-1; i>=0; i--) {
+                if (depth[u]-(1<<i) >= depth[v])
+                    u = anc[i][u];
+            }
+        }
+        if (u==v) return u;
+        for (ll i=MAXLN-1; i>=0; i--) {
+            if (anc[i][u] != anc[i][v]) {
+                u = anc[i][u];
+                v = anc[i][v];
+            }
+        }
+        return anc[0][u];
+    }
+};
+
+struct DSU {
+    vl par;
+    DSU(ll n) {
+        par.resize(n+1);
+        // sz.assign(n+1, 1);
+        iota(par.begin(), par.end(), 0);
+    }
+    ll _find(ll x) {
+        if (par[x]==x) return x;
+        return par[x] = _find(par[x]);
+    }
+    void _union(ll x, ll y) {   // 부모, 자식
+        x = _find(x);
+        y = _find(y);
+        if (x==y) return;
+        // if (sz[x]<sz[y]) swap(x, y);
+        par[y] = x;
+        // sz[x] += sz[y];
+    }
+};
+
+using Node = pair<ll,pll>;
+
+void solve() {
+    ll i, j, k;
+    // 입력
+    ll N, M, Q; cin >> N >> M >> Q;
+    vector<Node> edge(M);
+    ll u, v, t;
+    for (i=0; i<M; i++) {
+        cin >> u >> v >> t;
+        edge[i] = {t, {u-1, v-1}};
+    }
+
+    // kruskal
+    ll idx = N; // 새롭게 생성될 부모 노트의 인덱스
+    ll root = -1;
+    DSU dsu((N<<1)+1);
+    vl W((N<<1)+1, -1);
+    vvl tree((N<<1)+1);
+
+    sort(edge.begin(), edge.end());
+    for (i=0; i<M; i++) {
+        auto [cost, p1] = edge[i];
+        auto& [a, b] = p1;
+        // cout << a << ", " << b << " 노드 보고 있음!!\n";
+        a = dsu._find(a), b = dsu._find(b);
+        // cout << a << ", " << b << " 로 변함!!\n";
+        if (a==b) continue;
+        dsu._union(idx, b);
+        dsu._union(idx, a);
+        tree[idx].emplace_back(a);
+        tree[idx].emplace_back(b);
+        W[idx] = cost;
+        root = idx;
+        idx++;
+    }
+
+    LCA lca((N<<1)+1, tree, root);
+    vl sz((N<<1)+1, 0);
+    function<void(ll)> getSz = [&](ll node) {
+        if (node < N) {
+            sz[node] = 1;
+            return;
+        }
+        for (auto& ch : tree[node]) {
+            getSz(ch);
+            sz[node] += sz[ch];
+        }
+    };
+    getSz(root);
+
+    const vvl& anc = lca.anc;
+    ll a, b;
+    while (Q--) {
+        cin >> a >> b;
+        ll ans = lca.solve(a-1, b-1);
+        for (i=lca.MAXLN-1; i>=0; i--) {
+            if (W[anc[i][ans]] == W[ans]) {
+                ans = anc[i][ans];
+            }
+        }
+        cout << W[ans] << " " << sz[ans] << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=t; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
