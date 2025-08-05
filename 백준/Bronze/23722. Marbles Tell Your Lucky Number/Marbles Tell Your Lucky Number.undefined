@@ -1,6 +1,6 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #pragma warning(disable:4996)
-#pragma comment(linker, "/STACK:336777216")
+#pragma comment(linker,"/STACK:336777216")
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
@@ -8,31 +8,9 @@ using ll = long long;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
-typedef unsigned long long ull;
-typedef __float128 LD;
-typedef __int128_t LL;
-typedef __uint128_t ULL;
-typedef pair<ll, ll> pii;
-typedef vector<ll> vi;
-typedef vector<ll> vl;
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/pb_ds/detail/standard_policies.hpp>
-using namespace __gnu_pbds;
-template<typename T> using ordered_set
-    = tree<T, null_type, less<>, rb_tree_tag,
-        tree_order_statistics_node_update>;
-template<typename T> using ordered_multiset
-    = tree<T, null_type, less_equal<>, rb_tree_tag,
-        tree_order_statistics_node_update>;
-#define pb(x) push_back(x)
-#define all(x) (x).begin(), (x).end()
-#define rep(i,a,b) for (auto i = (a); i < (b); i++)
-#define each(x, a) for (auto& x: a)
-
-#define debug if constexpr (!ndebug) cout << "[DEBUG] "
-#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
-#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
 
 #ifdef ONLINE_JUDGE
 constexpr bool ndebug = true;
@@ -40,14 +18,8 @@ constexpr bool ndebug = true;
 constexpr bool ndebug = false;
 #endif
 
-ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
-ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
-ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
-pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
-ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
-
 void setup() {
-    if(!ndebug) {
+    if (!ndebug) {
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
     }
@@ -60,37 +32,33 @@ void setup() {
 
 void preprocess() {
     ll i, j, k;
-
 }
 
-void solve(ll testcase){
+void solve() {
     ll i, j, k;
+    vl arr(4);
     while (true) {
-        vl a(4);
-        ll nonEmpty = 0;
-        for (auto& e : a) {
-            cin >> e;
-            if (e) ++nonEmpty;
-        }
-        if (a[0]==a[1] && a[1]==a[2] && a[2]==a[3] && a[3]==0) break;
-        while (nonEmpty!=1) {
-            ll idx = -1, min = 1e10;
-            for (i=0; i<4; i++) {
-                if (a[i] && a[i]<min) {
-                    idx = i, min = a[i];
-                }
+        cin>>arr[0];
+        cin>>arr[1];
+        cin>>arr[2];
+        cin>>arr[3];
+        if (*max_element(arr.begin(), arr.end())==0) break;
+        while (true) {
+            ll min_val = 1e10;
+            for (auto x: arr) {
+                if (!x) continue;
+                min_val = min(min_val, x);
             }
-            for (i=0; i<4; i++) {
-                if (a[i] && i!=idx) {
-                    a[i] -= min;
-                    if (!a[i]) --nonEmpty;
-                }
+            if (arr[0]+arr[1]+arr[2]+arr[3] == min_val) break;
+            for (i=0;i<4;i++) {
+                if (arr[i]==min_val) break;
             }
-            // cout << nonEmpty << ", ";
-            // for (auto& e : a) cout << e << " ";
-            // cout << "\n";
+            for (j=0;j<4;j++) {
+                if (arr[j]==0 || j==i) continue;
+                arr[j] -= min_val;
+            }
         }
-        cout << max({a[0], a[1], a[2], a[3]}) << "\n";
+        cout<<*max_element(arr.begin(), arr.end())<<'\n';
     }
 }
 
@@ -99,8 +67,8 @@ int main() {
     preprocess();
     ll t = 1;
     // cin >> t;
-    for (ll testcase = 1; testcase <= t; testcase++){
-        solve(testcase);
+    for (ll test=1; test<=t; test++) {
+        solve();
     }
     return 0;
 }
