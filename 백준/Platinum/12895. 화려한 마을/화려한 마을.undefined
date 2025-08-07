@@ -1,0 +1,119 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct LazySeg {
+    ll n;
+    vector<bitset<30>> tree, lazy;
+    LazySeg(ll n): n(n), tree(n<<2, 0), lazy(n<<2, 0) {
+        segInit(1, 0, n-1);
+    }
+    void segInit(ll i, ll s, ll e) {
+        tree[i] = 1;
+        if (s==e) return;
+        ll m = (s+e)>>1;
+        segInit(i<<1, s, m);
+        segInit(i<<1|1, m+1, e);
+    }
+    void push(ll i, ll s, ll e) {
+        if (lazy[i] == 0) return;
+        if (s < e) {
+            tree[i<<1] = lazy[i<<1] = lazy[i];
+            tree[i<<1|1] = lazy[i<<1|1] = lazy[i];
+        }
+        lazy[i] = 0;
+    }
+    void segUpdate(ll i, ll s, ll e, ll l, ll r, ll c) {
+        if (s>r || e<l) return;
+        if (l<=s && e<=r) {
+            tree[i] = 1<<c;
+            lazy[i] = 1<<c;
+            return;
+        }
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        segUpdate(i<<1, s, m, l, r, c);
+        segUpdate(i<<1|1, m+1, e, l, r, c);
+        tree[i] = tree[i<<1] | tree[i<<1|1];
+    }
+    void update(ll l, ll r, ll c) {
+        if (l>r) swap(l, r);
+        segUpdate(1, 0, n-1, l, r, c);
+    }
+    bitset<30> segQuery(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return 0;
+        if (l<=s && e<=r) return tree[i];
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        return segQuery(i<<1, s, m, l, r) | segQuery(i<<1|1, m+1, e, l, r);
+    }
+    ll query(ll l, ll r) {
+        if (l>r) swap(l, r);
+        return (ll)segQuery(1, 0, n-1, l, r).count();
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, T, Q; cin >> N >> T >> Q;
+    LazySeg tree(N);
+    char op; ll x, y, z;
+    while (Q--) {
+        cin >> op;
+        switch (op) {
+            case 'C':
+                cin >> x >> y >> z;
+                tree.update(x-1, y-1, z-1);
+                break;
+            case 'Q':
+                cin >> x >> y;
+                cout << tree.query(x-1, y-1) << "\n";
+                break;
+        }
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
