@@ -1,0 +1,126 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Node {
+    ll Li, Lv, Ri, Rv;
+};
+
+struct SegTree {
+    ll n; vector<Node> tree;
+    SegTree(ll n): n(n), tree(n<<2, {-1, -1, -1, -1}) {}
+    Node merge(Node& a, Node& b) {
+        if (a.Li == -1) return b;
+        if (b.Li == -1) return a;
+        return {a.Li, a.Lv, b.Ri, b.Rv};
+    }
+    void segUpdate(ll i, ll s, ll e, ll pos, ll val) {
+        if (s==e) {
+            tree[i] = {pos, val, pos, val};
+            return;
+        }
+        ll m = (s+e)>>1;
+        if (pos<=m) segUpdate(i<<1, s, m, pos, val);
+        else segUpdate(i<<1|1, m+1, e, pos, val);
+        tree[i] = merge(tree[i<<1], tree[i<<1|1]);
+    }
+    void update(ll pos, ll val) { segUpdate(1, 0, n-1, pos, val); }
+    Node segQuery(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return {-1, -1, -1, -1};
+        if (l<=s && e<=r) return tree[i];
+        ll m = (s+e)>>1;
+        Node L = segQuery(i<<1, s, m, l, r);
+        Node R = segQuery(i<<1|1, m+1, e, l, r);
+        return merge(L, R);
+    }
+    Node query(ll l, ll r) { return segQuery(1, 0, n-1, l, r); }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl arr(N); ll maxDepth = -1;
+    for (auto& e : arr) {
+        cin >> e;
+        maxDepth = max(maxDepth, e);
+    }
+    vvl depth(maxDepth + 1);
+    for (i=0; i<N; i++)
+        depth[arr[i]].emplace_back(i);
+    if (depth[0].size() != 1) {
+        cout << -1;
+        return;
+    }
+
+    vector<pll> edge;
+    SegTree tree(N);
+    tree.update(depth[0][0], 0);
+    for (i=1; i<=maxDepth; i++) {
+        // cout << "depth == " << i << " 인 경우: \n";
+        for (auto& e : depth[i]) {
+            Node L = tree.query(0, e);
+            Node R = tree.query(e, N-1);
+            ll Li, Lv, Ri, Rv;
+            if (L.Li == -1)      Li = R.Ri, Lv = R.Rv, Ri = R.Li, Rv = R.Lv;
+            else if (R.Li == -1) Li = L.Ri, Lv = L.Rv, Ri = L.Li, Rv = L.Lv;
+            else                 Li = L.Ri, Lv = L.Rv, Ri = R.Li, Rv = R.Lv;
+
+            // cout << e << "번 노드의  왼쪽 : " << Li << " " << Lv << "\n";
+            // cout << e << "번 노드의 오른쪽 : " << Ri << " " << Rv << "\n";
+
+            if (Lv == i-1)      edge.emplace_back(Li, e);
+            else if (Rv == i-1) edge.emplace_back(Ri, e);
+            else                { cout << -1; return; }
+        }
+        for (auto& e : depth[i])
+            tree.update(e, i);
+    }
+
+    for (auto& e : edge)
+        cout << e.first+1 << " " << e.second+1 << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
