@@ -1,0 +1,117 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Trie {
+    struct Node {
+        map<char,ll> nxt;
+        bool isEnd = false;
+    };
+
+    vector<Node> tree;
+
+    Trie() { tree.emplace_back(); }
+
+    void insert(const string& word) {
+        ll cur = 0; // 루트
+        for (auto& c : word) {
+            if (!tree[cur].nxt.contains(c)) {
+                tree[cur].nxt[c] = tree.size();
+                tree.emplace_back();
+            }
+            cur = tree[cur].nxt[c];
+        }
+        tree[cur].isEnd = true;
+    }
+
+    bool search(const string& word) {
+        ll cur = 0;
+        for (auto& c : word) {
+            if (!tree[cur].nxt.contains(c)) return false;
+            cur = tree[cur].nxt[c];
+        }
+        return tree[cur].isEnd;
+    }
+
+    // 해당 prefix로 시작하는 단어 존재 여부
+    bool startsWith(const string& prefix) {
+        ll cur = 0;
+        for (auto& c : prefix) {
+            if (!tree[cur].nxt.contains(c)) return false;
+            cur = tree[cur].nxt[c];
+        }
+        return true;
+    }
+
+    ll solve(const string& word) {
+        ll ret = 0, cur = 0;
+        for (ll i=0; i<word.size(); i++) {
+            if (i==0 || tree[cur].isEnd || tree[cur].nxt.size()!=1) ret++;
+            cur = tree[cur].nxt[word[i]];
+        }
+        return ret;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    while (true) {
+        ll N; if (!(cin >> N)) break;
+        Trie trie;
+        vector<string> words(N);
+        for (auto& e : words) {
+            cin >> e;
+            trie.insert(e);
+        }
+        ll ans = 0;
+        for (auto& e : words) {
+            ans += trie.solve(e);
+        }
+        cout << fixed << setprecision(2) << (ld)ans/N << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
