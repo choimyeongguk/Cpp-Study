@@ -77,11 +77,16 @@ struct Trie {
         return true;
     }
 
-    ll solve(const string& word) {
-        ll ret = 0, cur = 0;
-        for (ll i=0; i<word.size(); i++) {
-            if (i==0 || tree[cur].isEnd || tree[cur].nxt.size()!=1) ret++;
-            cur = tree[cur].nxt[word[i]];
+    ll solve() {
+        return dfs(0, 0, 0);
+    }
+
+    ll dfs(ll cur, ll cnt, ll depth) {
+        ll ret = tree[cur].isEnd ? cnt : 0;
+        for (auto& [c,n] : tree[cur].nxt) {
+            if (depth==0 || tree[cur].isEnd || tree[cur].nxt.size()!=1)
+                ret += dfs(tree[cur].nxt[c], cnt+1, depth+1);
+            else ret += dfs(tree[cur].nxt[c], cnt, depth+1);
         }
         return ret;
     }
@@ -97,11 +102,12 @@ void solve(ll testcase){
             cin >> e;
             trie.insert(e);
         }
-        ll ans = 0;
-        for (auto& e : words) {
-            ans += trie.solve(e);
-        }
-        cout << fixed << setprecision(2) << (ld)ans/N << "\n";
+        cout << fixed << setprecision(2) << (ld)trie.solve()/N << "\n";
+        // ll ans = 0;
+        // for (auto& e : words) {
+        //     ans += trie.solve(e);
+        // }
+        // cout << fixed << setprecision(2) << (ld)ans/N << "\n";
     }
 }
 
