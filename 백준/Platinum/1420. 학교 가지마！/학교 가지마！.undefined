@@ -1,0 +1,146 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct DINIC {
+    struct Edge {
+        ll nxt, rev, res;
+    };
+    ll n;
+    vector<vector<Edge>> graph;
+    vl level, start;
+    DINIC(ll _n): n(_n), graph(n), level(n), start(n) {}
+    void add_edge(ll s, ll e, ll cap, ll rev_cap = 0) {
+        graph[s].push_back({e, (ll)graph[e].size(), cap});
+        graph[e].push_back({s, (ll)graph[s].size() - 1, rev_cap});
+    }
+    bool assign_level(ll src, ll sink) {
+        fill(level.begin(), level.end(), -1);
+        queue<ll> q;
+        level[src] = 0; q.emplace(src);
+        while (!q.empty()) {
+            ll cur = q.front(); q.pop();
+            for (auto& [nxt,rev,res] : graph[cur]) {
+                if (level[nxt]==-1 && res>0) {
+                    level[nxt] = level[cur] + 1;
+                    q.emplace(nxt);
+                }
+            }
+        }
+        return level[sink] != -1;
+    }
+    ll block_flow(ll cur, ll sink, ll flow) {
+        if (cur==sink) return flow;
+        for (ll& i=start[cur]; i<graph[cur].size(); i++) {
+            auto& [nxt,rev,res] = graph[cur][i];
+            if (res>0 && level[nxt]==level[cur]+1) {
+                ll pushed = block_flow(nxt, sink, min(flow, res));
+                if (pushed > 0) {
+                    res -= pushed;
+                    graph[nxt][rev].res += pushed;
+                    return pushed;
+                }
+            }
+        }
+        return 0;
+    }
+    ll solve(ll src, ll sink) {
+        ll total=0;
+        while (assign_level(src, sink)) {
+            fill(start.begin(), start.end(), 0);
+            while (ll pushed = block_flow(src, sink, LLONG_MAX)) {
+                total += pushed;
+            }
+        }
+        return total;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll R, C; cin >> R >> C;
+    vector<vector<char>> M(R, vector<char>(C));
+    for (auto& e : M)
+        for (auto& v : e)
+            cin >> v;
+    vvl loc2id(R, vl(C));
+    ll id = 0;
+    for (auto& e : loc2id)
+        for (auto& v : e)
+            v = id++;
+    DINIC flow(R*C*2);
+
+    ll srcR, srcC, sinkR, sinkC;
+    vvl d = {{-1, 0, 1, 0}, {0, 1, 0, -1}};
+    for (ll r=0; r<R; r++) {
+        for (ll c=0; c<C; c++) {
+            if (M[r][c] == '#') continue;
+            if (M[r][c] == '.') {
+                flow.add_edge(loc2id[r][c], R*C+loc2id[r][c], 1);
+            }
+            else if (M[r][c] == 'K') {
+                srcR = r, srcC = c;
+                flow.add_edge(loc2id[r][c], R*C+loc2id[r][c], 1e10);
+            }
+            else if (M[r][c] == 'H') {
+                sinkR = r, sinkC = c;
+                flow.add_edge(loc2id[r][c], R*C+loc2id[r][c], 1e10);
+            }
+
+            for (i=0; i<4; i++) {
+                ll nr = r + d[0][i];
+                ll nc = c + d[1][i];
+                if (nr<0 || nc<0 || nr==R || nc==C || M[nr][nc]=='#') continue;
+                flow.add_edge(R*C+loc2id[r][c], loc2id[nr][nc], 1e10);
+            }
+        }
+    }
+    ll tmp = abs(srcR-sinkR) + abs(srcC-sinkC);
+    if (tmp==1) cout << -1;
+    else cout << flow.solve(loc2id[srcR][srcC], loc2id[sinkR][sinkC]);
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
