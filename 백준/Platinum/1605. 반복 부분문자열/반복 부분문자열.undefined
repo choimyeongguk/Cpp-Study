@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+// O(Nlog^2N)
+void getSuffixArray(string& str, vl& SA, vl& rank) {
+    ll n = str.size();
+    SA.resize(n), rank.resize(n);
+    for (ll i=0; i<n; i++)
+        SA[i] = i, rank[i] = str[i];
+    for (ll L=1; L<n; L<<=1) {
+        auto cmp = [&](ll a, ll b) {
+            if (rank[a] != rank[b])     // rank는 L만큼의 비교 정보 담고 있음
+                return rank[a] < rank[b];
+            ll ra = a+L<n ? rank[a+L] : -1;
+            ll rb = b+L<n ? rank[b+L] : -1;
+            return ra < rb;
+        };
+        sort(SA.begin(), SA.end(), cmp);
+        vl tmp(n, 0);   // tmp[SA[0]] = 0;
+        for (ll i=1; i<n; i++)
+            tmp[SA[i]] = tmp[SA[i-1]] + (cmp(SA[i-1], SA[i]) ? 1 : 0);
+        rank = tmp;
+        if (rank[SA[n-1]] == n-1) break;
+    }
+}
+// O(n)
+void getLCP (string& str, vl& LCP) {
+    ll n = str.size(); LCP.resize(n);
+    vl SA, rank; getSuffixArray(str, SA, rank);
+    for (ll cnt=0, i=0; i<n; i++) {
+        if (!rank[i]) { cnt = 0; continue; }
+        ll j = SA[rank[i] - 1];
+        while (i+cnt<n && j+cnt<n && str[i+cnt]==str[j+cnt]) cnt++;
+        LCP[rank[i]] = cnt;
+        if (cnt) cnt--;
+    }
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll L; cin >> L;
+    string str; cin >> str;
+    vl lcp; getLCP(str, lcp);
+    ll ans = 0;
+    for (auto& e : lcp)
+        ans = max(ans, e);
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
