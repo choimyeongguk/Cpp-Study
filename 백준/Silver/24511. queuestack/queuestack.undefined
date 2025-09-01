@@ -40,20 +40,13 @@ void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
     vl isStack(N); for (auto& e : isStack) cin >> e;
-    stack<ll> st;
-    ll num;
-    for (i=0; i<N; i++) {
-        cin >> num;
-        if (!isStack[i])
-            st.emplace(num);
-    }
+    vl arr(N); for (auto& e : arr) cin >> e;
     queue<ll> q;
-    while (!st.empty()) {
-        q.emplace(st.top());
-        st.pop();
-    }
+    for (i=N-1; i>=0; i--)
+        if (!isStack[i])
+            q.emplace(arr[i]);
 
-    ll M; cin >> M;
+    ll num, M; cin >> M;
     while (M--) {
         cin >> num;
         q.emplace(num);
