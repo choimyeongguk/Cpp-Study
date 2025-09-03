@@ -40,7 +40,7 @@ void solve(ll testcase){
     ll i, j, k;
     ll N, M; cin >> N >> M;
     vector<string> words;
-    map<string,ll> freq;
+    unordered_map<string,ll> freq;
     string word;
     for (i=0; i<N; i++) {
         cin >> word;
