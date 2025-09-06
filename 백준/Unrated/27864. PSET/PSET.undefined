@@ -1,0 +1,108 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct Card {
+    vector<string> prop;
+    Card(): prop(2) {}
+    void flip() {
+        for (ll i=0; i<4; i++)
+            swap(prop[0][i], prop[1][i]);
+    }
+};
+
+bool isSET(const Card& a, const Card& b, const Card& c) {
+    vector<bool> satisfy(4);
+    for (ll i=0; i<4; i++) {
+        satisfy[i] = ((a.prop[0][i]==b.prop[0][i]&&b.prop[0][i]==c.prop[0][i])
+            ||(a.prop[0][i]!=b.prop[0][i]&&b.prop[0][i]!=c.prop[0][i]&&c.prop[0][i]!=a.prop[0][i]))
+            &&
+                ((a.prop[1][i]==b.prop[1][i]&&b.prop[1][i]==c.prop[1][i])
+                ||(a.prop[1][i]!=b.prop[1][i]&&b.prop[1][i]!=c.prop[1][i]&&c.prop[1][i]!=a.prop[1][i]));
+    }
+    return satisfy[0]&&satisfy[1]&&satisfy[2]&&satisfy[3];
+}
+
+void solve() {
+    ll i, j, k;
+    ll N; cin >> N;
+    vector<Card> card(N);
+    string c1, c2;
+    for (i=0; i<N; i++) {
+        cin >> card[i].prop[0] >> card[i].prop[1];
+    }
+
+    ll ans = 0;
+    vector<Card> candi(3);
+    function<void(ll,ll)> back_track = [&](ll cur, ll depth) {
+        if (depth == 3) {
+            if (isSET(candi[0], candi[1], candi[2])) {
+                ans++;
+                // cout << "--------------------\n";
+                // cout << candi[0].prop[0] << " " << candi[0].prop[1] << "\n";
+                // cout << candi[1].prop[0] << " " << candi[1].prop[1] << "\n";
+                // cout << candi[2].prop[0] << " " << candi[2].prop[1] << "\n";
+            }
+            return;
+        }
+        if (cur >= N) return;
+
+        // 일단 넣어보고
+        candi[depth] = card[cur];
+        back_track(cur+1, depth+1);
+
+        // 뒤집어서 넣어보고
+        card[cur].flip();
+        candi[depth] = card[cur];
+        back_track(cur+1, depth+1);
+
+        // 안넣어보고
+        back_track(cur+1, depth);
+    };
+    back_track(0, 0);
+    cout << ans/2;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
