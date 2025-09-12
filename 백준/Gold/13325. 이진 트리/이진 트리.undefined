@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using tlll = tuple<ll,ll,ll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    cin>>k;
+    ll n = 1LL<<(k+1);
+    vl edges(n);
+    vector<array<ll, 2>> dp(n);
+    for (i=2;i<n;i++) {
+        cin>>edges[i];
+    }
+    // for (i=1;i<n;i++) cout<<edges[i]<<' '; cout<<endl;
+    ll t = 2;
+    while (k--) {
+        for (i=(n>>t);i<(n>>(t-1));i++) {
+            ll left = (t==1 ? 0 : dp[i<<1][0])+edges[i<<1];
+            ll right = (t==1 ? 0 : dp[i<<1|1][0])+edges[i<<1|1];
+            dp[i][0] = max(left, right);
+            dp[i][1] = llabs(left - right) + dp[i<<1][1] + dp[i<<1|1][1];
+        }
+        t++;
+    }
+    // for (i=1;i<n;i++) {
+    //     cout<<dp[i][0]<<'|'<<dp[i][1]<<' ';
+    //     if (__builtin_popcountll(i+1)==1) cout<<endl;
+    // }
+    cout<<accumulate(edges.begin(), edges.end(), 0LL) + dp[1][1]<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
