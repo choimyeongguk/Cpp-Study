@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using tlll = tuple<ll,ll,ll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll N; cin >> N;
+    ll l=0, r=10000;
+    vl arr(N);
+    for (auto& e : arr) {
+        cin >> e;
+    }
+    sort(arr.begin(), arr.end());
+
+    ll yeesang, left;
+    while (l<=r) {
+        k = (l+r)>>1;
+        left = lower_bound(arr.begin(), arr.end(), k) - arr.begin();
+        while (arr[left]==k) {
+            yeesang = N - left;
+            if (yeesang == k) {
+                cout << k;
+                return;
+            }
+            left++;
+        }
+        yeesang = N - left;
+        if (yeesang == k) {
+            cout << k;
+            return;
+        }
+        if (yeesang > k) {  // 포함되는 논문이 너무 많다!!
+            l = k+1;
+        }
+        else {  // 포함되는 논문이 너무 적다!!
+            r = k-1;
+        }
+    }
+
+
+    // for (i=N-1; i>=0; i--) {
+    //     if (i<N-1 && arr[i]==arr[i+1]) continue;
+    //     ll left = lower_bound(arr.begin(), arr.end(), arr[i]) - arr.begin();
+    //     ll yeesang = N - left;
+    //     if (yeesang == arr[i]) {
+    //         cout << arr[i];
+    //         return;
+    //     }
+    // }
+    // cout << 0;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
