@@ -1,0 +1,130 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Tarjan {
+    ll n, vtime; vl up, visit; vvl graph;
+    ll scc_cnt; vl scc_idx, stk;    // for scc
+    vl cutVertex;                   // for cutVertex
+    vector<pll> cutEdge;            // for bridges, (u, v) with u < v
+
+    Tarjan (vvl& g)
+        : n(g.size()), vtime(0), up(n), visit(n,0), graph(g),
+          scc_idx(n,0), scc_cnt(0)
+    {
+        for (ll i=1;i<n;++i)
+            // if (visit[i] == 0) dfs4scc(i);
+            if (visit[i] == 0) dfs4cutVertexEdge(i, -1);
+        sort(cutEdge.begin(), cutEdge.end());
+        cutEdge.erase(unique(cutEdge.begin(), cutEdge.end()), cutEdge.end());
+        // sort(cutVertex.begin(), cutVertex.end());
+        // 동시에 여러개 쓰고 싶으면 알아서 vtime, visit, up 초기화 하기
+    }
+
+    void dfs4scc(ll node){
+        up[node] = visit[node] = ++vtime;
+        stk.push_back(node);
+        for (ll next : graph[node]){
+            if (visit[next] == 0) {
+                dfs4scc(next);
+                up[node] = min(up[node], up[next]);
+            }
+            else if (scc_idx[next] == 0)
+                up[node] = min(up[node], visit[next]);
+        }
+        if (up[node]==visit[node]){
+            ++scc_cnt;
+            ll t;
+            do {
+                t = stk.back(); stk.pop_back();
+                scc_idx[t] = scc_cnt;
+            } while (!stk.empty() && t != node);
+        }
+    }
+
+    void dfs4cutVertexEdge(ll node, ll parent){
+        bool isCutVertex = false;
+        // ll childNum = 0;
+        up[node] = visit[node] = ++vtime;
+        bool skippedParentEdge = false; // multiEdge 고려
+        for (auto& nxt : graph[node]){
+            if (nxt == parent && !skippedParentEdge) { skippedParentEdge = true; continue; }
+            if (visit[nxt] == 0) {
+                // childNum++;
+                dfs4cutVertexEdge(nxt, node);
+                up[node] = min(up[node], up[nxt]);
+                // if (parent!=-1 && up[nxt] >= visit[node])
+                //     isCutVertex = true;
+                // cutEdge (bridge)용. bridge 구할 때 필요없는건 알아서 지우셈
+                if (up[nxt] > visit[node]) {
+                cutEdge.emplace_back(node<nxt ?
+                pll{node, nxt} : pll{nxt, node});
+                }
+            } else up[node] = min(up[node], visit[nxt]);
+        }
+        // if (parent == -1 && childNum > 1) isCutVertex = true;
+        // if (isCutVertex) cutVertex.emplace_back(node);
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll V, E; cin >> V >> E;
+    vvl graph(V+1);
+    ll a, b;
+    for (i=0; i<E; i++) {
+        cin >> a >> b;
+        graph[a].emplace_back(b);
+        graph[b].emplace_back(a);
+    }
+    Tarjan tarjan(graph);
+    cout << tarjan.cutEdge.size() << "\n";
+    for (auto& [f,s] : tarjan.cutEdge) {
+        cout << f << " " << s << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
