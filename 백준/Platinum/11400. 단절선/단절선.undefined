@@ -41,17 +41,21 @@ struct Tarjan {
     ll scc_cnt; vl scc_idx, stk;    // for scc
     vl cutVertex;                   // for cutVertex
     vector<pll> cutEdge;            // for bridges, (u, v) with u < v
+    // for biconnected component
+    stack<pll> estk;                // DFS 중 쌓는 간선 스택
+    vector<vector<pll>> bcc_edges;  // 각 BCC를 이루는 간선들
+    vector<vector<ll>>  bcc_nodes;  // 각 BCC에 속한 정점들(중복 제거됨)
 
     Tarjan (vvl& g)
         : n(g.size()), vtime(0), up(n), visit(n,0), graph(g),
           scc_idx(n,0), scc_cnt(0)
     {
-        for (ll i=1;i<n;++i)
+        for (ll i=0;i<n;++i)
             // if (visit[i] == 0) dfs4scc(i);
-            if (visit[i] == 0) dfs4cutVertexEdge(i, -1);
+            if (visit[i] == 0) dfs4tarjan(i, -1);
+        sort(cutVertex.begin(), cutVertex.end());
         sort(cutEdge.begin(), cutEdge.end());
-        cutEdge.erase(unique(cutEdge.begin(), cutEdge.end()), cutEdge.end());
-        // sort(cutVertex.begin(), cutVertex.end());
+        // build_bcc_nodes();
         // 동시에 여러개 쓰고 싶으면 알아서 vtime, visit, up 초기화 하기
     }
 
@@ -76,28 +80,62 @@ struct Tarjan {
         }
     }
 
-    void dfs4cutVertexEdge(ll node, ll parent){
+    void dfs4tarjan(ll node, ll parent){
         bool isCutVertex = false;
-        // ll childNum = 0;
+        ll childNum = 0;
         up[node] = visit[node] = ++vtime;
         bool skippedParentEdge = false; // multiEdge 고려
         for (auto& nxt : graph[node]){
             if (nxt == parent && !skippedParentEdge) { skippedParentEdge = true; continue; }
             if (visit[nxt] == 0) {
-                // childNum++;
-                dfs4cutVertexEdge(nxt, node);
+                childNum++;
+                /* for BCC
+                 * estk.emplace(node, nxt);
+                 */
+                dfs4tarjan(nxt, node);
                 up[node] = min(up[node], up[nxt]);
-                // if (parent!=-1 && up[nxt] >= visit[node])
-                //     isCutVertex = true;
-                // cutEdge (bridge)용. bridge 구할 때 필요없는건 알아서 지우셈
-                if (up[nxt] > visit[node]) {
-                cutEdge.emplace_back(node<nxt ?
-                pll{node, nxt} : pll{nxt, node});
+                if (up[nxt] >= visit[node]) {
+                    if (parent != -1) isCutVertex = true;
+                    /* // for BCC
+                     * vector<pll> compE;
+                     * while (true) {
+                     *     auto e = estk.top(); estk.pop();
+                     *     compE.emplace_back(e);
+                     *     if (e.first==node && e.second==nxt) break;
+                     * }
+                     * bcc_edges.emplace_back(move(compE));
+                     */
                 }
-            } else up[node] = min(up[node], visit[nxt]);
+                 // for curEdge(bridge) bridge 구할 때 필요없는 건 알아서 지우셈
+                 if (up[nxt] > visit[node]) {
+                     cutEdge.emplace_back(node<nxt ?
+                         pll{node, nxt} : pll{nxt, node});
+                 } else up[node] = min(up[node], visit[nxt]);
+            } else {
+                up[node] = min(up[node], visit[nxt]);
+                /* // for BCC
+                 * estk.emplace(node, nxt);
+                 */
+            }
         }
-        // if (parent == -1 && childNum > 1) isCutVertex = true;
-        // if (isCutVertex) cutVertex.emplace_back(node);
+        if (parent == -1 && childNum > 1) isCutVertex = true;
+        if (isCutVertex) cutVertex.emplace_back(node);
+    }
+
+    void build_bcc_nodes_from_edges(){
+        bcc_nodes.clear();
+        bcc_nodes.reserve(bcc_edges.size());
+        for (auto &compE : bcc_edges){
+            vector<ll> verts;
+            verts.reserve(compE.size() * 2);
+            for (auto &e : compE) {
+                verts.push_back(e.first);
+                verts.push_back(e.second);
+            }
+            sort(verts.begin(), verts.end());
+            verts.erase(unique(verts.begin(), verts.end()), verts.end());
+            bcc_nodes.push_back(move(verts));
+        }
     }
 };
 
