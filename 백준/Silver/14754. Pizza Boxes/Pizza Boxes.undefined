@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll, ll>;
+using ld = long double;
+using pld = pair<ld, ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    } else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll R, C;
+    cin >> R >> C;
+    vvl M(R, vl(C));
+    vvl used(R, vl(C, false));
+    ll sum = 0;
+    for (auto &e: M)
+        for (auto &v: e) {
+            cin >> v;
+            sum += v;
+        }
+    // 행 확인
+    ll r, c, ans = 0;
+    ll Max, mr, mc;
+    for (r = 0; r < R; r++) {
+        Max = -1;
+        for (c = 0; c < C; c++) {
+            if (Max < M[r][c]) {
+                Max = M[r][c];
+                mr = r, mc = c;
+            }
+        }
+        ans += Max;
+        // cout << Max << " 더함!!\n";
+        used[mr][mc] = true;
+    }
+    for (c = 0; c < C; c++) {
+        Max = -1;
+        for (r = 0; r < R; r++) {
+            if (Max < M[r][c]) {
+                Max = M[r][c];
+                mr = r, mc = c;
+            }
+        }
+        if (!used[mr][mc]) {
+            ans += Max;
+            // cout << Max << " 더함!!!\n";
+            used[mr][mc] = true;
+        }
+    }
+    cout << sum-ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll i = 1; i <= t; i++) {
+        solve();
+    }
+    return 0;
+}
