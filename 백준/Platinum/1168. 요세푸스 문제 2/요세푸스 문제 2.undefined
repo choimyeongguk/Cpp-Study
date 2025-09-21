@@ -64,12 +64,11 @@ void solve(ll testcase){
     ll i, j, k;
     ll N, K; cin >> N >> K;
     vl ans; ans.reserve(N);
-    ll cur = -1;
+    ll cur = 0;
     SegTree seg(N);
     while (N--) {
-        cur = (cur + K) %(N+1);
+        cur = (cur + K - 1) %(N+1);
         ans.emplace_back(seg.popNth(cur)+1);
-        cur--;
     }
     cout << "<";
     for (i=0; i<ans.size()-1; i++)
