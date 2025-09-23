@@ -1,0 +1,113 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct SegTree {
+    struct Node { ll minV, maxV; };
+    ll n; vector<Node> tree;
+    SegTree(ll n): n(n), tree(n<<2) {
+        init(1, 0, n-1);
+    }
+    void init(ll i, ll s, ll e) {
+        tree[i] = { s, e };
+        if (s==e) return;
+        ll m = (s+e)>>1;
+        init(i<<1, s, m);
+        init(i<<1|1, m+1, e);
+    }
+    void update(ll pos, ll val) { update(1, 0, n-1, pos, val); }
+    void update(ll i, ll s, ll e, ll pos, ll val) {
+        if (s==e) {
+            tree[i] = { val, val };
+            return;
+        }
+        ll m = (s+e)>>1;
+        pos<=m ? update(i<<1, s, m, pos, val) : update(i<<1|1, m+1, e, pos, val);
+        tree[i] = {
+            min(tree[i<<1].minV, tree[i<<1|1].minV),
+            max(tree[i<<1].maxV, tree[i<<1|1].maxV)
+        };
+    }
+    bool query(ll l, ll r) {
+        if (l>r) swap(l, r);
+        Node res = query(1, 0, n-1, l, r);
+        return res.minV==l && res.maxV==r;
+    }
+    Node query(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return Node((ll)1e10, (ll)-1e10);
+        if (l<=s && e<=r) return tree[i];
+        ll m = (s+e)>>1;
+        Node ch1 = query(i<<1, s, m, l, r);
+        Node ch2 = query(i<<1|1, m+1, e, l, r);
+        return Node(
+            min(ch1.minV, ch2.minV),
+            max(ch1.maxV, ch2.maxV)
+        );
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, Q; cin >> N >> Q;
+    vl shelf(N); iota(shelf.begin(), shelf.end(), 0);
+    SegTree seg(N);
+    ll q, a, b;
+    while (Q--) {
+        cin >> q >> a >> b;
+        switch (q) {
+            case 0:
+                seg.update(a, shelf[b]);
+                seg.update(b, shelf[a]);
+                swap(shelf[a], shelf[b]);
+                break;
+            case 1:
+                cout << (seg.query(a, b) ? "YES\n" : "NO\n");
+                break;
+        }
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
