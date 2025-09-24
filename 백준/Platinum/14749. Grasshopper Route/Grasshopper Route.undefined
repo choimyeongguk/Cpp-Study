@@ -47,43 +47,36 @@ void solve(ll testcase){
     }
     ll s, t; cin >> s >> t;
 
-    // vl height(N+1, 0);
     vl haveTinChildren(N+1, false);
-    function<void(ll,ll)> dfs1 = [&](ll cur, ll pa) {
+    vl visit(N+1, false);
+    function<void(ll)> dfs1 = [&](ll cur) {
+        visit[cur] = true;
         if (cur == t) haveTinChildren[cur] = true;
-        for (auto& ch : tree[cur]) {
-            if (ch == pa) continue;
-            dfs1(ch, cur);
-            // height[cur] = max(height[cur], 1+height[ch]);
+        for (auto& ch : tree[cur]) if (!visit[ch]) {
+            dfs1(ch);
             haveTinChildren[cur] |= haveTinChildren[ch];
         }
     };
-    dfs1(s, -1);
+    dfs1(s);
 
     vl ans; ans.reserve(N);
-    function<void(ll,ll,bool)> dfs2 = [&](ll cur, ll pa, bool skip) {
+    fill(visit.begin(), visit.end(), false);
+    function<void(ll,bool)> dfs2 = [&](ll cur, bool skip) {
         // skip : 현재 노드를 스킵하고 자식부터 방문할 것인지 여부
+        visit[cur] = true;
         if (!skip) ans.emplace_back(cur);   // 부모 먼저 방문
         ll haveTchild = -1;
-        for (auto& ch : tree[cur]) {
-            if (ch == pa) continue;
+        for (auto& ch : tree[cur]) if (!visit[ch]) {
             if (haveTinChildren[ch]) {  // T가지고 있는 브랜치 마지막에 처리
                 haveTchild = ch;
                 continue;
             }
-            if (skip) dfs2(ch, cur, false); // 현재 노드에서 스킵했으면 자식에서는 스킵x
-            else dfs2(ch, cur, true);
+            dfs2(ch, !skip); // 현재 노드에서 스킵했으면 자식에서는 스킵x
         }
-        if (haveTchild != -1) {
-            if (haveTchild == t) {
-                dfs2(haveTchild, cur, true);
-            } else {
-                dfs2(haveTchild, cur, false);
-            }
-        }
+        if (haveTchild != -1) dfs2(haveTchild, haveTchild==t);
         if (skip) ans.emplace_back(cur);    // 부모 마지막에 방문
     };
-    dfs2(s, -1, false);
+    dfs2(s, false);
 
     for (auto& e : ans)
         cout << e << "\n";
