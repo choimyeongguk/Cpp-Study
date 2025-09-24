@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vvl tree(N+1);
+    for (i=1; i<N; i++) {
+        cin >> j >> k;
+        tree[j].emplace_back(k);
+        tree[k].emplace_back(j);
+    }
+    ll s, t; cin >> s >> t;
+
+    // vl height(N+1, 0);
+    vl haveTinChildren(N+1, false);
+    function<void(ll,ll)> dfs1 = [&](ll cur, ll pa) {
+        if (cur == t) haveTinChildren[cur] = true;
+        for (auto& ch : tree[cur]) {
+            if (ch == pa) continue;
+            dfs1(ch, cur);
+            // height[cur] = max(height[cur], 1+height[ch]);
+            haveTinChildren[cur] |= haveTinChildren[ch];
+        }
+    };
+    dfs1(s, -1);
+
+    vl ans; ans.reserve(N);
+    function<void(ll,ll,bool)> dfs2 = [&](ll cur, ll pa, bool skip) {
+        // skip : 현재 노드를 스킵하고 자식부터 방문할 것인지 여부
+        if (!skip) ans.emplace_back(cur);   // 부모 먼저 방문
+        ll haveTchild = -1;
+        for (auto& ch : tree[cur]) {
+            if (ch == pa) continue;
+            if (haveTinChildren[ch]) {  // T가지고 있는 브랜치 마지막에 처리
+                haveTchild = ch;
+                continue;
+            }
+            if (skip) dfs2(ch, cur, false); // 현재 노드에서 스킵했으면 자식에서는 스킵x
+            else dfs2(ch, cur, true);
+        }
+        if (haveTchild != -1) {
+            if (haveTchild == t) {
+                dfs2(haveTchild, cur, true);
+            } else {
+                dfs2(haveTchild, cur, false);
+            }
+        }
+        if (skip) ans.emplace_back(cur);    // 부모 마지막에 방문
+    };
+    dfs2(s, -1, false);
+
+    for (auto& e : ans)
+        cout << e << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
