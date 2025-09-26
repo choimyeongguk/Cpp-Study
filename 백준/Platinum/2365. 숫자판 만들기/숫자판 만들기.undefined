@@ -1,0 +1,186 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+// Usage : DINIC flow(#node)
+//         flow.add_edge(start, end, capacity)
+//         ans = flow.solve(source, sink)
+// O(V^2*E)
+struct Edge { ll nxt, rev, res; };
+struct DINIC {
+    ll n, pathLimit; vl level, start;
+    vector<vector<Edge>> graph;
+    DINIC(ll _n, ll _pathLimit=LLONG_MAX)
+        :n(_n), pathLimit(_pathLimit), graph(n), level(n), start(n) {}
+    ll add_edge(ll s, ll e, ll cap, ll rev_cap = 0) {
+        graph[s].push_back({e, (ll)graph[e].size(), cap});
+        graph[e].push_back({s, (ll)graph[s].size() - 1, rev_cap});
+        return graph[s].size()-1;
+    }
+    bool assign_level(ll src, ll sink) {
+        fill(level.begin(), level.end(), -1);
+        queue<ll> q;
+        level[src] = 0; q.emplace(src);
+        while (!q.empty()) {
+            ll cur = q.front(); q.pop();
+            for (auto& [nxt,rev,res] : graph[cur]) {
+                if (level[nxt]==-1 && res>0) {
+                    level[nxt] = level[cur] + 1;
+                    q.emplace(nxt);
+                }
+            }
+        }
+        return level[sink] != -1;
+    }
+    ll block_flow(ll cur, ll sink, ll flow) {
+        if (cur==sink) return flow;
+        for (ll& i=start[cur]; i<graph[cur].size(); i++) {
+            auto& [nxt,rev,res] = graph[cur][i];
+            if (res>0 && level[nxt]==level[cur]+1) {
+                ll pushed = block_flow(nxt, sink, min(flow, res));
+                if (pushed > 0) {
+                    pushed = min(pushed, pathLimit);
+                    res -= pushed;
+                    graph[nxt][rev].res += pushed;
+                    return pushed;
+                }
+            }
+        }
+        return 0;
+    }
+    ll solve(ll src, ll sink) {
+        ll total=0;
+        while (assign_level(src, sink)) {
+            fill(start.begin(), start.end(), 0);
+            while (ll pushed = block_flow(src, sink, LLONG_MAX)) {
+                total += pushed;
+            }
+        }
+        return total;
+    }
+    vector<pll> min_cut(ll src) {
+        vl visit(n, false);
+        queue<ll> q; visit[src] = true; q.push(src);
+        while(!q.empty()){
+            ll cur = q.front(); q.pop();
+            for (auto &[nxt,rev,res]: graph[cur]) {
+                if (!visit[nxt] && res>0)
+                    visit[nxt] = true; q.push(nxt);
+            }
+        }
+        vector<pll> cut_edges;
+        for (ll cur=0; cur<n; cur++){
+            if (!visit[cur]) continue;
+            for (auto &[nxt,rev,res]: graph[cur])
+                if (res>0 && !visit[nxt])
+                    cut_edges.emplace_back(cur, nxt);
+        }
+        return cut_edges;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    ll sum = 0;
+    vl sumR(N); for (auto& e : sumR) cin >> e;
+    vl sumC(N); for (auto& e : sumC) cin >> e, sum += e;;
+
+    ll id = 0;
+    vvl loc2id(N+1, vl(N+1));
+    for (auto& e : loc2id)
+        for (auto& v : e)
+            v = id++;
+    function<pll(ll)> id2loc = [&](ll id) {
+        return pll{ id/(N+1), id%(N+1) };
+    };
+
+    ll l = 0, r = 10000, m, ans;
+    ll src = (N+1)*(N+1), sink = src+1, maxFlow;
+    vector<vector<Edge>> graph;
+    while (l<=r) {
+        m =(l+r)>>1;
+        DINIC flow((N+1)*(N+1) + 2);
+        // src -> rowSum
+        for (i=0; i<N; i++)
+            flow.add_edge(src, loc2id[i][N], sumR[i]);
+        // rowSum -> cell
+        for (i=0; i<N; i++)
+            for (j=0; j<N; j++)
+                flow.add_edge(loc2id[i][N], loc2id[i][j], m);
+        // cell->colSum
+        for (i=0; i<N; i++)
+            for (j=0; j<N; j++)
+                flow.add_edge(loc2id[i][j], loc2id[N][j], m);
+        // colSum -> sink
+        for (i=0; i<N; i++)
+            flow.add_edge(loc2id[N][i], sink, sumC[i]);
+
+        maxFlow = flow.solve(src, sink);
+        if (maxFlow < sum) {
+            l = m+1;
+        } else {
+            ans = m;
+            graph = move(flow.graph);
+            r = m-1;
+        }
+    }
+    vvl ansTable(N, vl(N));
+    for (i=0; i<N; i++) {
+        for (auto& [nxt,rev,res] : graph[loc2id[i][N]]) {
+            ansTable[i][id2loc(nxt).second] = ans - res;
+        }
+    }
+
+    cout << ans << "\n";
+    for (auto& e : ansTable) {
+        for (auto& v : e)
+            cout << v << " ";
+        cout << "\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
