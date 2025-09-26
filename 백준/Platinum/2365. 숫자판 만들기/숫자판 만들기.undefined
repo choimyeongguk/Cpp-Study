@@ -125,9 +125,6 @@ void solve(ll testcase){
     for (auto& e : loc2id)
         for (auto& v : e)
             v = id++;
-    function<pll(ll)> id2loc = [&](ll id) {
-        return pll{ id/(N+1), id%(N+1) };
-    };
 
     ll l = 0, r = 10000, m, ans;
     ll src = (N+1)*(N+1), sink = src+1, maxFlow;
@@ -162,7 +159,7 @@ void solve(ll testcase){
     vvl ansTable(N, vl(N));
     for (i=0; i<N; i++) {
         for (auto& [nxt,rev,res] : graph[loc2id[i][N]]) {
-            ansTable[i][id2loc(nxt).second] = ans - res;
+            ansTable[i][nxt%(N+1)] = ans - res;
         }
     }
 
