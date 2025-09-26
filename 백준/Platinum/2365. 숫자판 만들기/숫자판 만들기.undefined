@@ -157,11 +157,9 @@ void solve(ll testcase){
         }
     }
     vvl ansTable(N, vl(N));
-    for (i=0; i<N; i++) {
-        for (auto& [nxt,rev,res] : graph[loc2id[i][N]]) {
-            ansTable[i][nxt%(N+1)] = ans - res;
-        }
-    }
+    for (i=0; i<N; i++)
+        for (j=1; j<=N; j++)
+            ansTable[i][j-1] = ans - graph[loc2id[i][N]][j].res;
 
     cout << ans << "\n";
     for (auto& e : ansTable) {
