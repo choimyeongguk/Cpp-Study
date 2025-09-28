@@ -1,0 +1,118 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996);
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+inline pll rotate90(const pll& point) {
+    return {-point.second, point.first};
+}
+
+ll dist(const pll& a, const pll& b) {
+    return abs(a.first-b.first)+abs(a.second-b.second);
+}
+
+void solve() {
+    ll i, j, k;
+    // 입력
+    ll Nt, Ns, Rmax; cin >> Nt >> Ns >> Rmax;
+    vector<pll> tree(Nt); for (auto& [x,y] : tree) cin >> x >> y;
+    set<pll> s; for (auto& e : tree) s.insert(e);
+    vector<pll> sensor(Ns);
+    for (auto& [x,y] : sensor) cin >> x >> y;
+    vector<pll> sensor_rel(Ns);
+    for (i=0; i<Ns; i++)
+        sensor_rel[i] = {sensor[i].first-sensor[0].first, sensor[i].second-sensor[0].second};
+
+    vector<pll> ans;
+    for (ll d=0; d<4; d++) {   // 4번 회전
+        for (i=0; i<Nt; i++) {
+            bool flag = true;
+            auto [dx,dy] = tree[i];
+            for (j=0; j<Ns; j++) {
+                if (!s.contains({sensor_rel[j].first+dx, sensor_rel[j].second+dy})) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (!flag) continue;
+            ll Xr = tree[i].first, Yr = tree[i].second;
+            switch (d) {
+                case 0:
+                    Xr -= sensor[0].first, Yr -= sensor[0].second;
+                    break;
+                case 1:
+                    Xr += sensor[0].second, Yr -= sensor[0].first;
+                    break;
+                case 2:
+                    Xr += sensor[0].first, Yr += sensor[0].second;
+                    break;
+                case 3:
+                    Xr -= sensor[0].second, Yr += sensor[0].first;
+                    break;
+            }
+
+            ll cnt = 0;
+            for (j=0; j<Nt; j++) {
+                if (dist({Xr, Yr}, tree[j]) <= Rmax)
+                    cnt++;
+            }
+            if (cnt==Ns && !s.contains({Xr, Yr})) {
+                ans.emplace_back(pll{Xr, Yr});
+                if (ans.size()>1) {
+                    cout << "Ambiguous";
+                    return;
+                }
+            }
+        }
+
+        for (auto& e : sensor_rel)  // 90도 회전
+            e = { -e.second, e.first };
+    }
+    if (ans.size()==0) {
+        cout << "Impossible";
+    }
+    else {
+        cout << ans.front().first << " " << ans.front().second;
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
