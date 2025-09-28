@@ -1,0 +1,123 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996);
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+__int128 large_pow(ll k) {
+    __int128 ret=1;
+    __int128 n=2;
+    while (k) {
+        if (k&1) ret=ret*n;
+        n=n*n;
+        k>>=1;
+    }
+    return ret;
+}
+
+string to_string(__int128 x) {
+    string s;
+    while (x) {
+        s += (char)(x%10 + '0');
+        x /= 10;
+    }
+    if (s.empty()) s += '0';
+    reverse(s.begin(), s.end());
+    return s;
+}
+
+void solve() {
+    ll i, j, k;
+    string s; cin>>s;
+    ll n=s.size();
+    ll o_cnt=0;
+    for (i=0;i<n;i++) {
+        if (i+1<n && s[i]=='O' && s[i+1]=='O') {
+            cout<<"INVALID\n";
+            return;
+        }
+        if (s[i]=='O') o_cnt++;
+    }
+    if (s.back()=='E') {
+        cout<<"INVALID\n";
+        return;
+    }
+    ll a=1, b=0, c=1, cnt=0;
+    for (i=0;i<n;i++) {
+        if (s[i]=='E') {
+            c<<=1;
+            cnt++;
+        }
+        else {
+            a*=3;
+            b=3*b+c;
+        }
+    }
+    // cout<<a<<' ';
+    // cout<<b<<' ';
+    // cout<<c<<' ';
+    // cout<<cnt<<endl;
+    ll cur=(1LL<<cnt)%a, bm=b%a;
+    k=0;
+    while (true) {
+        // if (k>50) {
+        //     cout<<"INVALID\n";
+        //     return;
+        // }
+        if (cur==bm) {
+            // cout<<k<<' '<<cnt<<endl;
+            __int128 x=large_pow(k+cnt);
+            x = (x-b)/a;
+            // cout<<to_string(x)<<endl;
+            if (x%2==0 && s[0]=='E' || x%2==1 && s[0]=='O') {
+                if (__builtin_popcountll(x)==1 || x==0);
+                else {
+                    cout<<to_string(x)<<'\n';
+                    return;
+                }
+            }
+        }
+        k++;
+        cur = (cur<<1)%a;
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
