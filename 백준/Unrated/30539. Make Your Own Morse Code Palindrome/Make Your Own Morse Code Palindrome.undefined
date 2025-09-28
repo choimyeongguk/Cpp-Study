@@ -1,0 +1,162 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996);
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+bool isPalindrome(const string& str) {
+    ll l = 0, r = str.size()-1;
+    while (l<=r) {
+        if (str[l] != str[r])
+            return false;
+        l++, r--;
+    }
+    return true;
+}
+
+void solve() {
+    ll i, j, k;
+    unordered_map<char,string> encoder = {
+        {'A', "01"}, {'B', "1000"}, {'C', "1010"},
+        {'D', "100"}, {'E', "0"}, {'F', "0010"},
+        {'G', "110"},{'H', "0000"}, {'I', "00"},
+        {'J', "0111"}, {'K', "101"}, {'L', "0100"},
+        {'M', "11"}, {'N', "10"}, {'O', "111"},
+        {'P', "0110"}, {'Q', "1101"}, {'R', "010"},
+        {'S', "000"}, {'T', "1"}, {'U', "001"},
+        {'V', "0001"}, {'W', "011"}, {'X', "1001"},
+        {'Y', "1011"}, {'Z', "1100"}, {'0', "11111"},
+        {'1', "01111"}, {'2', "00111"}, {'3', "00011"},
+        {'4', "00001"}, {'5', "00000"}, {'6', "10000"},
+        {'7', "11000"}, {'8', "11100"}, {'9', "11110"},
+    };
+    map<string,char> decoder;
+    for (auto& [key,val] : encoder)
+        decoder[val] = key;
+
+
+    string inputt;
+    getline(cin, inputt);
+    string input;
+    for (auto& e : inputt) {
+        if (e== ' ') continue;
+        input += e;
+    }
+    string str;
+    for (auto& c : input)
+        str += encoder[c];
+    if (isPalindrome(str)) {
+        cout << 0; return;
+    }
+
+    ll N = str.size();
+    vl dpo(N), dpe(N);
+    ll cnt, l, r;
+    for (i=0; i<str.size(); i++) {
+        // 중심 있는 경우(odd)
+        cnt = 0, l = i-1, r = i+1;
+        while (l>=0 && r<N && str[l]==str[r]) cnt++, l--, r++;
+        dpo[i] = cnt;
+        // 중심 없는 경우(even);
+        cnt = 0, l = i, r = i+1;
+        while (l>=0 && r<N && str[l]==str[r]) cnt++, l--, r++;
+        dpe[i] = cnt;
+    }
+
+    string candi = str;
+    reverse(candi.begin(), candi.end());
+    // candi.emplace_back(str);
+    // reverse(candi.front().begin(), candi.front().end());
+    for (i=0; i<N; i++) {
+        // 홀수인 경우
+        if (i+dpo[i]==N-1) {
+            string tmp = str.substr(0, i-dpo[i]);
+            reverse(tmp.begin(), tmp.end());
+            if (candi.size() > tmp.size())
+                candi = tmp;
+            // candi.emplace_back(tmp);
+        }
+        // 짝수인 경우
+        if (i+dpe[i]==N-1) {
+            string tmp = str.substr(0, i-dpe[i]+1);
+            reverse(tmp.begin(), tmp.end());
+            if (candi.size() > tmp.size())
+                candi = tmp;
+            // candi.emplace_back(tmp);
+        }
+    }
+
+    string ans;
+    string st;
+    function<void(string)> decode = [&](const string code) {
+        if (code.size() == 0) {
+            if (ans.empty() || ans.size() > st.size()) {
+                ans = st;
+                return;
+            }
+        }
+        if (!ans.empty() && st.size() >= ans.size()) return;
+
+        ll len = 1;
+        for (ll ii=2; ii<=min(5LL, (ll)code.size()); ii++)
+            if (decoder.contains(code.substr(0, ii)))
+                len = ii;
+        string tmp = code.substr(0, len);
+        st.push_back(decoder[tmp]);
+        decode(code.substr(len, code.size()-len));
+        st.pop_back();
+
+        // for (ll len=1; len<=min(5LL, (ll)code.size()); len++) {
+        //     string tmp = code.substr(0, len);
+        //     if (decoder.contains(tmp)) {
+        //         st.push_back(decoder[tmp]);
+        //         decode(code.substr(len, code.size()-len));
+        //         st.pop_back();
+        //     }
+        // }
+    };
+    decode(candi);
+    // for (auto& e : candi)
+    //     decode(e);
+    cout << ans.size() << " " << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
