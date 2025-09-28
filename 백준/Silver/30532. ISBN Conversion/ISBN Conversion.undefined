@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996);
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+bool check(const string& ISBN10) {
+    // 숫자와 하이픈으로 이루어져 있는지 확인
+    for (ll i=0; i<ISBN10.size()-1; i++)
+        if (!isdigit(ISBN10[i]) && ISBN10[i]!='-')
+            return false;
+    if (!isdigit(ISBN10.back()) && ISBN10.back()!='X')
+        return false;
+
+    // 하이픈 위치 확인
+    if (ISBN10.front()=='-' || ISBN10.back()=='-')
+        return false;
+    for (ll i=1; i<ISBN10.size(); i++)
+        if (ISBN10[i]=='-' && ISBN10[i-1]=='-')
+            return false;
+
+    // 하이픈 개수 확인
+    ll numHyphen = count_if(ISBN10.begin(), ISBN10.end(), [](const char& c) {
+        return c=='-';
+    });
+    if (numHyphen>3 || (numHyphen==3 && ISBN10[ISBN10.size()-2]!='-'))
+        return false;
+
+    // checkSum 확인
+    vl numbers; numbers.reserve(10);
+    for (auto& c : ISBN10) {
+        if (c=='-') continue;
+        if (c=='X') numbers.emplace_back(10);
+        else numbers.emplace_back(c-'0');
+    }
+    if (numbers.size()!=10) return false;
+    ll S = 0;
+    for (ll i=0; i<10; i++)
+        S += (10-i)*numbers[i];
+    if (S%11 != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+void solve() {
+    ll i, j, k;
+    string ISBN10; cin >> ISBN10;
+    if (!check(ISBN10)) {
+        cout << "invalid\n";
+        return;
+    }
+    string ans = "978-";
+    ans += ISBN10.substr(0, ISBN10.size()-1);
+    vl numbers; numbers.reserve(10);
+    for (auto& c : ISBN10) {
+        if (c=='-') continue;
+        if (c=='X') numbers.emplace_back(10);
+        else numbers.emplace_back(c-'0');
+    }
+    ll S = 38;
+    for (i=0; i<9; i++) {
+        S += numbers[i] * (i%2==0 ? 3 : 1);
+    }
+    ll checkSumDigit = 10 - (S%10);
+    if (checkSumDigit==10) checkSumDigit=0;
+    cout << ans << checkSumDigit <<"\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
