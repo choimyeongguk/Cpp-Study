@@ -1,0 +1,157 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+const ld eps=1e-12;
+inline ll diff(ld l,ld r) {
+    if (l-eps<r && r<l+eps) return 0;
+    return l<r?-1:1;
+}
+struct Point {
+    ld x,y;
+    bool operator==(const Point &o) const {
+        return diff(x,o.x)==0 && diff(y,o.y)==0;
+    }
+    Point operator+(const Point &o) const {
+        return Point{x+o.x,y+o.y};
+    }
+    Point operator-(const Point &o) const {
+        return Point{x-o.x,y-o.y};
+    }
+    Point operator*(const ld t) const {
+        return Point{x*t,y*t};
+    }
+};
+inline ld outer(const Point& a,const Point& b) {
+    return a.x*b.y-a.y*b.x;
+}
+inline ll ccw(const Point& a,const Point& b,const Point& c) {
+    return diff(outer(b-a,c-a),0);
+}
+
+void get_convexhull(vector<Point>& pt, vector<Point>& cv) {
+    sort(pt.begin(), pt.end(),[](const Point& a, const Point& b) {
+        return a.x==b.x ? a.y<b.y : a.x<b.x;
+    });
+    vector<Point> up,lo;
+    for (const auto& p:pt) {
+        while (up.size()>=2 && ccw(*++up.rbegin(),*up.rbegin(),p)>0) up.pop_back();
+        while (lo.size()>=2 && ccw(*++lo.rbegin(),*lo.rbegin(),p)<0) lo.pop_back();
+        up.push_back(p);
+        lo.push_back(p);
+    }
+    up.insert(up.end(),++lo.rbegin(),--lo.rend());
+    swap(up,cv);
+}
+
+void solve() {
+    while (1) {
+        ll n;
+        cin>>n;
+        if (!n) break;
+        vector<Point> points(n);
+        for (ll i=0;i<n;i++) {
+            cin>>points[i].x>>points[i].y;
+        }
+        vector<Point> temp(points),cv;
+        get_convexhull(temp,cv);
+        reverse(cv.begin()+1, cv.end());
+
+        // for (ll i=0;i<n;i++) {
+        //     cout<<points[i].x<<" "<<points[i].y<<'\n';
+        // }
+        // cout<<'\n';
+        // for (ll i=0;i<cv.size();i++) {
+        //     cout<<cv[i].x<<" "<<cv[i].y<<'\n';
+        // }
+        // cout<<'\n';cout<<'\n';
+
+
+        //first point can be concave
+        ll i=0,j=0;
+        while (points[i]!=cv[j]) i=(i+1)%n;
+        // cout<<"I="<<i<<"J="<<j<<'\n';
+
+        ll Icount=0,Jcount=0;
+        ll flag=0;
+        while (1){
+            // cout<<points[i].x<<","<<points[i].y<<"   "<<cv[j].x<<","<<cv[j].y<<'\n';
+            if (Icount>n || Jcount>cv.size()) break;
+            if (points[i]==cv[j]) {
+                i=(i+1)%n;
+                j=(j+1)%cv.size();
+                Icount++,Jcount++;
+                continue;
+            }
+
+            ll add=0;
+            while (points[(i+add)%n]!=cv[j]) {
+                add++;
+            }
+
+            // cout<<"test: "<<points[(i-1+n)%n].x<<" "<<points[(i-1+n)%n].y<<'\n';
+            // cout<<"test: "<<cv[j].x<<" "<<cv[j].y<<'\n';
+            // cout<<"test: "<<points[(i+add+1)%n].x<<" "<<points[(i+add+1)%n].y<<'\n';
+            if (ccw(points[(i-1+n)%n],cv[j],points[(i+add+1)%n]) !=0 ) {
+                cout<<"No\n";
+                flag=1;
+                break;
+            }
+            if (ccw(points[(i-2+n)%n],points[(i-1+n)%n],cv[j]) !=0 ) {
+                cout<<"No\n";
+                flag=1;
+                break;
+            }
+
+            i=(i+add)%n;
+            Icount+=add;
+        }
+
+        if (flag==0) {
+            cout<<"Yes\n";
+        }
+
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
