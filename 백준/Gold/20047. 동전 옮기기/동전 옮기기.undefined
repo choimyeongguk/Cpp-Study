@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll N; cin >> N;
+    string S, T; cin >> S >> T;
+    ll loc1, loc2; cin >> loc1 >> loc2;
+    string S_out = S;
+
+    if (S==T) {
+        cout << "YES";
+        return;
+    }
+    // 없앤 문자열 만들기
+    char first = S[loc1];
+    char second = S[loc2];
+    S_out.erase(loc2, 1);
+    S_out.erase(loc1, 1);
+
+    vector<char> pick = { first, second };
+    ll l = 0, r = 0, cnt = 0;
+    // while (l<N-2 && T[r]==S_out[l]) {
+    //     r++, l++;
+    // }
+    // ll right = r;
+    // // r에는 왼쪽에서부터 봤을 때, 처음으로 다른 문자가 들어감
+    // // 만약 앞부분이 전부 같다면 N-1 가리키게 됨
+    // l =
+    bool flag1 = true;
+    for (ll r=0; r<N; r++) {
+        if (l<N-2 && T[r]==S_out[l]) {
+            l++;
+        }
+        else {
+            if (T[r]==pick[cnt]) {
+                cnt++;
+            }
+            else {
+                // cout << "NO";
+                flag1 = false;
+                break;
+            }
+        }
+    }
+    bool flag2 = true;
+    l = N-3, cnt = 1;
+    for (ll r=N-1; r>=0; r--) {
+        if (l>=0 && T[r]==S_out[l]) {
+            l--;
+        }
+        else {
+            if (T[r]==pick[cnt]) {
+                cnt--;
+            }
+            else {
+                flag2 = false;
+                break;
+            }
+        }
+    }
+    if (!flag2 && !flag1) {
+        cout << "NO";
+    }
+    else cout << "YES";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
