@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess () {
+    ll i, j, k;
+}
+
+ll dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+ll dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+void solve() {
+    ll i, j, k;
+    ll r, c; cin>>r>>c;
+    vector<string> arr(r);
+    for (auto &x: arr) cin>>x;
+    vector<pll> ans;
+    for (i=1;i<r-1;i++) {
+        for (j=1;j<c-1;j++) {
+            if (arr[i][j]!='0') continue;
+            bool flag=true;
+            for (k=0;k<8;k++) {
+                ll nr = i+dr[k];
+                ll nc = j+dc[k];
+                if (arr[nr][nc]!='O') {
+                    flag=false;
+                    break;
+                }
+            }
+            if (flag) ans.push_back({i+1, j+1});
+        }
+    }
+    if (ans.size()==0) cout<<"Oh no!\n";
+    else if (ans.size()==1) cout<<ans[0].first<<' '<<ans[0].second<<'\n';
+    else cout<<"Oh no! "<<ans.size()<<" locations\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
