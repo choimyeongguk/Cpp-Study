@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+struct SEG {
+    ll n;
+    vl mv, pos, arr;
+    SEG(vl &arr) : n(arr.size()), arr(arr), mv(n<<2, -1), pos(n<<2, -1) {
+        init(1, 0, n-1);
+    }
+    void init(ll node, ll l, ll r) {
+        if (l==r) {
+            mv[node] = arr[l];
+            pos[node] = l;
+            return;
+        }
+        ll m=(l+r)>>1;
+        init(node<<1, l, m);
+        init(node<<1|1, m+1, r);
+        if (mv[node<<1]<mv[node<<1|1]) {    // 오른쪽이 더 클 때
+            mv[node]=mv[node<<1|1];
+            pos[node]=pos[node<<1|1];
+        }
+        else if (mv[node<<1]>mv[node<<1|1]) {   // 왼쪽이 더 클 때
+            mv[node]=mv[node<<1];
+            pos[node]=pos[node<<1];
+        }
+        else {  // 같을 떄
+            mv[node]=mv[node<<1];
+            pos[node]=pos[node<<1];
+        }
+    }
+    pll range(ll node, ll l, ll r, ll s, ll e) {
+        if (r<s || e<l) return {-1, -1};
+        if (s<=l && r<=e) return {mv[node], pos[node]};
+        ll m = (l+r)>>1;
+        auto [lm, lp] = range(node<<1, l, m, s, e);
+        auto [rm, rp] = range(node<<1|1, m+1, r, s, e);
+        if (lm<rm) return {rm, rp};
+        if (lm>rm) return {lm, lp};
+        return {lm, lp};
+    }
+    pll query(ll s, ll e) {return range(1, 0, n-1, s, e);}
+};
+
+void preprocess () {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    string s; cin>>s;
+    ll n = s.size();
+    vl arr;
+    arr.reserve(n);
+    while (s.size()) {
+        arr.push_back(s.back()-'0');
+        s.pop_back();
+    }
+    reverse(arr.begin(), arr.end());
+    SEG seg(arr);
+    function<ll(ll, ll)> f = [&arr, &seg, &f](ll l, ll r) -> ll {
+        // cout<<l<<' '<<r<< "구간에서 젤 큰 값은 : " << seg.query(l,r).first << "  " << " 위치는 : " << seg.query(l, r).second << "\n";
+        if (l==r) return arr[l];
+        if (l>r) return 0;
+        auto [mv, pos] = seg.query(l, r);
+        return mv*(pos-l+1)*(r-pos+1) + f(l, pos-1) + f(pos+1, r);
+    };
+    ll sum = f(0, n-1);
+    ll cnt = n*(n+1)/2;
+    ll g = gcd(sum, cnt);
+    sum /= g;
+    cnt /= g;
+    if (sum%cnt) {
+        if (sum>cnt) cout<<sum/cnt<<' ';
+        cout<<sum%cnt<<'/'<<cnt<<'\n';
+    }
+    else cout<<sum/cnt<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
