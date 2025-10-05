@@ -1,0 +1,127 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+__int128 gcd(__int128 a, __int128 b) {
+    if (b==0) return a;
+    return gcd(b, a%b);
+}
+
+struct fraction {
+    __int128 ja, mo;
+    fraction(__int128 j=0, __int128 m=1) : mo(m), ja(j) {
+        simplify();
+    }
+    void simplify() {
+        __int128 g = gcd(ja, mo);
+        if (mo<0) {
+            ja=-ja;
+            mo=-mo;
+        }
+        if (g) {
+            ja/=g;
+            mo/=g;
+        }
+    }
+    fraction operator+(const fraction o) {
+        return fraction(ja*o.mo+mo*o.ja, mo*o.mo);
+    }
+    fraction operator*(const fraction o) {
+        return fraction(ja*o.ja, mo*o.mo);
+    }
+};
+
+constexpr ll M = 1'000'000'000'000'000'000;
+ostream &operator<<(ostream &os, __int128 x) {
+    if (x<=M) return os<<(ll)x;
+    return os<<(ll)(x/M)<<(ll)(x%M);
+}
+
+void preprocess () {
+    ll i, j, k;
+    fraction a(3, 4), b(1, 8);
+    fraction c = a+b;
+}
+
+ll dr[] = {-1, -1, 1, 1};
+ll dc[] = {-1, 1, -1, 1};
+void solve() {
+    ll i, j, k;
+    ll n, x, y, d; cin>>n>>x>>y>>d;
+    vector prob(n, vector<fraction>(n));
+    vector next(n, vector<fraction>(n));
+    prob[x-1][y-1] = fraction(1, 1);
+    fraction ans, q(1, 4);
+    while (d--) {
+        for (i=0;i<n;i++) {
+            for (j=0;j<n;j++) {
+                fraction cur = prob[i][j];
+                for (k=0;k<4;k++) {
+                    ll nr, nc;
+                    if (i==0 && dr[k]==-1) nr=i;
+                    else if (i==n-1 && dr[k]==1) nr=i;
+                    else nr=i+dr[k];
+                    if (j==0 && dc[k]==-1) nc=j;
+                    else if (j==n-1 && dc[k]==1) nc=j;
+                    else nc=j+dc[k];
+                    next[nr][nc] = next[nr][nc] + cur*q;
+                }
+            }
+        }
+
+        // cout<<"===========\n";
+        // for (i=0;i<n;i++) {
+        //     for (j=0;j<n;j++) {
+        //         cout<<next[i][j].ja<<'/'<<next[i][j].mo<<' ';
+        //     }
+        //     cout<<endl;
+        // }
+
+        prob.swap(next);
+        next.assign(n, vector<fraction>(n));
+        for (i=0;i<n;i++) {
+            ans = ans + prob[i][i];
+            prob[i][i] = fraction(0, 1);
+        }
+        // cout<<(ll)ans.ja<<'/'<<(ll)ans.mo<<'\n';
+    }
+    cout<<ans.ja<<'/'<<ans.mo<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
