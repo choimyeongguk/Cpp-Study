@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess () {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll n, m; cin>>m>>n;
+    vector<string> tmp(n), arr;
+    for (auto &x: tmp) cin>>x;
+    for (i=0;i<n;i++) {
+        vl cnt(26);
+        for (auto ch: tmp[i]) cnt[ch-'A']++;
+        ll s=0;
+        bool flag=true;
+        for (j=0;j<m;j++) {
+            if (cnt[j]>=2) flag=false;
+            s += cnt[j];
+        }
+        if (s != tmp[i].size()) flag=false;
+        if (flag) arr.push_back(tmp[i]);
+    }
+    // cout<<arr.size()<<endl;
+    // for (auto &x: arr) cout<<x<<endl;
+    n = arr.size();
+    vvl ok(n, vl(n));
+    for (i=0;i<n;i++) {
+        for (j=i+1;j<n;j++) {
+            vl cnt(26);
+            for (auto ch: arr[i]) cnt[ch-'A']++;
+            for (auto ch: arr[j]) cnt[ch-'A']++;
+            if (*max_element(cnt.begin(), cnt.end())==1)
+                ok[i][j]=1;
+        }
+    }
+    vl used;
+    function<ll(ll)> bt = [&n, &ok, &used, &bt](ll idx) -> ll {
+        if (idx==n) return used.size();
+        ll ret=bt(idx+1);
+        bool flag=true;
+        for (auto x: used) {
+            if (ok[x][idx]==0) flag=false;
+        }
+        if (flag) {
+            used.push_back(idx);
+            ret=max(ret, bt(idx+1));
+            used.pop_back();
+        }
+        return ret;
+    };
+    // for (auto x: arr) cout<<x<<'\n';
+    cout<<bt(0)<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
