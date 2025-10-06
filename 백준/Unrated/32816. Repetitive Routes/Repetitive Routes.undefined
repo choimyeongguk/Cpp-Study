@@ -43,19 +43,16 @@ struct Query {
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
-    vvl customer(N+1);
+    vl customer(N+1, -1);
     vl arr(N*2);
     ll num, N2=N*2;
+    ll block = max(1LL, (ll)sqrt(N*2));
+    vector<Query> query; query.reserve(N);
     for (i=0; i<N2; i++) {
         cin >> num >> arr[i];
-        customer[num].emplace_back(i);
-    }
-    ll block = max(1LL, (ll)sqrt(N*2));
-    vector<Query> query(N);
-    for (i=1; i<=N; i++) {
-        query[i-1] = {
-            customer[i][0], customer[i][1], customer[i][0]/block
-        };
+        if (customer[num] == -1)
+            customer[num] = i;
+        else query.emplace_back(customer[num], i, customer[num]/block);
     }
     sort(query.begin(), query.end(), [&](const Query& a, const Query& b) {
         if (a.bi != b.bi) return a.bi < b.bi;
