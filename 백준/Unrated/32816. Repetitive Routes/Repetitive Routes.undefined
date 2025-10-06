@@ -37,7 +37,7 @@ void preprocess() {
 }
 
 struct Query {
-    ll l, r, idx, bi;
+    ll l, r, bi;
 };
 
 void solve(ll testcase){
@@ -45,8 +45,8 @@ void solve(ll testcase){
     ll N; cin >> N;
     vvl customer(N+1);
     vl arr(N*2);
-    ll num;
-    for (i=0; i<N*2; i++) {
+    ll num, N2=N*2;
+    for (i=0; i<N2; i++) {
         cin >> num >> arr[i];
         customer[num].emplace_back(i);
     }
@@ -54,7 +54,7 @@ void solve(ll testcase){
     vector<Query> query(N);
     for (i=1; i<=N; i++) {
         query[i-1] = {
-            customer[i][0], customer[i][1], i-1, customer[i][0]/block
+            customer[i][0], customer[i][1], customer[i][0]/block
         };
     }
     sort(query.begin(), query.end(), [&](const Query& a, const Query& b) {
@@ -68,7 +68,7 @@ void solve(ll testcase){
     auto add = [&](const ll& x) { if (++freq[arr[x]] == 1) distinct++; };
     auto remove = [&](const ll& x) { if (--freq[arr[x]] == 0) distinct--; };
     ll l = 0, r = -1, ans = 0;
-    for (auto& [lq,rq,idx,bi] : query) {
+    for (auto& [lq,rq,bi] : query) {
         while (l<lq) remove(l++);
         while (l>lq) add(--l);
         while (r<rq) add(++r);
