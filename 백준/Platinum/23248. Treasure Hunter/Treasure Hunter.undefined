@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif;
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll R, C, N; cin >> R >> C >> N;
+    ll r, c;
+    vvl last(R);
+    for (i=0; i<N; i++) {
+        cin >> r >> c;
+        last[r-1].emplace_back(c-1);
+    }
+    for (auto& e : last) {
+        e.emplace_back(-1);
+        sort(e.begin(), e.end());
+    }
+
+    bool flag;
+    ll cnt = 0, cur, tmp;
+    while (true) {
+        cnt++;
+        cur = 0;
+        flag = false;
+        for (i=0; i<R; i++) {
+            if (last[i].back() < cur) continue;
+
+            tmp = last[i].back();   // 끝부분 인덱스
+            auto it = lower_bound(last[i].begin(), last[i].end(), cur);
+            last[i].erase(it, last[i].end());
+            cur = tmp;
+            flag = true;
+        }
+        // for (auto& e : last) {
+        //     for (auto& v : e) {
+        //         cout << v << " ";
+        //     }
+        //     cout << "\n";
+        // }
+        // cout << "\n";
+        if (!flag) break;
+    }
+    cout << cnt-1;
+
+    // bool flag;
+    // ll cnt = 0, cur, tmp;
+    // while (true) {
+    //     cnt++;
+    //     cur = 0;
+    //     flag = false;
+    //
+    //     for (i=0; i<R; i++) {
+    //         if (last[i] < cur) {
+    //             // cout << cur << " ";
+    //             continue;
+    //         }
+    //         tmp = last[i];
+    //         last[i] = cur==0 ? -1 : dp[i][cur-1];
+    //         cur = tmp;
+    //         flag = true;
+    //         // cout << cur << " ";
+    //     }
+    //     // cout << "\n";
+    //     if (!flag) break;
+    // }
+    // cout << cnt-1;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
