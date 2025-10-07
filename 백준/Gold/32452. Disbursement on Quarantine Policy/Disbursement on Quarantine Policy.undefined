@@ -1,0 +1,147 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+constexpr ll MOD = 1000000007;
+ll modpow(ll n, ll k) {
+    ll ret=1;
+    n %= MOD;
+    while (k) {
+        if (k&1) ret=ret*n%MOD;
+        n=n*n%MOD;
+        k>>=1;
+    }
+    return ret;
+}
+
+ll modinv(ll n) {
+    return modpow(n, MOD-2);
+}
+
+ll dr[] = {-1, -1, 1, 1};
+ll dc[] = {-1, 1, -1, 1};
+void solve() {
+    ll i, j, k;
+    ll r, c, d0, d1, d2; cin>>r>>c>>d0>>d1>>d2;
+    vvl arr(r, vl(c));
+    for (i=0;i<r;i++) {
+        string s; cin>>s;
+        for (j=0;j<c;j++) {
+            if (s[j]=='.') arr[i][j] = 0;
+            else if (s[j]=='?') arr[i][j] = 1;
+            else arr[i][j] = 2;
+        }
+    }
+    vvl p(r, vl(c));
+    for (i=0;i<r;i++) {
+        for (j=0;j<c;j++) {
+            ll v1=0, v2=0, v3=0;
+            ll q1=0, q2=0, q3=0;
+            if (arr[i][j]==1) q1++;
+            if (arr[i][j]==2) v1++;
+            if (i>0 && arr[i-1][j]==1) q2++;
+            if (i<r-1 && arr[i+1][j]==1) q2++;
+            if (j>0 && arr[i][j-1]==1) q2++;
+            if (j<c-1 && arr[i][j+1]==1) q2++;
+            if (i>0 && arr[i-1][j]==2) v2++;
+            if (i<r-1 && arr[i+1][j]==2) v2++;
+            if (j>0 && arr[i][j-1]==2) v2++;
+            if (j<c-1 && arr[i][j+1]==2) v2++;
+            for (k=0;k<4;k++) {
+                ll nr = i+dr[k];
+                ll nc = j+dc[k];
+                if (nr<0 || nr>=r) continue;
+                if (nc<0 || nc>=c) continue;
+                if (arr[nr][nc]==1) q3++;
+                if (arr[nr][nc]==2) v3++;
+            }
+            if (v1) p[i][j] = (p[i][j]+d0) % MOD;
+            else if (v2) {
+                if (q1) p[i][j] = (p[i][j] + modinv(2)*(d0+d1)%MOD)%MOD;
+                else p[i][j] = (p[i][j]+d1)%MOD;
+            }
+            else if (v3) {
+                ll pp = 1;
+                if (q1) {
+                    p[i][j] += pp*modinv(2)%MOD*d0%MOD;
+                    p[i][j] %= MOD;
+                    pp = pp*modinv(2)%MOD;
+                }
+
+                p[i][j] += pp * (1-modinv(1<<q2)+MOD)%MOD*d1%MOD;
+                p[i][j] %= MOD;
+                pp = pp*modinv(1<<q2)%MOD;
+
+                p[i][j] += pp * (1-modinv(1<<q3)+MOD)%MOD*d2%MOD;
+                p[i][j] %= MOD;
+                pp = pp*modinv(1<<q3)%MOD;
+
+                p[i][j] += pp*d2%MOD;
+                p[i][j] %= MOD;
+            }
+            else {
+                ll pp = 1;
+                if (q1) {
+                    p[i][j] += pp*modinv(2)%MOD*d0%MOD;
+                    p[i][j] %= MOD;
+                    pp = pp*modinv(2)%MOD;
+                }
+
+                p[i][j] += pp * (1-modinv(1<<q2)+MOD)%MOD*d1%MOD;
+                p[i][j] %= MOD;
+                pp = pp*modinv(1<<q2)%MOD;
+
+                p[i][j] += pp * (1-modinv(1<<q3)+MOD)%MOD*d2%MOD;
+                p[i][j] %= MOD;
+                pp = pp*modinv(1<<q3)%MOD;
+            }
+        }
+    }
+    ll ans=0;
+    for (i=0;i<r;i++)
+        for (j=0;j<c;j++)
+            ans = (ans+p[i][j])%MOD;
+    cout<<ans<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
