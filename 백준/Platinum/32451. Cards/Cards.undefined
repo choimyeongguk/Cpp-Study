@@ -1,0 +1,110 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll N; cin >> N;
+    vl A(N); for (auto& e : A) cin >> e;
+    vl B(N); for (auto& e : B) cin >> e;
+    unordered_map<ll,ll> mp;
+    for (i=0; i<N; i++)
+        mp[A[i]] = B[i];
+
+    vvl cycle;
+    vl visited(N+1, false);
+    for (i=1; i<=N; i++) {
+        if (visited[i]) continue;
+        vl tmp; ll cur = i;
+        do {
+            tmp.emplace_back(cur);
+            visited[cur] = true;
+            cur = mp[cur];
+        } while (!visited[cur]);
+        cycle.emplace_back(tmp);
+    }
+
+    // 홀짝성으로 만들 수 있는지 체크
+    ll numEven = 0;
+    for (auto& e : cycle)
+        if (e.size() % 2 == 0)
+            numEven++;
+    if (numEven % 2 == 1) {  // 짝수 개수가 홀수개면
+        cout << "No";
+        return;
+    }
+
+    // 해 구성
+    vl ans; ans.reserve(N);
+    bool flag = false;
+    for (auto& e : cycle) {
+        vl tmp = e;
+        sort(tmp.begin(), tmp.end());
+        if (e.size() % 2 == 1) {    // 홀수
+            ll mid = tmp[e.size()/2];
+            ll idx = 0;
+            while (e[idx] != mid) idx++;
+            for (i=idx; i<e.size(); i++)
+                ans.emplace_back(e[i]);
+            for (i=0; i<idx; i++)
+                ans.emplace_back(e[i]);
+        }
+        else {  // 짝수
+            ll mid = flag ? tmp[e.size()/2] : tmp[e.size()/2-1];
+            flag = !flag;
+            ll idx = 0;
+            while (e[idx] != mid) idx++;
+            for (i=idx; i<e.size(); i++)
+                ans.emplace_back(e[i]);
+            for (i=0; i<idx; i++)
+                ans.emplace_back(e[i]);
+        }
+    }
+
+    cout << "Yes\n";
+    for (auto& e : ans) cout << e << " ";
+    cout << "\n";
+    for (auto& e : ans) cout << mp[e] << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
