@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll V, E; cin >> V >> E;
+    vvl G(V+1);
+    vl in_degree(V+1, 0);
+    ll a, b;
+    for (i=0; i<E; i++) {
+        cin >> a >> b;
+        G[a].emplace_back(b);
+        in_degree[b]++;
+    }
+
+    priority_queue<ll,vl,greater<ll>> pq;
+    for (i=1; i<=V; i++)
+        if (!in_degree[i])
+            pq.emplace(i);
+
+    ll cur;
+    vl ans;
+    while (!pq.empty()) {
+        cur = pq.top(); pq.pop();
+        ans.emplace_back(cur);
+        for (auto& nxt : G[cur]) {
+            in_degree[nxt]--;
+            if (!in_degree[nxt])
+                pq.emplace(nxt);
+        }
+    }
+    if (ans.size() != V) {
+        cout << "IMPOSSIBLE";
+    }
+    else {
+        for (auto& e : ans)
+            cout << e << " ";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
