@@ -41,19 +41,15 @@ void solve() {
     vl dist(n, INF);
     dist[s]=0;
     while (t--) {
-        map<ll, ll> ndist;
+        unordered_map<ll, ll> ndist;
         for (i=0;i<m;i++) {
             ll u, v, w; cin>>u>>v>>w;
-            if (dist[u]!=INF && dist[v]>dist[u]+w) {
-                if (!ndist.contains(v)) ndist[v] = dist[u]+w;
-                else ndist[v] = min(ndist[v], dist[u]+w);
-            }
-            if (dist[v]!=INF && dist[u]>dist[v]+w) {
-                if (!ndist.contains(u)) ndist[u] = dist[v]+w;
-                else ndist[u] = min(ndist[u], dist[v]+w);
-            }
+            if (dist[u]!=INF && dist[v]>dist[u]+w)
+                ndist[v] = ndist.contains(v) ? min(ndist[v], dist[u]+w) : dist[u]+w;
+            if (dist[v]!=INF && dist[u]>dist[v]+w)
+                ndist[u] = ndist.contains(u) ? min(ndist[u], dist[v]+w) : dist[v]+w;
         }
-        for (auto [u, d] : ndist)
+        for (auto& [u, d] : ndist)
             dist[u] = d;
     }
     cout<<(dist[e]==INF ? -1 : dist[e])<<'\n';
