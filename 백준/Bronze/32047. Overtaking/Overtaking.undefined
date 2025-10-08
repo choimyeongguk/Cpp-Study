@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    while (1) {
+        ll n;
+        cin>>n;
+        if (!n) break;
+
+        vl a(n);
+        vl b(n);
+        vl c(n);
+        for (ll i=0;i<n;i++) {
+            cin>>a[i];
+        }
+        for (ll i=0;i<n;i++)cin>>b[i];
+
+        for (ll i=1;i<n;i++) {
+            a[i]+=a[i-1];
+            b[i]+=b[i-1];
+        }
+
+        for (ll i=0;i<n;i++) {
+            if (a[i]>b[i]) c[i]=1;
+            else if(a[i]==b[i]) c[i]=0;
+            else c[i]=-1;
+
+            //cout<<c[i]<<" ";
+        }
+        //cout<<'\n';
+
+        ll count=0;
+
+        ll flag=0;
+        for (ll i=0;i<n;i++) {
+            if (c[i]==1) {
+                if (flag==-1) {
+                    count++;
+                }
+                flag=1;
+            }
+            else if (c[i]==-1) {
+                if (flag==1) {
+                    count++;
+                }
+                flag=-1;
+            }
+        }
+
+        cout<<count<<'\n';
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
