@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct elem {
+    ll s, e, x, y;
+};
+
+pll f(ll a, ll b, ll c) {
+    if (c<=b) return {b-max(a, c), b};
+    return {0, c};
+}
+
+ll dist(const elem &a, const elem &b) {
+    return llabs(a.x-b.x) + llabs(a.y-b.y);
+}
+
+void solve() {
+    ll i, j, k;
+    ll n; cin>>n;
+    vector<elem> arr(n+1, {0, 0, 0, 0});
+    for (i=1;i<=n;i++) cin>>arr[i].x>>arr[i].y;
+    for (i=1;i<=n;i++) cin>>arr[i].s>>arr[i].e;
+    sort(arr.begin()+1, arr.end(), [](const elem &a, const elem &b) {
+        if (a.e==b.e) return a.s<b.s;
+        return a.e<b.e;
+    });
+    vl dp(n+1, -1), time(n+1, 9e18);
+    time[0] = dp[0] = 0;
+    for (i=1;i<=n;i++) {
+        for (j=0;j<i;j++) {
+            auto [t, e] = f(arr[i].s, arr[i].e, time[j] + dist(arr[i], arr[j]));
+            if (time[i] == e) {
+                dp[i] = max(dp[i], dp[j]+t);
+            }
+            else if (time[i]>=e && dp[i]<=dp[j]+t) {
+                dp[i] = max(dp[i], dp[j]+t);
+                time[i] = e;
+            }
+            // if (dp[j]+t > dp[i]) {
+            //     dp[i] = dp[j]+t;
+            //     time[i] = e;
+            // }
+            // else if (dp[j]+t == dp[i])
+            //     time[i] = min(time[i], e);
+        }
+    }
+    ll ans=0;
+    for (i=1;i<=n;i++)
+        ans=max(ans, dp[i]);
+    cout<<ans<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
