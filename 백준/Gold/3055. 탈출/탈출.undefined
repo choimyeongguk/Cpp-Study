@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll R, C; cin >> R >> C;
+    vector<string> M(R); for (auto& e : M) cin >> e;
+    queue<pll> squirrel, water;
+    for (i=0; i<R; i++)
+        for (j=0; j<C; j++)
+            if (M[i][j] == '*')
+                water.emplace(i, j);
+            else if (M[i][j] == 'S')
+                squirrel.emplace(i, j);
+
+    ll nr, nc, time = 0;
+    vvl d = {{-1, 0, 1, 0},{0, 1, 0, -1}};
+    while (!squirrel.empty()) {
+        time++;
+        // 다람쥐 이동
+        for (i=(ll)squirrel.size(); i>0; i--) {
+            auto [r,c] = squirrel.front(); squirrel.pop();
+            if (M[r][c] == 'S') {
+                for (j=0; j<4; j++) {
+                    nr = r + d[0][j];
+                    nc = c + d[1][j];
+                    if (nr<0 || nc<0 || nr==R || nc==C) continue;
+                    if (M[nr][nc]=='X' || M[nr][nc]=='*' || M[nr][nc]=='S') continue;
+                    if (M[nr][nc]=='D') {
+                        cout << time;
+                        return;
+                    }
+                    M[nr][nc] = 'S';
+                    squirrel.emplace(nr,nc);
+                }
+            }
+        }
+        // 물 이동
+        for (i=(ll)water.size(); i>0; i--) {
+            auto [r,c] = water.front(); water.pop();
+            for (j=0; j<4; j++) {
+                nr = r + d[0][j];
+                nc = c + d[1][j];
+                if (nr<0 || nc<0 || nr==R || nc==C) continue;
+                if (M[nr][nc]=='X' || M[nr][nc]=='D' || M[nr][nc]=='*') continue;
+                M[nr][nc] = '*';
+                water.emplace(nr, nc);
+            }
+        }
+    }
+    cout << "KAKTUS";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
