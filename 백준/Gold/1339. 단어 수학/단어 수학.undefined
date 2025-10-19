@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vector<string> word(N); for (auto& e : word) cin >> e;
+    vl weight('Z'+1, 0);
+    for (auto& w : word) {
+        ll ten = 1;
+        for (i=w.size()-1; i>=0; i--) {
+            weight[w[i]] += ten;
+            ten *= 10;
+        }
+    }
+
+    priority_queue<pll> pq;
+    for (i='A'; i<='Z'; i++)
+        pq.emplace(weight[i], i);
+
+    unordered_map<char,ll> mp; ll idx = 9;
+    while (!pq.empty() && idx>=0) {
+        mp[pq.top().second] = idx--;
+        pq.pop();
+    }
+
+    ll sum = 0;
+    for (auto& w : word) {
+        ll tmp = 0;
+        for (auto& e : w)
+            tmp = tmp*10 + mp[e];
+        sum += tmp;
+    }
+    cout << sum;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
