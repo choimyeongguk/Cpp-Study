@@ -1,0 +1,86 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    const ll MAX = 200001;
+    vl visit(MAX, 0);
+    queue<ll> q; q.emplace(N);
+    while (!q.empty()) {
+        ll cur = q.front(); q.pop();
+        if (cur==K) break;
+        if (cur<MAX-1 && !visit[cur+1]) {
+            visit[cur+1] = 1;
+            q.emplace(cur+1);
+        }
+        if (cur>0 && !visit[cur-1]) {
+            visit[cur-1] = -1;
+            q.emplace(cur-1);
+        }
+        if (cur*2<MAX && !visit[cur*2]) {
+            visit[cur*2] = 2;
+            q.emplace(cur*2);
+        }
+    }
+    vl ans;
+    ll cur = K;
+    while (cur != N) {
+        ans.emplace_back(cur);
+        switch (visit[cur]) {
+            case 1: cur--; break;
+            case -1: cur++; break;
+            case 2: cur /= 2; break;
+        }
+    }
+    ans.emplace_back(N);
+    reverse(ans.begin(), ans.end());
+    cout << ans.size()-1 << "\n";
+    for (auto& e : ans) cout << e << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
