@@ -1,0 +1,110 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vvl M(N, vl(N));
+    for (auto& e : M)
+        for (auto& v : e)
+            cin >> v;
+
+    ll idx = 0;
+    vvl d = {{-1, 0, 1, 0},{0, 1, 0, -1}};
+    vvl visit(N, vl(N, false));
+    vector<vector<pll>> land(1);
+    function<void(ll,ll)> assignLandNum = [&](ll r, ll c) {
+        visit[r][c] = true;
+        land.back().emplace_back(r, c);
+        M[r][c] = idx;
+        for (ll ii=0; ii<4; ii++) {
+            ll nr = r + d[0][ii];
+            ll nc = c + d[1][ii];
+            if (nr<0 || nc<0 || nr==N || nc==N || visit[nr][nc] || M[nr][nc]!=1)
+                continue;
+            assignLandNum(nr, nc);
+        }
+    };
+    for (i=0; i<N; i++)
+        for (j=0; j<N; j++)
+            if (M[i][j]==1 && !visit[i][j]) {
+                idx++;
+                land.emplace_back();
+                assignLandNum(i, j);
+            }
+
+    ll ans = 1e10;
+    for (i=1; i<=idx; i++) {    // 시작 섬
+        queue<pair<ll,pll>> q;
+        vvl visit_tmp(N, vl(N, false));
+        for (auto& [r,c] : land[i]) {
+            q.emplace(0, pll{r,c});
+            visit_tmp[r][c] = true;
+        }
+        while (!q.empty()) {
+            auto [dist,loc] = q.front(); q.pop();
+            auto& [r,c] = loc;
+            bool flag = false;
+            for (j=0; j<4; j++) {
+                ll nr = r + d[0][j];
+                ll nc = c + d[1][j];
+                if (nr<0 || nc<0 || nr==N || nc==N || visit_tmp[nr][nc]) continue;
+                if (M[nr][nc]>0 && M[nr][nc]!=i) {
+                    ans = min(ans, dist);
+                    flag = true;
+                    break;
+                }
+                visit_tmp[nr][nc] = true;
+                q.emplace(dist+1, pll{nr, nc});
+            }
+            if (flag) break;
+        }
+    }
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
