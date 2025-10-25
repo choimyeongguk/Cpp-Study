@@ -1,0 +1,179 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct MCMF {
+    struct Edge { ll nxt, rev, res, cost; };
+    ll n;
+    vector<vector<Edge>> g;
+    MCMF(ll n): n(n), g(n) {}
+
+    void add_edge(ll s, ll e, ll cap, ll cost, ll rev_cap = 0){
+        g[s].emplace_back(e, (ll)g[e].size(), cap, cost);
+        g[e].emplace_back(s, (ll)g[s].size()-1, rev_cap, -cost);
+    }
+
+    // s->t로 최대 maxf만큼 보냄(기본: 무한). (flow, cost) 반환
+    pll min_cost_max_flow(ll src, ll sink, ll maxf = LLONG_MAX){
+        const ll INF = LLONG_MAX;
+        ll flow = 0, minCost = 0;
+
+        vl pi(n, 0), dist(n), avail(n);
+        vl pv(n), pe(n);    // prev vertex, prev edge idx
+
+        // 초기 포텐셜: 음수비용 간선이 있을 수 있으면 SPFA/BF로 한 번 계산
+        auto spfa_init = [&](){
+            deque<ll> dq; vector<bool> inq(n,false);
+            fill(pi.begin(), pi.end(), INF);
+            pi[src] = 0; dq.push_back(src); inq[src] = true;
+            while (!dq.empty()){
+                ll cur = dq.front(); dq.pop_front(); inq[cur] = false;
+                for (auto& [nxt,rev,res,cost] : g[cur])
+                    if (res>0 && pi[nxt]>pi[cur]+cost) {
+                        pi[nxt] = pi[cur] + cost;
+                        if (!inq[nxt]) {
+                            inq[nxt] = true;
+                            if (!dq.empty() && pi[nxt]<pi[dq.front()]) dq.push_front(nxt);
+                            else dq.push_back(nxt);
+                        }
+                }
+            }
+            for (ll i=0; i<n; i++)
+                if (pi[i] == INF) pi[i] = 0; // 도달불가는 0으로
+        };
+        spfa_init();
+
+        while (flow < maxf){
+            fill(dist.begin(), dist.end(), INF);
+            fill(avail.begin(), avail.end(), 0);
+            dist[src] = 0; avail[src] = INF;
+            priority_queue<pll,vector<pll>,greater<pll>> pq;
+            pq.emplace(0, src);
+            while (!pq.empty()){
+                auto [d,cur] = pq.top(); pq.pop();
+                if (d != dist[cur]) continue;
+                for (ll i=0; i<g[cur].size(); i++) {
+                    auto& [nxt,rev,res,cost] = g[cur][i];
+                    if (res <= 0) continue;
+                    ll w = cost + pi[cur] - pi[nxt]; // 감소비용
+                    if (dist[nxt] > dist[cur]+w){
+                        dist[nxt] = dist[cur] + w;
+                        pv[nxt] = cur; pe[nxt] = i;
+                        avail[nxt] = min(avail[cur], res);
+                        pq.push({dist[nxt], nxt});
+                    }
+                }
+            }
+            if(dist[sink] == INF) break; // 더 이상 증가경로 없음
+            for(ll i=0; i<n; i++)
+                if(dist[i] < INF) pi[i] += dist[i]; // 포텐셜 업데이트
+            ll add = min(avail[sink], maxf-flow);
+            flow += add;
+            for (ll i=sink; i!=src; i=pv[i]) {
+                auto& [nxt,rev,res,cost] = g[pv[i]][pe[i]];
+                res -= add;
+                g[i][rev].res += add;
+                minCost += add*cost;
+            }
+        }
+        return {flow, minCost};
+    }
+};
+
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl in(N); for (auto& e : in) cin >> e;
+    vl out(N); for (auto& e : out) cin >> e;
+    ll T, F; cin >> T >> F;
+
+    // 최솟값
+    ll src = 2*N, sink = src+1;
+    MCMF flowMin(2*N+2);
+    // src -> in
+    for (i=0; i<N; i++)
+        flowMin.add_edge(src, i, 1, 0);
+    // in -> out
+    for (i=0; i<N; i++) {
+        for (j=0; j<N; j++) {
+            if (in[i] >= out[j]) continue;
+            ll time = out[j] - in[i];
+            ll cost = time<=T ? min((T-time)*(T-time), F) : 0LL;
+            flowMin.add_edge(i, N+j, 1, cost);
+        }
+    }
+    // out -> sink
+    for (i=0; i<N; i++)
+        flowMin.add_edge(N+i, sink, 1, 0);
+    auto [flow1,ansMin] = flowMin.min_cost_max_flow(src, sink);
+
+    // 최댓값
+    MCMF flowMax(2*N+2);
+    // src -> in
+    for (i=0; i<N; i++)
+        flowMax.add_edge(src, i, 1, 0);
+    // in -> out
+    for (i=0; i<N; i++) {
+        for (j=0; j<N; j++) {
+            if (in[i] >= out[j]) continue;
+            ll time = out[j] - in[i];
+            ll cost = time<=T ? min((T-time)*(T-time), F) : 0LL;
+            flowMax.add_edge(i, N+j, 1, -cost);
+        }
+    }
+    // out -> sink
+    for (i=0; i<N; i++)
+        flowMax.add_edge(N+i, sink, 1, 0);
+    auto [flow2,ansMax] = flowMax.min_cost_max_flow(src, sink);
+
+    if (flow1!=N || flow2!=N)
+        cout << -1;
+    else
+        cout << ansMin << " " << -ansMax;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
