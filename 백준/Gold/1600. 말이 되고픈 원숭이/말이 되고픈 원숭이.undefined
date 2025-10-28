@@ -1,0 +1,93 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll K, C, R; cin >> K >> C >> R;
+    vvl M(R, vl(C));
+    for (auto& e : M) for (auto& v : e) cin >> v;
+
+    queue<pair<pll,pll>> q;  // (동작수,사용한 점프 횟수), 위치
+    q.emplace(pll{0, 0}, pll{0, 0});
+    vvl visit(R, vl(C, 1e10));    // 이 위치에 도달하기 까지 사용한 점프 횟수
+    visit[0][0] = 0;
+
+    vvl d1 = {{-1, 0, 1, 0},{0, 1, 0, -1}};
+    vvl d2 = {{-2, -1, 1, 2, 2, 1, -1, -2},{1, 2, 2, 1, -1, -2, -2, -1}};
+    while (!q.empty()) {
+        auto [p1, p2] = q.front(); q.pop();
+        auto& [move, jump] = p1;
+        auto& [r, c] = p2;
+
+        if (r==R-1 && c==C-1) {
+            cout << move;
+            return;
+        }
+
+        // 인접칸 이동
+        for (i=0; i<4; i++) {
+            ll nr = r + d1[0][i];
+            ll nc = c + d1[1][i];
+            if (nr<0 || nc<0 || nr==R || nc==C || M[nr][nc] || visit[nr][nc]<=jump) continue;
+            visit[nr][nc] = jump;
+            q.emplace(pll{move+1, jump}, pll{nr, nc});
+        }
+
+        if (jump==K) continue;
+        // 점프 이동
+        for (i=0; i<8; i++) {
+            ll nr = r + d2[0][i];
+            ll nc = c + d2[1][i];
+            if (nr<0 || nc<0 || nr>=R || nc>=C || M[nr][nc] || visit[nr][nc]<=jump+1) continue;
+            visit[nr][nc] = jump+1;
+            q.emplace(pll{move+1, jump+1}, pll{nr, nc});
+        }
+    }
+    cout << -1;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
