@@ -46,19 +46,16 @@ void solve(ll testcase){
     for (i=2; i<num.size(); i++) {
         if (!num[i]) continue;
         prime2.emplace_back(i*i);
-        for (j=i; j<num.size(); j+=i)
+        for (j=i*i; j<num.size(); j+=i)
             num[j] = 0;
     }
 
     vl arr(Max-Min+1);
     iota(arr.begin(), arr.end(), Min);
-    // for (auto& e : prime2) cout << e << " ";
-    // cout << "\n";
     for (auto& p : prime2) {
         i = p*(Min/p);
         if (i<Min) i += p;
         i -= Min;
-        // cout << i << "\n";
         for (; i<arr.size(); i+=p)
             arr[i] = 0;
     }
