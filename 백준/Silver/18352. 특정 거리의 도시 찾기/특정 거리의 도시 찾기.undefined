@@ -1,0 +1,76 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using ull = unsigned long long;
+using tlll = tuple<ll,ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll V, E, K, X; cin >> V >> E >> K >> X;
+    vvl G(V);
+    for (i=0; i<E; i++) {
+        cin >> j >> k;
+        G[j-1].emplace_back(k-1);
+    }
+    vl visit(V, false); visit[X-1] = true;
+    queue<pll> q; q.emplace(X-1, 0);
+    vl ans;
+    while (!q.empty()) {
+        auto [cur,depth] = q.front(); q.pop();
+        if (depth == K) {
+            ans.emplace_back(cur);
+            continue;
+        }
+        for (auto& nxt : G[cur]) {
+            if (visit[nxt]) continue;
+            visit[nxt] = true;
+            q.emplace(nxt, depth+1);
+        }
+    }
+    sort(ans.begin(), ans.end());
+    if (ans.empty()) cout << -1;
+    else for (auto& e : ans) cout << e+1 << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
