@@ -1,0 +1,105 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif;
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct SegTree {
+    ll n; vl data; vector<bitset<10000>> tree;
+    SegTree(vl& arr): n(arr.size()), data(arr), tree(n<<2, 0) {
+        init(1, 0, n-1);
+    }
+    void init(ll i, ll s, ll e) {
+        if (s==e) {
+            tree[i][data[s]] = 1;
+            return;
+        }
+        ll m = (s+e)>>1;
+        init(i<<1, s, m);
+        init(i<<1|1, m+1, e);
+        tree[i] = tree[i<<1] | tree[i<<1|1];
+    }
+    bitset<10000> query(ll l, ll r) { return query(1, 0, n-1, l, r); }
+    bitset<10000> query(ll i, ll s, ll e, ll l, ll r) {
+        if (l>r || s>r || e<l) return 0;
+        if (l<=s && e<=r) return tree[i];
+        ll m = (s+e)>>1;
+        return query(i<<1, s, m, l, r) | query(i<<1|1, m+1, e, l, r);
+    }
+};
+
+void solve(ll test) {
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    vl arr(N);
+    for (auto& e : arr) {
+        cin >> e;
+        e--;
+    }
+    SegTree seg(arr);
+
+    vl freq(K, 0);
+    ll ans = 1e10, cnt = 0;
+    for (ll l=0, r=0; r<N; r++) {
+        if (freq[arr[r]]==0) cnt++;
+        freq[arr[r]]++;
+        while (freq[arr[l]]>1) {
+            freq[arr[l]]--;
+            if (freq[arr[l]]==0) cnt--;
+            l++;
+        }
+        ll width = r-l+1;
+        if (cnt==K && width < ans) {
+            // cout << "P' 찾음!! " << l << " " << r << "\n";
+            bitset<10000> left = seg.query(0, l-1);
+            bitset<10000> right = seg.query(r+1, N-1);
+            left |= right;
+            // cout << left.count() << "\n";
+            if (left.count() == K)
+                ans = width;
+        }
+    }
+    if (ans==1e10)
+        cout << 0;
+    else cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
