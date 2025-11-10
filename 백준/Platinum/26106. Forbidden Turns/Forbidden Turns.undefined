@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+    ll i, j, k;
+
+    ll M, N, K; cin >> M >> N >> K;
+    ll S, E; cin >> S >> E;
+    vector<vector<pll>> G(N);
+    ll f, t, c;
+    for (i=0; i<M; i++) {
+        cin >> f >> t >> c;
+        G[f].emplace_back(c, t);
+    }
+    set<pair<ll,pll>> s;
+    for (i=0; i<K; i++) {
+        cin >> f >> t >> c;
+        s.emplace(f,pll{t,c});
+    }
+
+    vector<unordered_set<ll>> visit(N); // i에서 j에 도달하면 visit[j].insert(i)
+    priority_queue<pair<ll,pll>,vector<pair<ll,pll>>,greater<>> pq; // 비용, 이전 노드, 현재 노드
+    pq.emplace(0, pll{S, S});
+    while (!pq.empty()) {
+        auto [cost,p] = pq.top(); pq.pop();
+        auto [prev,cur] = p;
+        if (cur == E) {
+            cout << cost;
+            return;
+        }
+        for (auto& [ncost,nxt] : G[cur]) {
+            if (s.contains({prev, pll{cur, nxt}})) continue;
+            if (visit[nxt].contains(cur)) continue;
+            visit[nxt].emplace(cur);
+            pq.emplace(cost + ncost, pll{cur, nxt});
+        }
+    }
+    cout << -1;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
