@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve(ll test) {
+    ll i, j, k;
+    string s; cin>>s;
+    ll n = s.size();
+    function<ll(ll, ll, ll)> f = [&s, &f](ll l, ll r, ll cnt) -> ll {
+        if (l>=r) {
+            return cnt;
+        }
+        if (s[l] == s[r]) return f(l+1, r-1, cnt);
+        else if (cnt==3) return -1;
+        else {
+            ll r1 = f(l+1, r, cnt+1);
+            ll r2 = f(l, r-1, cnt+1);
+            if (r1 == -1) {
+                if (r2 == -1) return -1;
+                return r2;
+            }
+            if (r2 == -1) return r1;
+            return min(r1, r2);
+        }
+    };
+    cout<<f(0, n-1, 0)<<endl;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
