@@ -75,13 +75,13 @@ struct LazySegTree {
             else {
                 for (auto c : {L, R}) {
                     if (isRep[c]) {
-                        rep[c] = (rep[c] * mul[i] %MOD + add[i]) %MOD;
+                        rep[c] = (rep[c] * mul[i] + add[i]) %MOD;
                         tree[c] = rep[c] * (c==L ? m-s+1 : e-m) %MOD;
                     }
                     else {
                         mul[c] = mul[c] * mul[i] %MOD;
                         add[c] = (add[c] * mul[i] %MOD + add[i]) %MOD;
-                        tree[c] = (tree[c] * mul[i] %MOD + add[i] * (c==L ? m-s+1 : e-m)) %MOD;
+                        tree[c] = (tree[c] * mul[i] + add[i] * (c==L ? m-s+1 : e-m)) %MOD;
                     }
                 }
             }
