@@ -1,0 +1,183 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct LazySegTree {
+    const ll MOD = 1'000'000'007;
+    ll n; vl data, tree, add, mul, rep, isRep;
+    LazySegTree(vl& arr) : n(arr.size()), data(arr), tree(n<<2, 0),
+    add(n<<2, 0), mul(n<<2, 1), rep(n<<2, 0), isRep(n<<2, false) {
+        init(1, 0, n-1);
+    }
+    void init(ll i, ll s, ll e) {
+        if (s==e) {
+            tree[i] = data[s];
+            return;
+        }
+        ll m = (s+e)>>1;
+        init(i<<1, s, m);
+        init(i<<1|1, m+1, e);
+        tree[i] = (tree[i<<1] + tree[i<<1|1]) %MOD;
+    }
+    void update(ll l, ll r, ll v, ll op) {
+        switch (op) {
+            case 1: updateAdd(1, 0, n-1, l, r, v); break;
+            case 2: updateMul(1, 0, n-1, l, r, v); break;
+            case 3: updateRep(1, 0, n-1, l, r, v); break;
+        }
+    }
+    void push(ll i, ll s, ll e) {
+        if (s < e) {
+            ll L = i<<1, R = i<<1|1, m = (s+e)>>1;
+
+            if (isRep[i]) {
+                add[L] = add[R] = 0;
+                mul[L] = mul[R] = 1;
+                rep[L] = rep[R] = rep[i];
+                isRep[L] = isRep[R] = isRep[i];
+                tree[L] = rep[L] * (m-s+1) %MOD;
+                tree[R] = rep[R] * (e-m) %MOD;
+            }
+            else {
+                for (auto c : {L, R}) {
+                    if (isRep[c]) {
+                        rep[c] = (rep[c] * mul[i] %MOD + add[i]) %MOD;
+                        tree[c] = rep[c] * (c==L ? m-s+1 : e-m) %MOD;
+                    }
+                    else {
+                        mul[c] = mul[c] * mul[i] %MOD;
+                        add[c] = (add[c] * mul[i] %MOD + add[i]) %MOD;
+                        tree[c] = (tree[c] * mul[i] %MOD + add[i] * (c==L ? m-s+1 : e-m)) %MOD;
+                    }
+                }
+            }
+        }
+        isRep[i] = false;
+        add[i] = 0, mul[i] = 1;
+    }
+    void updateAdd(ll i, ll s, ll e, ll l, ll r, ll v) {
+        if (s>r || e<l) return;
+        if (l<=s && e<=r) {
+            if (isRep[i]) {
+                rep[i] = (rep[i] + v) %MOD;
+                tree[i] = rep[i] * (e-s+1) %MOD;
+            }
+            else {
+                add[i] = (add[i] + v) %MOD;
+                tree[i] = (tree[i] + v * (e-s+1)) %MOD;
+            }
+            return;
+        }
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        updateAdd(i<<1, s, m, l, r, v);
+        updateAdd(i<<1|1, m+1, e, l, r, v);
+        tree[i] = (tree[i<<1] + tree[i<<1|1]) %MOD;
+    }
+    void updateMul(ll i, ll s, ll e, ll l, ll r, ll v) {
+        if (s>r || e<l) return;
+        if (l<=s && e<=r) {
+            if (isRep[i]) {
+                rep[i] = rep[i] * v %MOD;
+                tree[i] = rep[i] * (e-s+1) %MOD;
+            }
+            else {
+                add[i] = add[i] * v %MOD;
+                mul[i] = mul[i] * v %MOD;
+                tree[i] = tree[i] * v %MOD;
+            }
+            return;
+        }
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        updateMul(i<<1, s, m, l, r, v);
+        updateMul(i<<1|1, m+1, e, l, r, v);
+        tree[i] = (tree[i<<1] + tree[i<<1|1]) %MOD;
+    }
+    void updateRep(ll i, ll s, ll e, ll l, ll r, ll v) {
+        if (s>r || e<l) return;
+        if (l<=s && e<=r) {
+            add[i] = 0, mul[i] = 1, rep[i] = v, isRep[i] = true;
+            tree[i] = rep[i] * (e-s+1) %MOD;
+            return;
+        }
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        updateRep(i<<1, s, m, l, r, v);
+        updateRep(i<<1|1, m+1, e, l, r, v);
+        tree[i] = (tree[i<<1] + tree[i<<1|1]) %MOD;
+    }
+    ll query(ll l, ll r) { return query(1, 0, n-1, l, r); }
+    ll query(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return 0;
+        if (l<=s && e<=r) return tree[i];
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        return (query(i<<1, s, m, l, r) + query(i<<1|1, m+1, e, l, r)) %MOD;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl arr(N); for (auto& e : arr) cin >> e;
+    LazySegTree seg(arr);
+    ll M; cin >> M;
+    ll op, x, y, v;
+    while (M--) {
+        cin >> op >> x >> y;
+        x--, y--;
+        if (op == 4) {
+            cout << seg.query(x, y) << "\n";
+        }
+        else {
+            cin >> v;
+            seg.update(x, y, v, op);
+        }
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
