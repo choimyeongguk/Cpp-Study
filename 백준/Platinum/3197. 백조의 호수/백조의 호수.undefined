@@ -1,0 +1,127 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll R, C; cin >> R >> C;
+    vector<string> M(R); for (auto& e : M) cin >> e;
+
+    ll cnt = 0;
+    vl swan;
+    vvl visit(R, vl(C, 0));
+    vvl d = {{-1, 0, 1, 0},{0, 1, 0, -1}};
+    function<void(ll,ll)> assign_group = [&](ll r, ll c) {
+        visit[r][c] = cnt;
+        if (M[r][c] == 'L') swan.emplace_back(cnt);
+        for (ll i=0; i<4; i++) {
+            ll nr = r + d[0][i];
+            ll nc = c + d[1][i];
+            if (nr<0 || nc<0 || nr==R || nc==C || M[nr][nc]=='X' || visit[nr][nc]) continue;
+            assign_group(nr, nc);
+        }
+    };
+    for (i=0; i<R; i++) for (j=0; j<C; j++)
+        if (!visit[i][j] && M[i][j] != 'X') {
+            cnt++;
+            assign_group(i, j);
+        }
+
+    vl pa(cnt+1), sz(cnt+1, 1);
+    iota(pa.begin(), pa.end(), 0);
+    function<ll(ll)> find = [&](ll node) {
+        if (pa[node] == node) return node;
+        return pa[node] = find(pa[node]);
+    };
+    function<void(ll,ll)> merge = [&](ll a, ll b) {
+        a = find(a), b = find(b);
+        if (a == b) return;
+        if (sz[a] < sz[b]) swap(a, b);
+        pa[b] = a;
+        sz[a] += sz[b];
+    };
+
+    queue<pll> q;
+    for (i=0; i<R; i++) {
+        for (j=0; j<C; j++) {
+            if (visit[i][j]) continue;
+            for (k=0; k<4; k++) {
+                ll nr = i + d[0][k];
+                ll nc = j + d[1][k];
+                if (nr<0 || nc<0 || nr==R || nc==C || M[nr][nc]=='X') continue;
+                visit[i][j] = visit[nr][nc];
+                q.emplace(i, j);
+                break;
+            }
+        }
+    }
+
+    ll ans = 0;
+    while (find(swan[0]) != find(swan[1])) {
+        ans++;
+        ll qsz = q.size();
+        while (qsz--) {
+            auto [r,c] = q.front(); q.pop();
+            vl tmp;
+            for (i=0; i<4; i++) {
+                ll nr = r + d[0][i];
+                ll nc = c + d[1][i];
+                if (nr<0 || nc<0 || nr==R || nc==C) continue;
+                if (!visit[nr][nc]) {
+                    visit[nr][nc] = -1;
+                    q.emplace(nr, nc);
+                }
+                else if (visit[nr][nc] != -1) tmp.emplace_back(visit[nr][nc]);
+            }
+            for (i=0; i<tmp.size(); i++) for (j=i+1; j<tmp.size(); j++)
+                merge(tmp[i], tmp[j]);
+            visit[r][c] = tmp[0];
+        }
+    }
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
