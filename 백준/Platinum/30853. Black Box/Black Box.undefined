@@ -1,0 +1,141 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+struct SEG {
+    ll n;
+    vl seg;
+    SEG(ll n):n(n),seg(n<<2,0) {
+        init(1,0,n-1);
+    }
+    void init(ll node,ll l,ll r) {
+        if (l==r) {
+            seg[node]=1;
+            return;
+        }
+        ll mid=(l+r)>>1;
+        init(node<<1,l,mid);
+        init(node<<1|1,mid+1,r);
+        seg[node]=seg[node<<1]+seg[node<<1|1];
+    }
+    void update(ll node,ll l,ll r,ll tar) {
+        if (tar<l || r<tar) return;
+        if (l==r) {
+            seg[node]=0;
+            return;
+        }
+        ll mid=(l+r)>>1;
+        update(node<<1,l,mid,tar);
+        update(node<<1|1,mid+1,r,tar);
+        seg[node]=seg[node<<1]+seg[node<<1|1];
+    }
+    ll query(ll node,ll l,ll r,ll tarl,ll tarr) {
+        if (tarr<l || r<tarl) return 0;
+        if (tarl<=l && r<=tarr) {
+            return seg[node];
+        }
+        ll mid=(l+r)>>1;
+        return query(node<<1,l,mid,tarl,tarr)+query(node<<1|1,mid+1,r,tarl,tarr);
+    }
+    ll kth(ll node,ll l,ll r,ll k) {
+        if (l==r) return l;
+        ll leftsum = seg[node<<1];
+        ll mid=(l+r)>>1;
+        if (k<leftsum) return kth(node<<1,l,mid,k);
+        return kth(node<<1|1,mid+1,r,k-leftsum);
+    }
+    void update(ll tar){update(1,0,n-1,tar);}
+    ll query(ll l,ll r){return query(1,0,n-1,l,r);}
+    ll kth(ll k){return kth(1,0,n-1,k);}
+};
+
+void solve(ll test) {
+    ll n;cin>>n;
+    vl a(n);
+    for (ll i=0;i<n;i++) cin>>a[i];
+    swap(a[0],a[a[n-1]%(n-1)]);
+
+    SEG seg(n);
+    // cout<<seg.query(0,1)<<'\n';
+    //cout<<seg.kth(0)<<"\n\n";
+
+    vl ans(n);
+    ll startpos=0;
+    for (ll i=0;i<n;i++) {
+        if (i==0) {
+            ans[0]=a[0];
+            startpos=1;
+            seg.update(0);
+            continue;
+        }
+        ll blank = n-i;
+        ll move = (a[i-1]-1)%blank;
+        ll leftsum = seg.query(0,startpos);
+        ll rightsum = seg.query(startpos,n-1);
+        ll idx;
+        if (rightsum>move) {
+            idx = seg.kth(leftsum+move-1);
+        }
+        else {
+            move-=rightsum;
+            idx = seg.kth(move);
+        }
+        ans[idx]=a[i];
+        //startpos=idx;
+
+        ll leftidx = seg.query(0,idx);
+        ll rightidx = seg.query(idx,n-1);
+        if (rightidx==0) {
+            startpos = seg.kth(0);
+        }
+        else startpos = seg.kth(leftidx);
+
+        seg.update(idx);
+
+
+    }
+    for (ll i=0;i<n;i++) cout<<ans[i]<<'\n';
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
