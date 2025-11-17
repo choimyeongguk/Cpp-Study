@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = int;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+struct Node {
+    ll data;
+    Node *y, *n;
+    Node() {
+        data = 0;
+        y = n = nullptr;
+    }
+    // ~Node() {
+    //     delete y;
+    //     delete n;
+    // }
+};
+
+void preprocess() {
+    ll i, j, k;
+}
+
+using elem = bitset<500000>;
+void solve(ll test) {
+    ll i, j;
+    ll n, k, m, f; cin>>n>>k>>m>>f;
+    vector<elem> cards(k);
+    for (i=0;i<k;i++) {
+        for (j=0;j<m;j++) {
+            ll x; cin>>x;
+            cards[i][x-1] = 1;
+        }
+    }
+    Node *root = new Node;
+    for (i=1;i<=n;i++) {
+        Node *cur = root;
+        for (j=0;j<k;j++) {
+            if (cards[j][i-1]) {
+                if (cur->y == nullptr) {
+                    cur->y = new Node;
+                }
+                cur = cur->y;
+            }
+            else {
+                if (cur->n == nullptr) {
+                    cur->n = new Node;
+                }
+                cur = cur->n;
+            }
+        }
+        if (cur->data==0) cur->data = i;
+        else cur->data = -1;
+    }
+    while (f--) {
+        Node *cur = root;
+        string s; cin>>s;
+        bool flag = true;
+        for (auto ch: s) {
+            if (ch=='Y') {
+                if (cur->y == nullptr) {
+                    flag = false;
+                    break;
+                }
+                cur = cur->y;
+            }
+            else {
+                if (cur->n == nullptr) {
+                    flag = false;
+                    break;
+                }
+                cur = cur->n;
+            }
+        }
+        if (cur->data == -1) flag = false;
+        if (flag) cout<<cur->data<<'\n';
+        else cout<<"0\n";
+    }
+    // delete root;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve(test);
+    }
+    return 0;
+}
