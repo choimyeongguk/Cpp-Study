@@ -1,0 +1,151 @@
+#include <bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker,"/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if (!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+}
+
+void solve() {
+    ll i, j, k;
+    ll N; cin >> N;
+    vector<pll> arr(N);
+    for (auto& e : arr) cin >> e.first;
+    for (auto& e : arr) cin >> e.second;
+
+    using Node = pair<pll,ll>;
+    priority_queue<Node,vector<Node>,greater<Node>> pq;
+    for (i=0; i<N; i++) {
+        pq.emplace(arr[i], i);
+    }
+
+    ll ans = 0;
+    vl used(N, false);
+    while (!pq.empty()) {
+        auto [p1,idx] = pq.top(); pq.pop();
+        auto [f,s] = p1;
+        if (used[idx]) continue;
+        // cout << idx << " 방문!!\n";
+
+        ans++;
+        used[idx] = true;
+        ll minS = s, l = idx-1, r = idx+1;
+        while (l>=0 && !used[l] && arr[l].second > minS) {
+            used[l] = true;
+            l--;
+        }
+        while (r<N && !used[r] && arr[r].second > minS) {
+            used[r] = true;
+            r++;
+        }
+    }
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll test=1; test<=t; test++) {
+        solve();
+    }
+    return 0;
+}
+
+// #include <bits/stdc++.h>
+// #pragma warning(disable:4996)
+// #pragma comment(linker,"/STACK:336777216")
+// #pragma GCC optimize("O3,unroll-loops")
+// #pragma GCC target("avx,avx2,fma")
+// using namespace std;
+// using ll = long long;
+// using pll = pair<ll,ll>;
+// using ld = long double;
+// using pld = pair<ld,ld>;
+// using vl = vector<ll>;
+// using vvl = vector<vl>;
+//
+// #ifdef ONLINE_JUDGE
+// constexpr bool ndebug = true;
+// #else
+// constexpr bool ndebug = false;
+// #endif
+//
+// void setup() {
+//     if (!ndebug) {
+//         freopen("input.txt", "r", stdin);
+//         freopen("output.txt", "w", stdout);
+//     }
+//     else {
+//         ios_base::sync_with_stdio(0);
+//         cin.tie(0);
+//         cout.tie(0);
+//     }
+// }
+//
+// void preprocess() {
+//     ll i, j, k;
+// }
+//
+// void solve() {
+//     ll i, j, k;
+//     ll n; cin>>n;
+//     vl a(n), b(n);
+//     for (i=0;i<n;i++) cin>>a[i];
+//     for (i=0;i<n;i++) cin>>b[i];
+//     ll ans=1, ma=1e10, mb=1e10, mai=-1, mbi=-1;
+//     for (i=0;i<n;i++) {
+//         if (a[i]<ma) {
+//             ma=a[i];
+//             mai=i;
+//         }
+//         if (b[i]<mb) {
+//             mb=b[i];
+//             mbi=i;
+//         }
+//         if (mai != mbi) {
+//             ans++;
+//             ma=a[i], mb=b[i], mai=i, mbi=i;
+//         }
+//     }
+//     cout<<ans<<'\n';
+// }
+//
+// int main() {
+//     setup();
+//     preprocess();
+//     ll t = 1;
+//     // cin >> t;
+//     for (ll test=1; test<=t; test++) {
+//         solve();
+//     }
+//     return 0;
+// }
