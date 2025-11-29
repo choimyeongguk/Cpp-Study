@@ -62,7 +62,7 @@ void solve(ll testcase){
         study[algo] = -1;   // 공부 완료
         for (auto& [dec,nxt] : G[algo]) {
             if (study[nxt] != -1) {
-                study[nxt] = max(0, study[nxt] - dec);
+                study[nxt] -= dec;
                 pq.emplace(study[nxt], nxt);
             }
         }
