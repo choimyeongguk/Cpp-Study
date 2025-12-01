@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, M; cin >> N >> M;
+    vvl G(N);
+    for (i=0; i<M; i++) {
+        ll A, B; cin >> A >> B;
+        G[B-1].emplace_back(A-1);
+    }
+    vl visit(N, false);
+    function<ll(ll)> dfs = [&](ll cur) {
+        ll cnt = 1;
+        visit[cur] = true;
+        for (auto& nxt : G[cur])
+            if (!visit[nxt])
+                cnt += dfs(nxt);
+        return cnt;
+    };
+
+    vl hack(N, 0);
+    for (i=0; i<N; i++) {
+        fill(visit.begin(), visit.end(), 0);
+        hack[i] = dfs(i);
+    }
+    ll maxHack = 0;
+    vl ans;
+    for (i=0; i<N; i++) {
+        if (maxHack < hack[i]) {
+            maxHack = hack[i];
+            ans = vl{i+1};
+        }
+        else if (maxHack == hack[i]) {
+            ans.emplace_back(i+1);
+        }
+    }
+    for (auto& e : ans) cout << e << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
