@@ -39,12 +39,16 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
-    set<ll> s;
-    while (N--) {
-        ll num; cin >> num;
-        s.insert(num);
-    }
-    for (auto& e : s) cout << e << " ";
+    vl arr(N); for (auto& e : arr) cin >> e;
+    sort(arr.begin(), arr.end());
+    arr.erase(unique(arr.begin(), arr.end()), arr.end());
+    for (auto& e : arr) cout << e << " ";
+    // set<ll> s;
+    // while (N--) {
+    //     ll num; cin >> num;
+    //     s.insert(num);
+    // }
+    // for (auto& e : s) cout << e << " ";
 }
 
 int main() {
