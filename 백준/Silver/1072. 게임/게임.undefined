@@ -1,6 +1,2 @@
 #include<bits/stdc++.h>
-main() {
-    long long X,Y,Z;std::cin>>X>>Y;Z=100*Y/X;
-    long double t=100*(X-Y),a=99-Z,l=t/a,r=t/--a;
-    std::cout<<(r<=X||l<=X?-1:(long long)ceil(l-X));
-}
+main() {long long X,Y,Z;std::cin>>X>>Y;Z=100*Y/X;long double t=100*(X-Y),a=99-Z,l=t/a,r=t/--a;std::cout<<(r<=X||l<=X?-1:(long long)ceil(l-X));}
