@@ -2,6 +2,6 @@
 using namespace std;
 main() {
     long long X,Y,Z;cin>>X>>Y;Z=100*Y/X;
-    long double t=100.0*(X-Y),l=t/(99-Z),r=t/(98-Z);
+    long double t=100.0*(X-Y),a=99-Z,l=t/a,r=t/--a;
     cout<<(r<=X||l<=X?-1:(long long)ceil(l-X));
 }
