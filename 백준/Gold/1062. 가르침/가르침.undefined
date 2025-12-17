@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+
+    ll N, K; cin >> N >> K;
+    vector<bitset<26>> word(N, 0);
+    for (i=0; i<N; i++) {
+        string str; cin >> str;
+        for (auto& c : str)
+            word[i][c-'a'] = true;
+    }
+
+    bitset<26> use;
+    use[0] = use['n'-'a'] = use['t'-'a'] = use['i'-'a'] = use['c'-'a'] = true;
+    K -= 5;
+    if (K<0) {
+        cout << 0;
+        return;
+    }
+
+    ll ans = 0;
+    function<void(ll,ll)> back_track = [&](ll start, ll remain) {
+        if (remain == 0) {
+            ll cnt = 0;
+            // cout << use << "\n";
+            for (auto& w : word) {
+                bitset<26> tmp = w & use;
+                if (w == tmp)
+                    cnt++;
+            }
+            ans = max(ans, cnt);
+            return;
+        }
+        if (start >= 26) return;
+        if (use[start]) {
+            back_track(start+1, remain);
+            return;
+        }
+        // 사용하지 않는 경우
+        back_track(start+1, remain);
+        use[start] = true;
+        back_track(start+1, remain-1);
+        use[start] = false;
+    };
+    back_track(0, K);
+    cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
