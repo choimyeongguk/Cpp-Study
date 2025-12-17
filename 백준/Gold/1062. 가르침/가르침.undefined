@@ -69,15 +69,13 @@ void solve(ll testcase){
             return;
         }
         if (start >= 26) return;
-        if (use[start]) {
-            back_track(start+1, remain);
-            return;
-        }
         // 사용하지 않는 경우
         back_track(start+1, remain);
-        use[start] = true;
-        back_track(start+1, remain-1);
-        use[start] = false;
+        if (!use[start]) {
+            use[start] = true;
+            back_track(start+1, remain-1);
+            use[start] = false;   
+        }
     };
     back_track(0, K);
     cout << ans;
