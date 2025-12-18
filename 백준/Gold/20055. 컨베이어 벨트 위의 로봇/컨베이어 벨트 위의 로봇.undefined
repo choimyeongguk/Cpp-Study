@@ -1,0 +1,99 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    deque<pll> belt(2*N);   // 내구도, 로봇 여부
+    for (auto& e : belt) {
+        cin >> e.first;
+        e.second = false;
+    }
+
+    deque<ll> robot;
+    ll step = 0, broken = 0;
+    while (true) {
+        step++;
+
+        // rotate
+        belt.push_front(belt.back());
+        belt.pop_back();
+        for (auto& e : robot) e++;
+        if (!robot.empty() && robot[0] == N-1) {
+            belt[N-1].second = false;
+            robot.pop_front();
+        }
+
+        // move
+        for (auto& e : robot) {
+            if (belt[e+1].first && !belt[e+1].second) {
+                belt[e++].second = false;
+                belt[e].first--;
+                belt[e].second = true;
+                if (!belt[e].first) broken++;
+
+                if (e == N-1) {
+                    belt[e].second = false;
+                    robot.pop_front();
+                }
+            }
+        }
+
+        // put
+        if (belt[0].first) {
+            belt[0].first--;
+            if (!belt[0].first) broken++;
+            belt[0].second = true;
+            robot.push_back(0);
+        }
+
+        if (broken >= K) break;
+    }
+    cout << step;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
