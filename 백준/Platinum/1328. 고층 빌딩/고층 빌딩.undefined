@@ -39,11 +39,11 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll MOD = 1'000'000'007;
-    vl fact(105, 1); for (i=1; i<105; i++) fact[i] = fact[i-1]*i %MOD;
-    vvl comb(105, vl(105, 0));
+    vl fact(100, 1); for (i=1; i<100; i++) fact[i] = fact[i-1]*i %MOD;
+    vvl comb(100, vl(100, 0));
     comb[0][0] = 1;
-    for (i=1; i<105; i++) {
-        for (j=1; j<105; j++)
+    for (i=1; i<100; i++) {
+        for (j=1; j<100; j++)
             comb[i][j] = (comb[i-1][j-1] + comb[i-1][j]) %MOD;
         comb[i][0] = 1;
     }
