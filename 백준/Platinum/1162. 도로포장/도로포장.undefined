@@ -1,0 +1,92 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll V, E, K; cin >> V >> E >> K;
+    vector<vpll> G(V);
+    for (i=0; i<E; i++) {
+        ll a, b, c; cin >> a >> b >> c;
+        G[--a].emplace_back(c, --b);
+        G[b].emplace_back(c, a);
+    }
+    vvl dist(V, vl(K+1, 1e10));
+    dist[0][0] = 0;
+
+    using pqE = pair<ll,pll>;
+    priority_queue<pqE,vector<pqE>,greater<>> pq;    // 비용, {포장, 노드}
+    pq.emplace(0, pll{0, 0});
+    while (!pq.empty()) {
+        auto [cost,p] = pq.top(); pq.pop();
+        auto [pave, cur] = p;
+        if (dist[cur][pave] != cost) continue;
+        if (cur == V-1) {
+            cout << cost;
+            return;
+        }
+
+        for (auto& [w,nxt] : G[cur]) {
+            // 포장하지 않고 가는 경우
+            if (dist[nxt][pave] > cost+w) {
+                dist[nxt][pave] = cost+w;
+                pq.emplace(dist[nxt][pave], pll{pave, nxt});
+            }
+            // 포장해서 가는 경우
+            if (pave!=K && dist[nxt][pave+1] > cost) {
+                dist[nxt][pave+1] = cost;
+                pq.emplace(dist[nxt][pave+1], pll{pave+1, nxt});
+            }
+        }
+    }
+    // ll ans = 1e10;
+    // for (i=0; i<=K; i++) {
+    //     ans = min(ans, dist[V-1][i]);
+    // }
+    // cout << ans;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
