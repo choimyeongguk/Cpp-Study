@@ -53,7 +53,7 @@ void solve(ll testcase){
     pq.emplace(0, pll{0, 0});
     while (!pq.empty()) {
         auto [cost,p] = pq.top(); pq.pop();
-        auto [pave, cur] = p;
+        auto& [pave, cur] = p;
         if (dist[cur][pave] != cost) continue;
         if (cur == V-1) {
             cout << cost;
@@ -73,11 +73,6 @@ void solve(ll testcase){
             }
         }
     }
-    // ll ans = 1e10;
-    // for (i=0; i<=K; i++) {
-    //     ans = min(ans, dist[V-1][i]);
-    // }
-    // cout << ans;
 }
 
 int main() {
