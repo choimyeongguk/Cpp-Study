@@ -1,0 +1,171 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Cube {
+    enum color { W = 'w', Y = 'y', R = 'r', O = 'o', G = 'g', B = 'b' };
+    vector<vector<char>> corner = {
+        { W, W, W, W },     // up
+        { Y, Y, Y, Y },     // down
+        { R, R, R, R },     // front
+        { O, O, O, O },     // back
+        { G, G, G, G },     // left
+        { B, B, B, B }      // right
+    };
+    vector<vector<char>> edge = {
+        { W, W, W, W },     // up
+        { Y, Y, Y, Y },     // down
+        { R, R, R, R },     // front
+        { O, O, O, O },     // back
+        { G, G, G, G },     // left
+        { B, B, B, B }      // right
+    };
+
+    void print() {
+        cout << corner[0][0] << edge[0][0] << corner[0][1] << "\n";
+        cout << edge[0][3]   << 'w'        << edge[0][1]   << "\n";
+        cout << corner[0][3] << edge[0][2] << corner[0][2] << "\n";
+    }
+    void rotate(vector<char>& face) {
+        char tmp = face[0];
+        face[0] = face[3];
+        face[3] = face[2];
+        face[2] = face[1];
+        face[1] = tmp;
+    }
+    void rotate_corner(vl f, vl n) {
+        char tmp = corner[f[0]][n[0]];
+        corner[f[0]][n[0]] = corner[f[3]][n[3]];
+        corner[f[3]][n[3]] = corner[f[2]][n[2]];
+        corner[f[2]][n[2]] = corner[f[1]][n[1]];
+        corner[f[1]][n[1]] = tmp;
+    }
+    void rotate_edge(vl f, vl n) {
+        char tmp = edge[f[0]][n[0]];
+        edge[f[0]][n[0]] = edge[f[3]][n[3]];
+        edge[f[3]][n[3]] = edge[f[2]][n[2]];
+        edge[f[2]][n[2]] = edge[f[1]][n[1]];
+        edge[f[1]][n[1]] = tmp;
+    }
+    void u(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[0]);
+            rotate(edge[0]);
+            // corner
+            rotate_corner(vl{2, 4, 3, 5}, vl{0, 0, 0, 0});
+            rotate_corner(vl{2, 4, 3, 5}, {1, 1, 1, 1});
+            rotate_edge(vl{2, 4, 3, 5}, vl{0, 0, 0, 0});
+        }
+    }
+    void d(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[1]);
+            rotate(edge[1]);
+            // corner
+            rotate_corner(vl{2, 5, 3, 4}, vl{2, 2, 2, 2});
+            rotate_corner(vl{2, 5, 3, 4}, {3, 3, 3, 3});
+            rotate_edge(vl{2, 5, 3, 4}, vl{2, 2, 2, 2});
+        }
+    }
+    void f(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[2]);
+            rotate(edge[2]);
+            // corner
+            rotate_corner(vl{0, 5, 1, 4}, vl{2, 3, 0, 1});
+            rotate_corner(vl{0, 5, 1, 4}, {3, 0, 1, 2});
+            rotate_edge(vl{0, 5, 1, 4}, vl{2, 3, 0, 1});
+        }
+    }
+    void b(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[3]);
+            rotate(edge[3]);
+            // corner
+            rotate_corner(vl{0, 4, 1, 5}, vl{0, 3, 2, 1});
+            rotate_corner(vl{0, 4, 1, 5}, {1, 0, 3, 2});
+            rotate_edge(vl{0, 4, 1, 5}, vl{0, 3, 2, 1});
+        }
+    }
+    void l(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[4]);
+            rotate(edge[4]);
+            rotate_corner(vl{0, 2, 1, 3}, vl{0, 0, 0, 2});
+            rotate_corner(vl{0, 2, 1, 3}, {3, 3, 3, 1});
+            rotate_edge(vl{0, 2, 1, 3}, vl{3, 3, 3, 1});
+        }
+    }
+    void r(bool cw=true) {
+        for (ll i=0; i<=!cw*2; i++) {
+            rotate(corner[5]);
+            rotate(edge[5]);
+            rotate_corner(vl{0, 3, 1, 2}, vl{1, 3, 1, 1});
+            rotate_corner(vl{0, 3, 1, 2}, {2, 0, 2, 2});
+            rotate_edge(vl{0, 3, 1, 2}, vl{1, 3, 1, 1});
+        }
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    Cube cube;
+    while (N--) {
+        string op; cin >> op;
+        switch (op[0]) {
+            case 'U': cube.u(op[1]=='+'); break;
+            case 'D': cube.d(op[1]=='+'); break;
+            case 'F': cube.f(op[1]=='+'); break;
+            case 'B': cube.b(op[1]=='+'); break;
+            case 'L': cube.l(op[1]=='+'); break;
+            case 'R': cube.r(op[1]=='+'); break;
+        }
+    }
+    cube.print();
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
