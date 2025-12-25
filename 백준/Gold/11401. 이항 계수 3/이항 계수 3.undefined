@@ -37,29 +37,47 @@ void preprocess() {
 }
 
 ll MOD = 1'000'000'007;
-pll extended_gcd(ll a, ll b) {
-    if (!b) return {1, 0};
-    pll t = extended_gcd(b, a % b);
-    return {t.second, t.first - t.second * (a / b)};
-}
-ll modinv(ll a, ll m) {
-    return (extended_gcd(a, m).first % m + m) % m;
-}
+// pll extended_gcd(ll a, ll b) {
+//     if (!b) return {1, 0};
+//     pll t = extended_gcd(b, a % b);
+//     return {t.second, t.first - t.second * (a / b)};
+// }
+// ll modinv(ll a, ll m) {
+//     return (extended_gcd(a, m).first % m + m) % m;
+// }
+//
+// ll C(ll N, ll K) {
+//     ll ret = 1;
+//     vl inv(K+1); inv[1] = 1;
+//     for (ll i=2; i<=K; i++)
+//         inv[i] = MOD - MOD/i * inv[MOD%i] %MOD;
+//     for (ll i=1; i<=K; i++)
+//         ret = ret * (N-i+1) %MOD * inv[i] % MOD;
+//     return ret;
+// }
 
-ll C(ll N, ll K) {
-    ll ret = 1;
-    vl inv(K+1); inv[1] = 1;
-    for (ll i=2; i<=K; i++)
-        inv[i] = MOD - MOD/i * inv[MOD%i] %MOD;
-    for (ll i=1; i<=K; i++)
-        ret = ret * (N-i+1) %MOD * inv[i] % MOD;
-    return ret;
+ll modpow(ll x, ll r) {
+    if (r == 0) return 1;
+    if (r == 1) return x;
+    ll tmp = modpow(x, r/2);
+    if (r%2) return tmp * tmp %MOD * x %MOD;
+    return tmp * tmp %MOD;
+}
+ll modinv(ll x) {
+    return modpow(x, MOD-2);
 }
 
 void solve(ll testcase){
     ll i, j, k;
     ll N, K; cin >> N >> K;
-    cout << C(N, K);
+    K = min(K, N-K);
+    ll bunmo = 1, bunja = 1;
+    for (i=1; i<=K; i++) {
+        bunmo = bunmo * (N-i+1) %MOD;
+        bunja = bunja * i %MOD;
+    }
+    cout << bunmo * modinv(bunja) %MOD;
+    // cout << C(N, K);
 }
 
 int main() {
