@@ -1,0 +1,121 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    vl arr(N); for (auto& e : arr) cin >> e;
+    ll M; cin >> M;
+    vector<pair<ll,pll>> query(M);
+    for (i=0; i<M; i++) {
+        query[i].first = i;
+        cin >> query[i].second.first >> query[i].second.second;
+        query[i].second.first--;
+        query[i].second.second--;
+    }
+
+    ll blockSz = (ll)sqrt(N);
+    sort(query.begin(), query.end(), [&](const pair<ll,pll>& a, const pair<ll,pll>& b) {
+        ll aBlock = a.second.first / blockSz;
+        ll bBlock = b.second.first / blockSz;
+        if (aBlock == bBlock) {
+            if (aBlock&1) return a.second.second > b.second.second;
+            return a.second.second < b.second.second;
+        }
+        return aBlock < bBlock;
+    });
+
+    ll l = 0, r = 0;
+    vl ans(M), cnt(N, 0); cnt[0]++;
+    priority_queue<ll> pq; pq.emplace(0);
+    vector<deque<ll>> idxList(K+1); idxList[arr[0]].emplace_back(0);
+
+    function<void(ll,ll)> add = [&](ll x, ll loc) {
+        ll v = arr[x], diff;
+        if (!idxList[v].empty()) {
+            diff = idxList[v].back() - idxList[v].front();
+            cnt[diff]--;
+            // if (cnt[diff]) cnt[diff]--;
+        }
+
+        loc ? idxList[v].emplace_back(x) : idxList[v].emplace_front(x);
+
+        diff = idxList[v].back() - idxList[v].front();
+        cnt[diff]++;
+        pq.emplace(diff);
+    };
+    function<void(ll,ll)> remove = [&](ll x, ll loc) {
+        ll v = arr[x], diff;
+        diff = idxList[v].back() - idxList[v].front();
+        cnt[diff]--;
+        // if (cnt[diff]) cnt[diff]--;
+
+        loc ? idxList[v].pop_back() : idxList[v].pop_front();
+
+        if (!idxList[v].empty()) {
+            diff = diff = idxList[v].back() - idxList[v].front();
+            cnt[diff]++;
+            pq.emplace(diff);
+        }
+    };
+
+    for (auto& [q,p] : query) {
+        auto [L,R] = p;
+
+        while (l > L) add(--l, 0);
+        while (r < R) add(++r, 1);
+        while (l < L) remove(l++, 0);
+        while (r > R) remove(r--, 1);
+
+        while (!cnt[pq.top()]) pq.pop();
+        ans[q] = pq.top();
+    }
+
+    for (auto& e : ans) cout << e << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
