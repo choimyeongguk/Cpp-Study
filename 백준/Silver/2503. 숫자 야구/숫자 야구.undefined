@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    unordered_set<string> s;
+    for (char i='1'; i<='9'; i++) {
+        for (char j='1'; j<='9'; j++) {
+            if (i == j) continue;
+            for (char k='1'; k<='9'; k++) {
+                if (i == k || j == k) continue;
+                s.insert(string{i, j, k});
+            }
+        }
+    }
+    ll N; cin >> N;
+    string num; ll strike, ball;
+    for (i=0; i<N; i++) {
+        unordered_set<string> tmp;
+        cin >> num >> strike >> ball;
+        for (auto& e : s) {
+            ll cntStrike = (e[0]==num[0]) + (e[1]==num[1]) + (e[2]==num[2]);
+            ll cntBall = (e[0]==num[1]) + (e[0]==num[2]) + (e[1]==num[0]) + (e[1]==num[2]) + (e[2]==num[0]) + (e[2]==num[1]);
+            if (cntStrike == strike && cntBall == ball) {
+                tmp.insert(e);
+            }
+        }
+        s = move(tmp);
+    }
+    cout << s.size();
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
