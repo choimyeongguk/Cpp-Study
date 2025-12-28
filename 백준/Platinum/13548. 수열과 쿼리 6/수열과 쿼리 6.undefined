@@ -62,13 +62,13 @@ void solve(ll testcase){
     vl freq(100001, 0); freq[A[l]] = 1; // 각 숫자의 빈도 저장
     vl cnt(N+1, 0); cnt[1] = 1; // 각 빈도의 빈도 저장
 
-    function<void(ll)> add = [&](ll v) {
-        ll old = freq[v];
-        ll nw = old + 1;
-        freq[v] = nw;
-        if (old > 0) cnt[old]--;
-        cnt[nw]++;
-        curMax = max(curMax, nw);
+    function<void(ll)> add = [&](ll v) {    // 새로운 value 추가하겠다
+        ll old = freq[v];   // 기존 빈도
+        ll nw = old + 1;    // 새로운 빈도 (기존빈도+1)
+        freq[v] = nw;       // 빈도 갱신
+        if (old > 0) cnt[old]--;    // 새로운 값을 추가한게 아니라면 cnt--
+        cnt[nw]++;          // 빈도의 빈도 갱신
+        curMax = max(curMax, nw);   // 새로운 빈도로 최대값 갱신
     };
     function<void(ll)> remove = [&](ll v) {
         ll old = freq[v];
@@ -76,7 +76,8 @@ void solve(ll testcase){
         freq[v] = nw;
         cnt[old]--;
         if (nw) cnt[nw]++;
-        while (curMax>0 && !cnt[curMax]) curMax--;
+        if (old==curMax && !cnt[curMax]) curMax = max(curMax-1, 0LL);
+        // while (curMax>0 && !cnt[curMax]) curMax--;
     };
 
     for (i=0; i<M; i++) {
