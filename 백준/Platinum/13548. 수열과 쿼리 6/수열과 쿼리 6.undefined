@@ -76,8 +76,8 @@ void solve(ll testcase){
         freq[v] = nw;
         cnt[old]--;
         if (nw) cnt[nw]++;
-        if (old==curMax && !cnt[curMax]) curMax = max(curMax-1, 0LL);
-        // while (curMax>0 && !cnt[curMax]) curMax--;
+        if (old==curMax && !cnt[curMax]) curMax--;
+        // 최대 빈도가 없어진다 하더라도 그 아랫단계의 빈도는 항상 생김
     };
 
     for (i=0; i<M; i++) {
