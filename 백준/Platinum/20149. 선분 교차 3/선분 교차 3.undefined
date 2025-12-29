@@ -1,0 +1,130 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+ll outer(ll x1, ll y1, ll x2, ll y2) {
+    ll o = x1*y2 - x2*y1;
+    return o>0 ? +1 : !o ? 0 : -1;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll x1, y1, x2, y2; cin >> x1 >> y1 >> x2 >> y2;
+    ll x3, y3, x4, y4; cin >> x3 >> y3 >> x4 >> y4;
+
+    if (x1>x2 || (x1==x2 && y1>y2)) swap(x1, x2), swap(y1, y2);
+    if (x3>x4 || (x3==x4 && y3>y4)) swap(x3, x4), swap(y3, y4);
+
+    ll ccw1 = outer(x2-x1, y2-y1, x3-x1, y3-y1);
+    ll ccw2 = outer(x2-x1, y2-y1, x4-x1, y4-y1);
+    ll check1 = ccw1 * ccw2;
+
+    ll ccw3 = outer(x4-x3, y4-y3, x1-x3, y1-y3);
+    ll ccw4 = outer(x4-x3, y4-y3, x2-x3, y2-y3);
+    ll check2 = ccw3 * ccw4;
+
+    bool isCross = false;
+    bool isParallel = (y2-y1)*(x4-x3)==(y4-y3)*(x2-x1);
+
+    if (check1<0 && check2<0) isCross = true;
+    if (!check1) {
+        if (!ccw1 && x1<=x3 && x3<=x2 && min(y1,y2)<=y3 && y3<=max(y1,y2)) {
+            cout << "1\n";
+            if (!isParallel || (x3==x2 && y3==y2))
+                cout << x3 << " " << y3;
+            return;
+        }
+        if (!ccw2 && x1<=x4 && x4<=x2 && min(y1,y2)<=y4 && y4<=max(y1,y2)) {
+            cout << "1\n";
+            if (!isParallel || (x4==x1 && y4==y1))
+                cout << x4 << " " << y4;
+            return;
+        }
+    }
+    if (!check2) {
+        if (!ccw3 && x3<=x1 && x1<=x4 && min(y3,y4)<=y1 && y1<=max(y3,y4)) {
+            cout << "1\n";
+            if (!isParallel || (x1==x4 && y1==y4))
+                cout << x1 << " " << y1;
+            return;
+        }
+        if (!ccw4 && x3<=x2 && x2<=x4 && min(y3,y4)<=y2 && y2<=max(y3,y4)) {
+            cout << "1\n";
+            if (!isParallel || (x2==x3 && y2==y3))
+                cout << x2 << " " << y2;
+            return;
+        }
+    }
+
+    if (!isCross) {
+        cout << 0;
+        return;
+    }
+
+    cout << "1\n" << fixed << setprecision(10);
+    if (x1==x2 && x3==x4) {
+        vl y = {y1, y2, y3, y4};
+        sort(y.begin(), y.end());
+        if (y[1] == y[2]) {
+            cout << x1 << " " << y[1];
+        }
+    }
+    else if (x1==x2) {
+        cout << x1 << " " << (ld)(y4-y3)*(x1-x3)/(x4-x3) + y3;
+    }
+    else if (x3==x4) {
+        cout << x3 << " " << (ld)(y2-y1)*(x3-x1)/(x2-x1) + y1;
+    }
+    else {
+        __int128 xBunja = (__int128)(x2-x1)*(x4-x3)*(y3-y1) - x3*(y4-y3)*(x2-x1) + x1*(y2-y1)*(x4-x3);
+        __int128 xBunmo = (__int128)(x4-x3)*(y2-y1) - (x2-x1)*(y4-y3);
+        ld x = (ld)xBunja/(ld)xBunmo;
+        ld y = (ld)(y2-y1)*(x-x1)/(x2-x1) + y1;
+        cout << x << " " << y;
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
