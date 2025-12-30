@@ -56,26 +56,28 @@ void solve(ll testcase){
         }
     }
 
-    set<pll> edge;
-    for (i=0; i<N-1; i++)
-        for (j=i+1; j<N; j++)
-            edge.emplace(i, j);
+    vvl G = D;
     for (ll s=0; s<N; s++) {
         for (ll e=0; e<N; e++) {
             if (s == e) continue;
             for (ll m=0; m<N; m++) {
                 if (s == m || e == m) continue;
-                if (D[s][m]<0 || D[m][e]<0) continue;
                 if (D[s][e] == D[s][m] + D[m][e]) {
-                    edge.erase(pll{s, e});
-                    D[s][e] = -1;
+                    G[s][e] = G[e][s] = -1;
                 }
             }
         }
     }
-    cout << edge.size() << "\n";
-    for (auto& [f,s] : edge) {
-        cout << f+1 << " " << s+1 << " " << D[f][s] << "\n";
+    vpll ans;
+    for (i=0; i<N-1; i++) {
+        for (j=i+1; j<N; j++) {
+            if (G[i][j]<0) continue;
+            ans.emplace_back(i, j);
+        }
+    }
+    cout << ans.size() << "\n";
+    for (auto& [f,s] : ans) {
+        cout << f+1 << " " << s+1 << " " << G[f][s] << "\n";
     }
 }
 
