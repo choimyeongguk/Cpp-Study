@@ -67,16 +67,12 @@ void solve(ll testcase){
     ll N; cin >> N;
     vl arr(N); for (auto& e : arr) cin >> e;
     SegTree seg(arr);
-    ll ans = 0;
-    function<void(ll,ll)> dnq = [&](ll l, ll r) {
-        if (l>r) return;
+    function<ll(ll,ll)> dnq = [&](ll l, ll r) {
+        if (l>r) return -1LL;
         auto [h,m] = seg.query(l, r);
-        ans = max(ans, h*(r-l+1));
-        dnq(l, m-1);
-        dnq(m+1, r);
+        return max({dnq(l, m - 1), dnq(m + 1, r), h*(r-l+1)});
     };
-    dnq(0, N-1);
-    cout << ans;
+    cout << dnq(0, N-1);
 }
 
 int main() {
