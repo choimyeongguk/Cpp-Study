@@ -1,0 +1,104 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct SegTree {
+    ll n; vl data, tree2; vpll tree1;
+    SegTree(const vl& arr): n((ll)arr.size()), data(arr), tree1(n<<2), tree2(n<<2) {
+        init(1, 0, n-1);
+    }
+    void init(ll i, ll s, ll e) {
+        if (s==e) {
+            tree1[i] = {data[s], s};
+            tree2[i] = data[s];
+            return;
+        }
+        ll m = (s+e)>>1;
+        init(i<<1, s, m);
+        init(i<<1|1, m+1, e);
+        tree1[i] = tree1[i<<1].first<tree1[i<<1|1].first ? tree1[i<<1] : tree1[i<<1|1];
+        tree2[i] = tree2[i<<1] + tree2[i<<1|1];
+    }
+    pll getMin(ll l, ll r) { return getMin(1, 0, n-1, l, r); }
+    pll getMin(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return {1e10, -1};
+        if (l<=s && e<=r) return tree1[i];
+        ll m = (s+e)>>1;
+        pll t1 = getMin(i<<1, s, m, l, r);
+        pll t2 = getMin(i<<1|1, m+1, e, l, r);
+        return t1.first<t2.first ? t1 : t2;
+    }
+    ll getSum(ll l, ll r) { return getSum(1, 0, n-1, l, r); }
+    ll getSum(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return 0;
+        if (l<=s && e<=r) return tree2[i];
+        ll m = (s+e)>>1;
+        return getSum(i<<1, s, m, l, r) + getSum(i<<1|1, m+1, e, l, r);
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl arr(N); for (auto& e : arr) cin >> e;
+    SegTree seg(arr);
+    ll ans = 0, ansL = -1, ansR = -1;
+    function<void(ll,ll)> dnq = [&](ll l, ll r) {
+        if (l>r) return;
+        auto [h,m] = seg.getMin(l, r);
+        ll tmp = h * seg.getSum(l, r);
+        if (ans <= tmp) {
+            ans = tmp;
+            ansL = l, ansR = r;
+        }
+        dnq(l, m-1);
+        dnq(m+1, r);
+    };
+    dnq(0, N-1);
+    cout << ans << "\n" << ansL+1 << " " << ansR+1;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
