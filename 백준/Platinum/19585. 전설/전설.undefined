@@ -43,26 +43,49 @@ struct Trie {
     };
     vector<Node> tree;
     Trie() { tree.emplace_back(); }
-    void insert(const string& word) {
+    void insert(const string& word, bool reverse=false) {
         ll cur = 0; // 루트
-        for (auto& c : word) {
-            if (!tree[cur].nxt.contains(c)) {
-                tree[cur].nxt[c] = tree.size();
-                tree.emplace_back();
+        if (reverse) {
+            for (auto it=word.rbegin(); it!=word.rend(); it++) {
+                char c = *it;
+                if (!tree[cur].nxt.contains(c)) {
+                    tree[cur].nxt[c] = tree.size();
+                    tree.emplace_back();
+                }
+                cur = tree[cur].nxt[c];
             }
-            cur = tree[cur].nxt[c];
+        }
+        else {
+            for (auto& c : word) {
+                if (!tree[cur].nxt.contains(c)) {
+                    tree[cur].nxt[c] = tree.size();
+                    tree.emplace_back();
+                }
+                cur = tree[cur].nxt[c];
+            }
         }
         tree[cur].isEnd = true;
     }
     // 주어진 단어의 prefix가 단어 중에 존재하는지 여부
-    vl searchPrefix(const string& word) {
+    vl searchPrefix(const string& word, bool reverse=false) {
         vl ret;
         ll cur = 0, len = 0;
-        for (auto& c : word) {
-            if (!tree[cur].nxt.contains(c)) break;
-            cur = tree[cur].nxt[c];
-            len++;
-            if (tree[cur].isEnd) ret.emplace_back(len); // prefix 길이 저장
+        if (reverse) {
+            for (auto it=word.rbegin(); it!=word.rend(); it++) {
+                char c = *it;
+                if (!tree[cur].nxt.contains(c)) break;
+                cur = tree[cur].nxt[c];
+                len++;
+                if (tree[cur].isEnd) ret.emplace_back(len); // prefix 길이 저장
+            }
+        }
+        else {
+            for (auto& c : word) {
+                if (!tree[cur].nxt.contains(c)) break;
+                cur = tree[cur].nxt[c];
+                len++;
+                if (tree[cur].isEnd) ret.emplace_back(len); // prefix 길이 저장
+            }
         }
         return ret;
     }
@@ -79,15 +102,13 @@ void solve(ll testcase){
     }
     for (i=0; i<N; i++) {
         cin >> str;
-        reverse(str.begin(), str.end());
-        nameTree.insert(str);
+        nameTree.insert(str, true);
     }
     ll Q; cin >> Q;
     while (Q--) {
         cin >> str;
         vl prefixColor = colorTree.searchPrefix(str);
-        reverse(str.begin(), str.end());
-        vl suffixName = nameTree.searchPrefix(str);
+        vl suffixName = nameTree.searchPrefix(str, true);
 
         bool flag = false;
         for (auto& e : prefixColor) {
