@@ -44,10 +44,13 @@ vvl modmul(const vvl& A, const vvl& B) {
     for (ll r=0; r<N; r++) {
         for (ll i=0; i<N; i++) {
             for (ll c=0; c<N; c++) {
-                C[r][c] = (C[r][c] + A[r][i]*B[i][c]) %MOD;
+                C[r][c] += A[r][i] * B[i][c];
             }
         }
     }
+    for (auto& e : C)
+        for (auto& v : e)
+            v %= MOD;
     return C;
 }
 
