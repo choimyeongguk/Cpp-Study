@@ -1,0 +1,91 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+const ll MOD = 1'000'000'007;
+
+vvl modmul(const vvl& A, const vvl& B) {
+    ll n = A.size();
+    vvl C(n, vl(n, 0));
+    for (ll r=0; r<n; r++) {
+        for (ll i=0; i<n; i++) {
+            for (ll c=0; c<n; c++) {
+                C[r][c] = (C[r][c] + A[r][i] * B[i][c]) %MOD;
+            }
+        }
+    }
+    // for (auto& e : C)
+    //     for (auto& v : e)
+    //         v %= MOD;
+    return C;
+}
+
+vvl modpow(const vvl& A, ll x) {
+    ll n = A.size();
+    if (x == 0) {
+        vvl ret(n, vl(n, 0));
+        for (ll i=0; i<n; i++) ret[i][i] = 0;
+        return ret;
+    }
+    if (x == 1) return A;
+    vvl half = modpow(A, x/2);
+    return (x&1 ? modmul(modmul(half, half), A) : modmul(half, half));
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll n, m; cin >> n >> m;
+    vvl M(n, vl(n, 0));
+    while (m--) {
+        ll a, b; cin >> a >> b;
+        M[--a][--b] = 1;
+        M[b][a] = 1;
+    }
+    ll D; cin >> D;
+    cout << modpow(M, D)[0][0];
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
