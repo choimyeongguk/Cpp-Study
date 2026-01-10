@@ -72,10 +72,7 @@ void solve(ll testcase){
     acc = S.front();
     for (i=1; i<S.size(); i++) {
         ll startPos = acc;
-        for (j=0; j<S[i]; j++) {
-            ll pos = startPos + j;
-            P += prefixSum[startPos] - arr[pos]*startPos;
-        }
+        P += prefixSum[startPos]*S[i] - (prefixSum[startPos+S[i]] - prefixSum[startPos])*startPos;
         acc += S[i];
     }
     cout << "Happy\n" << P;
