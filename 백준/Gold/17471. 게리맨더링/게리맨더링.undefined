@@ -1,0 +1,105 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl val(N); for (auto& e : val) cin >> e;
+    vvl G(N);
+    for (i=0; i<N; i++) {
+        ll num; cin >> num;
+        for (j=0; j<num; j++) {
+            ll adj; cin >> adj;
+            G[i].emplace_back(adj-1);
+        }
+    }
+
+    ll ans = 1e10;
+    vl color(N), visit(N);
+    function<bool()> check = [&] {
+        function<bool(ll)> dfs = [&](ll cur) {
+            visit[cur] = true;
+            for (auto& nxt : G[cur])
+                if (!visit[nxt] && color[nxt]==color[cur])
+                    if (!dfs(nxt)) return false;
+            return true;
+        };
+        bool zero = false, one = false;
+        fill(visit.begin(), visit.end(), false);
+        for (ll i=0; i<N; i++) {
+            if (visit[i]) continue;
+            if (color[i]) {
+                if (one) return false;
+                one = true;
+                if (!dfs(i)) return false;
+            }
+            else {
+                if (zero) return false;
+                zero = true;
+                if (!dfs(i)) return false;
+            }
+        }
+        return true;
+    };
+    for (ll mask=(ll)pow(2,N)-2; mask>=1; mask--) {
+        ll two = 1;
+        for (i=0; i<N; i++) {
+            color[i] = (two & mask)!=0;
+            two <<= 1;
+        }
+        if (check()) {
+            ll diff = 0;
+            for (i=0; i<N; i++) {
+                diff += color[i] ? val[i] : -val[i];
+            }
+            ans = min(ans, abs(diff));
+        }
+    }
+    cout << (ans==1e10 ? -1 : ans);
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
