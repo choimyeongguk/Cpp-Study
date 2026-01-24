@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+ll modmul(ll a, ll b, ll m) {
+    return ll((__int128)a*(__int128)b%m);
+}
+
+ll modpow(ll n, ll k, ll m) {
+    ll ret=1;
+    n%=m;
+    while (k) {
+        if (k&1) ret=modmul(ret, n, m);
+        n=modmul(n, n, m);
+        k>>=1;
+    }
+    return ret;
+}
+
+bool is_prime(ll n) {
+    if (n<2 || n%2==0 || n%3==0) return n==2 || n==3;
+    ll k = __builtin_ctzll(n-1), d = n-1 >> k;
+    for (ll a: { 2, 325, 9375, 28178, 450775, 9780504, 1795265022 }) {
+        ll p = modpow(a%n, d, n), i = k;
+        while (p!=1 && p!=n-1 && a%n && i--) p = modmul(p, p, n);
+        // 1이나 -1을 만나면 중단 -> 소수일 것 같음!
+        // 1인 경우는 초기값에서 걸러지고, -1은 한 번이라도 등장하면 걸러짐
+        if (p!=n-1 && i!=k) return false;
+        // 소수일 가능성이 있는경우 (아니면 무조건 합성수)
+        // case 1: 전부 1
+        // case 2: 중간에 -1 나오고 그다음 전부 1
+    }
+    return true;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    ll num, cnt = 0;
+    while (N--) {
+        cin >> num;
+        cnt += is_prime(2*num + 1);
+    }
+    cout << cnt;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
