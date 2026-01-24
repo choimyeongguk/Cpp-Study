@@ -40,7 +40,8 @@ using ull = uint64_t;
 using u128 = unsigned __int128;
 
 inline ull modmul(ull a, ull b, ull m) {
-    return (u128)a * b % m;
+    // return (u128)a * b % m;
+    return a * b % m;
 }
 
 inline ull modpow(ull a, ull e, ull m) {
