@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = int;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N; cin >> N;
+    vl arr(N); for (auto& e : arr) cin >> e;
+    vl comp = arr;
+    sort(comp.begin(), comp.end());
+    comp.erase(unique(comp.begin(), comp.end()), comp.end());
+    for (auto& e : arr)
+        e = lower_bound(comp.begin(), comp.end(), e) - comp.begin();
+
+    ll Q; cin >> Q;
+    vector<pair<ll,pll>> query(Q);
+    for (i=0; i<Q; i++) {
+        ll l, r; cin >> l >> r;
+        query[i] = { i, {l-1, r-1} };
+    }
+
+    ll blockSz = (ll)sqrt(N);
+    sort(query.begin(), query.end(), [&](const pair<ll,pll>& a, const pair<ll,pll>& b) {
+        auto& [al, ar] = a.second;
+        auto& [bl, br] = b.second;
+        ll aBlock = al / blockSz, bBlock = bl / blockSz;
+        return aBlock!=bBlock ? aBlock<bBlock : aBlock&1 ? ar>br : ar<br;
+    });
+
+    ll l = 0, r = -1, cnt = 0;
+    vl ans(Q), freq(comp.size(), 0);
+    function<void(ll)> add = [&](ll x) {
+        if (!freq[arr[x]]) cnt++;
+        freq[arr[x]]++;
+    };
+    function<void(ll)> remove = [&](ll x) {
+        freq[arr[x]]--;
+        if (!freq[arr[x]]) cnt--;
+    };
+    for (auto& [idx,p] : query) {
+        auto& [L, R] = p;
+        while (r < R) if (!freq[arr[++r]]++) cnt++;
+        while (l > L) if (!freq[arr[--l]]++) cnt++;
+        while (r > R) if (!--freq[arr[r--]]) cnt--;
+        while (l < L) if (!--freq[arr[l++]]) cnt--;
+        ans[idx] = cnt;
+    }
+
+    for (auto& e : ans) cout << e << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
