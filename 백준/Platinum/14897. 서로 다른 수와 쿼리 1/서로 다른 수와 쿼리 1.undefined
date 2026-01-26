@@ -55,22 +55,14 @@ void solve(ll testcase){
 
     ll blockSz = (ll)sqrt(N);
     sort(query.begin(), query.end(), [&](const pair<ll,pll>& a, const pair<ll,pll>& b) {
-        auto& [al, ar] = a.second;
-        auto& [bl, br] = b.second;
+        auto [al, ar] = a.second;
+        auto [bl, br] = b.second;
         ll aBlock = al / blockSz, bBlock = bl / blockSz;
         return aBlock!=bBlock ? aBlock<bBlock : aBlock&1 ? ar>br : ar<br;
     });
 
     ll l = 0, r = -1, cnt = 0;
     vl ans(Q), freq(comp.size(), 0);
-    function<void(ll)> add = [&](ll x) {
-        if (!freq[arr[x]]) cnt++;
-        freq[arr[x]]++;
-    };
-    function<void(ll)> remove = [&](ll x) {
-        freq[arr[x]]--;
-        if (!freq[arr[x]]) cnt--;
-    };
     for (auto [idx,p] : query) {
         auto [L, R] = p;
         while (r < R) if (!freq[arr[++r]]++) cnt++;
