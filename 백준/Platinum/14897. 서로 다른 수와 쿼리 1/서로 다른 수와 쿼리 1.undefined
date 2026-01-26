@@ -36,6 +36,10 @@ void preprocess() {
 
 }
 
+struct Query {
+    ll idx, l, r;
+};
+
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
@@ -47,24 +51,28 @@ void solve(ll testcase){
         e = lower_bound(comp.begin(), comp.end(), e) - comp.begin();
 
     ll Q; cin >> Q;
-    vector<pair<ll,pll>> query(Q);
+    vector<Query> query(Q);
     for (i=0; i<Q; i++) {
         ll l, r; cin >> l >> r;
-        query[i] = { i, {l-1, r-1} };
+        query[i] = { i, l-1, r-1 };
     }
 
     ll blockSz = (ll)sqrt(N);
-    sort(query.begin(), query.end(), [&](const pair<ll,pll>& a, const pair<ll,pll>& b) {
-        auto [al, ar] = a.second;
-        auto [bl, br] = b.second;
-        ll aBlock = al / blockSz, bBlock = bl / blockSz;
-        return aBlock!=bBlock ? aBlock<bBlock : aBlock&1 ? ar>br : ar<br;
+    sort(query.begin(), query.end(), [&](const Query& a, const Query& b) {
+        ll aBlock = a.l/blockSz, bBlock = b.l/blockSz;
+        return aBlock!=bBlock ? aBlock<bBlock : aBlock&1 ? a.r>b.r : a.r<b.r;
     });
+    // sort(query.begin(), query.end(), [&](const pair<ll,pll>& a, const pair<ll,pll>& b) {
+    //     auto [al, ar] = a.second;
+    //     auto [bl, br] = b.second;
+    //     ll aBlock = al / blockSz, bBlock = bl / blockSz;
+    //     return aBlock!=bBlock ? aBlock<bBlock : aBlock&1 ? ar>br : ar<br;
+    // });
 
     ll l = 0, r = -1, cnt = 0;
     vl ans(Q), freq(comp.size(), 0);
-    for (auto [idx,p] : query) {
-        auto [L, R] = p;
+    for (auto [idx,L,R] : query) {
+        // auto [L, R] = p;
         while (r < R) if (!freq[arr[++r]]++) cnt++;
         while (l > L) if (!freq[arr[--l]]++) cnt++;
         while (r > R) if (!--freq[arr[r--]]) cnt--;
