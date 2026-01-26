@@ -56,14 +56,13 @@ void solve(ll testcase){
         query[i] = { i, (l-1)/blockSz, l-1, r-1 };
     }
 
-    sort(query.begin(), query.end(), [&](const Query& a, const Query& b) {
+    sort(query.begin(), query.end(), [&](Query& a, Query& b) {
         return a.block!=b.block ? a.block<b.block : a.block&1 ? a.r>b.r : a.r<b.r;
     });
 
     ll l = 0, r = -1, cnt = 0;
     vl ans(Q), freq(comp.size(), 0);
     for (auto [idx,block,L,R] : query) {
-        // auto [L, R] = p;
         while (r < R) if (freq[arr[++r]]++ == 0) cnt++;
         while (l > L) if (freq[arr[--l]]++ == 0) cnt++;
         while (r > R) if (--freq[arr[r--]] == 0) cnt--;
