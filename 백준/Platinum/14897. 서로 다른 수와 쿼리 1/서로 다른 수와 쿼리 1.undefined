@@ -64,10 +64,10 @@ void solve(ll testcase){
     vl ans(Q), freq(comp.size(), 0);
     for (auto [idx,block,L,R] : query) {
         // auto [L, R] = p;
-        while (r < R) if (!freq[arr[++r]]++) cnt++;
-        while (l > L) if (!freq[arr[--l]]++) cnt++;
-        while (r > R) if (!--freq[arr[r--]]) cnt--;
-        while (l < L) if (!--freq[arr[l++]]) cnt--;
+        while (r < R) if (freq[arr[++r]]++ == 0) cnt++;
+        while (l > L) if (freq[arr[--l]]++ == 0) cnt++;
+        while (r > R) if (--freq[arr[r--]] == 0) cnt--;
+        while (l < L) if (--freq[arr[l++]] == 0) cnt--;
         ans[idx] = cnt;
     }
 
