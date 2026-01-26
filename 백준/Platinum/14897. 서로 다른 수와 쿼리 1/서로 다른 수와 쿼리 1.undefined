@@ -71,7 +71,7 @@ void solve(ll testcase){
         freq[arr[x]]--;
         if (!freq[arr[x]]) cnt--;
     };
-    for (auto& [idx,p] : query) {
+    for (auto [idx,p] : query) {
         auto [L, R] = p;
         while (r < R) if (!freq[arr[++r]]++) cnt++;
         while (l > L) if (!freq[arr[--l]]++) cnt++;
