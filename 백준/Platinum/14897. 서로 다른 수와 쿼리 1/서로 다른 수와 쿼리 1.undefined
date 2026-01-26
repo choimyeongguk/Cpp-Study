@@ -71,7 +71,9 @@ void solve(ll testcase){
         ans[idx] = cnt;
     }
 
-    for (auto& e : ans) cout << e << "\n";
+    string out;
+    for (auto& e : ans) out += to_string(e) + '\n';
+    cout << out;
 }
 
 int main() {
