@@ -36,24 +36,54 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    inline char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    inline int nextInt() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        int sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        int x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+};
+
 struct Query { ll idx, block, l, r; };
 
 void solve(ll testcase){
+    FastScanner fs;
+
     ll i, j, k;
-    ll N; cin >> N;
-    vl arr(N); for (auto& e : arr) cin >> e;
+    ll N = fs.nextInt();
+    vl arr(N); for (auto& e : arr) e = fs.nextInt();
     vl comp = arr;
     sort(comp.begin(), comp.end());
     comp.erase(unique(comp.begin(), comp.end()), comp.end());
     for (auto& e : arr)
         e = lower_bound(comp.begin(), comp.end(), e) - comp.begin();
 
-    ll Q; cin >> Q;
+    ll Q = fs.nextInt();
     ll blockSz = (ll)sqrt(N);
     vector<Query> query(Q);
     for (i=0; i<Q; i++) {
-        ll l, r; cin >> l >> r;
-        query[i] = { i, (l-1)/blockSz, l-1, r-1 };
+        ll l = fs.nextInt() - 1;
+        ll r = fs.nextInt() - 1;
+        query[i] = { i, l/blockSz, l, r };
     }
 
     sort(query.begin(), query.end(), [&](Query& a, Query& b) {
