@@ -84,14 +84,26 @@ void solve(ll testcase){
 
     // 오일러 경로
     ll time = 0;
-    vl start(N), end(N);
-    function<void(ll)> dfs = [&](ll cur) {
-        start[cur] = time++;
-        for (auto nxt : tree[cur])
-            dfs(nxt);
-        end[cur] = time-1;
-    };
-    dfs(root);
+    vl start(N, -1), end(N, -1);
+    stack<ll> st; st.emplace(root);
+    while (!st.empty()) {
+        if (start[st.top()] == -1) {
+            start[st.top()] = time++;
+            for (auto nxt : tree[st.top()])
+                st.emplace(nxt);
+        }
+        else {
+            end[st.top()] = time-1;
+            st.pop();
+        }
+    }
+    // function<void(ll)> dfs = [&](ll cur) {
+    //     start[cur] = time++;
+    //     for (auto nxt : tree[cur])
+    //         dfs(nxt);
+    //     end[cur] = time-1;
+    // };
+    // dfs(root);
 
     LazySegTree seg(N);
     while (M--) {
