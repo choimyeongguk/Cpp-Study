@@ -87,7 +87,7 @@ void solve(ll testcase){
     vl start(N), end(N);
     function<void(ll)> dfs = [&](ll cur) {
         start[cur] = time++;
-        for (auto& nxt : tree[cur])
+        for (auto nxt : tree[cur])
             dfs(nxt);
         end[cur] = time-1;
     };
