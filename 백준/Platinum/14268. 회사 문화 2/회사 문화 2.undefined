@@ -1,0 +1,133 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = int;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct LazySegTree {
+    ll n; vl tree, lazy;
+    LazySegTree(ll n): n(n), tree(n<<2, 0), lazy(n<<2, 0) {}
+    void push(ll i, ll s, ll e) {
+        if (lazy[i] == 0) return;
+        ll m = (s+e)>>1;
+        tree[i<<1] += lazy[i] * (m-s+1);
+        lazy[i<<1] += lazy[i];
+        tree[i<<1|1] += lazy[i] * (e-m);
+        lazy[i<<1|1] += lazy[i];
+        lazy[i] = 0;
+    }
+    void update(ll l, ll r, ll val) { update(1, 0, n-1, l, r, val); }
+    void update(ll i, ll s, ll e, ll l, ll r, ll val) {
+        if (s>r || e<l) return;
+        if (l<=s && e<=r) {
+            tree[i] += val * (e-s+1);
+            lazy[i] += val;
+            return;
+        }
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        update(i<<1, s, m, l, r, val);
+        update(i<<1|1, m+1, e, l, r, val);
+        tree[i] = tree[i<<1] + tree[i<<1|1];
+    }
+    ll query(ll pos) { return query(1, 0, n-1, pos); }
+    ll query(ll i, ll s, ll e, ll pos) {
+        if (s==e) return tree[i];
+        push(i, s, e);
+        ll m = (s+e)>>1;
+        return pos<=m ? query(i<<1, s, m, pos) : query(i<<1|1, m+1, e, pos);
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, M; cin >> N >> M;
+    vvl tree(N);
+    ll root = -1;
+    for (i=0; i<N; i++) {
+        ll pa; cin >> pa;
+        if (pa == -1) root = i;
+        else tree[pa-1].emplace_back(i);
+    }
+
+    // 오일러 경로
+    ll time = 0;
+    vl start(N, -1), end(N, -1);
+    stack<ll> st; st.emplace(root);
+    while (!st.empty()) {
+        if (start[st.top()] == -1) {
+            start[st.top()] = time++;
+            for (auto nxt : tree[st.top()])
+                st.emplace(nxt);
+        }
+        else {
+            end[st.top()] = time-1;
+            st.pop();
+        }
+    }
+    // function<void(ll)> dfs = [&](ll cur) {
+    //     start[cur] = time++;
+    //     for (auto nxt : tree[cur])
+    //         dfs(nxt);
+    //     end[cur] = time-1;
+    // };
+    // dfs(root);
+
+    LazySegTree seg(N);
+    while (M--) {
+        ll op, a, b; cin >> op;
+        switch (op) {
+            case 1:
+                cin >> a >> b;
+                seg.update(start[a-1], end[a-1], b);
+                break;
+            case 2:
+                cin >> a;
+                cout << seg.query(start[a-1]) << "\n";
+                break;
+        }
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
