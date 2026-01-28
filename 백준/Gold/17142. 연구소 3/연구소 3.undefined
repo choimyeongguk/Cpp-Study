@@ -1,0 +1,108 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, M; cin >> N >> M;
+    ll numBlock = N*N;
+    vpll virus;
+    vvl board(N, vl(N));
+    for (i=0; i<N; i++) {
+        for (j=0; j<N; j++) {
+            cin >> board[i][j];
+            if (board[i][j] == 1) numBlock--;
+            if (board[i][j] == 2) virus.emplace_back(i, j);
+        }
+    }
+
+    ll ans = 1e10;
+    vl activate;
+    vvl d = {{-1, 0, 1, 0}, {0, 1, 0, -1}};
+    function<void()> spread = [&]() {
+        queue<pll> q;
+        vvl visit(N, vl(N, false));
+        for (auto& e : activate) {
+            auto [r,c] = virus[e];
+            q.emplace(r, c);
+            visit[r][c] = true;
+        }
+
+        bool flag;
+        ll cnt = 0, numVirus = virus.size(), num;
+        while (!q.empty() && numVirus!=numBlock) {
+            cnt++;
+            num = q.size();
+            for (ll i=0; i<num; i++) {
+                auto [r,c] = q.front(); q.pop();
+                for (ll j=0; j<4; j++) {
+                    ll nr = r + d[0][j];
+                    ll nc = c + d[1][j];
+                    if (nr<0 || nc<0 || nr==N || nc==N || visit[nr][nc] || board[nr][nc]==1) continue;
+                    if (board[nr][nc] == 0) numVirus++;
+                    q.emplace(nr, nc);
+                    visit[nr][nc] = true;
+                }
+            }
+        }
+        if (numVirus == numBlock) ans = min(ans, cnt);
+    };
+    function<void(ll,ll)> comb = [&](ll idx, ll depth) {
+        if (depth == M) {
+            spread(); return;
+        }
+        if (idx >= virus.size()) return;
+        comb(idx+1, depth);
+        activate.emplace_back(idx);
+        comb(idx+1, depth+1);
+        activate.pop_back();
+    };
+    comb(0, 0);
+
+    cout << (ans==1e10 ? -1 : ans);
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
