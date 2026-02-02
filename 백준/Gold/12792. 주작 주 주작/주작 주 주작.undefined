@@ -38,13 +38,10 @@ void preprocess() {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N;
+    ll N, num; cin >> N;
     for (i=1; i<=N; i++) {
-        ll num; cin >> num;
-        if (num == i) {
-            cout << -1;
-            return;
-        }
+        cin >> num;
+        if (num == i) { cout << -1; return; }
     }
     cout << 1000003;
 }
