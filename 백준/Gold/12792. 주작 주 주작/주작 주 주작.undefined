@@ -36,11 +36,39 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    inline char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    inline int nextInt() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        int sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        int x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N, num; cin >> N;
+    FastScanner fs;
+    ll num, N = fs.nextInt();
     for (i=1; i<=N; i++) {
-        cin >> num;
+        num = fs.nextInt();
         if (num == i) { cout << -1; return; }
     }
     cout << 1000003;
