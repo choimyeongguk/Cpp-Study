@@ -66,10 +66,9 @@ struct FastScanner {
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
-    ll num, N = fs.nextInt();
+    ll N = fs.nextInt();
     for (i=1; i<=N; i++) {
-        num = fs.nextInt();
-        if (num == i) { cout << -1; return; }
+        if (fs.nextInt() == i) { cout << -1; return; }
     }
     cout << 1000003;
 }
