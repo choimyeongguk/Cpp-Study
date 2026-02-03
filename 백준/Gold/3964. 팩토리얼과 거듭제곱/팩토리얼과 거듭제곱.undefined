@@ -114,11 +114,9 @@ void solve(ll testcase){
 
     ll ans = LLONG_MAX;
     for (i=0; i<factor.size(); i++) {
-        ll numP = 0;
+        ll numP = 0, tmp;
         __int128 p = factor[i].first;
-        while (true) {
-            ll tmp = N / p;
-            if (tmp == 0) break;
+        while ((tmp = N / p)) {
             numP += tmp;
             p *= factor[i].first;
         }
