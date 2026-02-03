@@ -1,0 +1,143 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+using ull = uint64_t;
+using u128 = unsigned __int128;
+
+inline ull modmul(ull a, ull b, ull m) {
+    return (u128)a * b % m;
+}
+
+inline ull modpow(ull a, ull e, ull m) {
+    ull r = 1;
+    a %= m;
+    while (e) {
+        if (e & 1) r = modmul(r, a, m);
+        a = modmul(a, a, m);
+        e >>= 1;
+    }
+    return r;
+}
+
+inline bool is_prime(ull n) {
+    if (n<2 || n%2==0 || n%3==0) return n==2 || n==3;
+    ull s = __builtin_ctzll(n-1), d = n-1 >> s;
+    for (ull a : { 2, 325, 9375, 28178, 450775, 9780504, 1795265022 }) {
+        // for (ull a : { 2, 7, 61 }) {
+        if (a%n == 0) continue;
+        ull x = modpow(a, d, n);
+        if (x==1 || x==n-1) continue;   // case 1: 전부 1 or case 2: -1 나오고 그다음 전부 1
+        bool flag = true;
+        for (ull r=1; r<s; r++) {
+            x = modmul(x, x, n);
+            if (x == n-1) { flag = false; break; }  // case 2: 중간에 -1 나오고 그다음 전부 1
+            if (x == 1) return false;
+        }
+        if (flag) return false;
+    }
+    return true;
+}
+
+ull pollard_rho(ull n) {
+    if ((n&1) == 0) return 2;
+    if (n%3 == 0) return 3;
+
+    function<ull(ull)> f = [&](ull x) { return (modmul(x, x, n) + 3)%n; };
+    ull x=0, y=0, t=30, p=2, i=1, q=0, ret=1;
+    while (t++ % 40 || (ret = gcd(p, n))==1) {
+        if (x == y) x = ++i, y = f(x);  // x-y==0 을 p에 누적하면 곱 누적이 망가짐 -> 새로운 시도
+        if ((q = (ll)modmul(p, x>y?x-y:y-x, n))) p=q;
+        x = f(x), y = f(f(y));
+    }
+    return ret;
+}
+
+vpll max_primefactor(ull n) {
+    vpll ret;
+    vl factor;
+    function<void(ull)> getFactor = [&](ull x) {
+        if (x == 1) return;
+        if (is_prime(x)) {
+            factor.emplace_back(x);
+            return;
+        }
+        ull d = pollard_rho(x);
+        getFactor(d);
+        getFactor(x/d);
+    };
+    getFactor(n);
+    sort(factor.begin(), factor.end());
+    ll l = 0, r;
+    for (r=0; r<factor.size(); r++) {
+        if (factor[l] != factor[r]) {
+            ret.emplace_back(factor[l], r-l);
+            l = r;
+        }
+    }
+    ret.emplace_back(factor[l], r-l);
+    return ret;
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, K; cin >> N >> K;
+    vpll factor = max_primefactor(K);
+
+    ll ans = LLONG_MAX;
+    for (i=0; i<factor.size(); i++) {
+        ll numP = 0, tmp;
+        __int128 p = factor[i].first;
+        while ((tmp = N / p)) {
+            numP += tmp;
+            p *= factor[i].first;
+        }
+        ans = min(ans, numP / factor[i].second);
+    }
+    cout << ans << "\n";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
