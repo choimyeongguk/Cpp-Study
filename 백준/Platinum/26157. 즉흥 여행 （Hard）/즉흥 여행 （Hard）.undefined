@@ -1,0 +1,131 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+// O(V+E)
+// memo: the order of scc_idx constitutes a reverse topological sort
+// BCC 선인장 판별 : 각 bcc 별로 E<=V면 OK
+// bfs4tarjan 코드 필요한 부분 주석 해제해서 알아서 쓰기
+struct Tarjan {
+    ll n, vtime; vl up, visit; vvl graph;
+    ll scc_cnt; vl scc_idx, stk;    // for scc
+
+    Tarjan (vvl& g)
+        : n(g.size()), vtime(0), up(n), visit(n,0), graph(g),
+          scc_idx(n,0), scc_cnt(0) {
+        for (ll i=0;i<n;++i)    // 0-index
+            if (visit[i] == 0) dfs4scc(i);
+
+        for (ll i=0; i<n; i++)
+            scc_idx[i]--;
+    }
+
+    void dfs4scc(ll node){
+        up[node] = visit[node] = ++vtime;
+        stk.push_back(node);
+        for (ll next : graph[node]){
+            if (visit[next] == 0) {
+                dfs4scc(next);
+                up[node] = min(up[node], up[next]);
+            }
+            else if (scc_idx[next] == 0)
+                up[node] = min(up[node], visit[next]);
+        }
+        if (up[node]==visit[node]){
+            ++scc_cnt;
+            ll t;
+            do {
+                t = stk.back(); stk.pop_back();
+                scc_idx[t] = scc_cnt;
+            } while (!stk.empty() && t != node);
+        }
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll V, E; cin >> V >> E;
+    vvl G(V);
+    for (i=0; i<E; i++) {
+        ll u, v; cin >> u >> v;
+        G[u-1].emplace_back(v-1);
+    }
+
+    set<pll> edge;
+    Tarjan scc(G);
+    for (i=0; i<V; i++)
+        for (auto& e : G[i])
+            if (scc.scc_idx[i] != scc.scc_idx[e])
+                edge.emplace(scc.scc_idx[i], scc.scc_idx[e]);
+
+    vl in_degree(scc.scc_cnt, 0), out_degree(scc.scc_cnt, 0);
+    for (auto& [u,v] : edge) {
+        in_degree[v]++;
+        out_degree[u]++;
+    }
+
+    ll startScc = -1, endScc = -1;
+    for (i=0; i<scc.scc_cnt; i++) {
+        if (in_degree[i] == 0) {
+            if (startScc != -1) { cout << 0; return; }
+            startScc = i;
+        }
+        if (out_degree[i] == 0) {
+            if (endScc != -1) { cout << 0; return; }
+            endScc = i;
+        }
+    }
+
+    vl ans;
+    for (i=0; i<V; i++)
+        if (scc.scc_idx[i] == startScc)
+            ans.emplace_back(i);
+    sort(ans.begin(), ans.end());
+    cout << ans.size() << "\n";
+    for (auto& e : ans) cout << e+1 << " ";
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
