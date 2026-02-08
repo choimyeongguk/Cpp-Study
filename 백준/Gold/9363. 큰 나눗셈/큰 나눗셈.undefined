@@ -126,7 +126,7 @@ void solve(ll testcase){
         }
     }
     ll X=1, Y=1;
-    for (auto& [k,v] : cnt) {
+    for (auto [k,v] : cnt) {
         if (v > 0) X *= ipow(k, v);
         else if (v < 0) Y *= ipow(k, -v);
     }
