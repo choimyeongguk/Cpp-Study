@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -36,17 +36,45 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    inline char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    inline int nextInt() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        int sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        int x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+};
+
 struct Query {
     ll idx, start, end, color;
 };
 
 void solve(ll testcase){
     ll i, j, k;
-    ll V, E, Q; cin >> V >> E >> Q;
+    FastScanner fs;
+    ll V=fs.nextInt(), E=fs.nextInt(), Q=fs.nextInt();
     vl rin_degree(V, 0), lin_degree(V, 0);
     vvl rG(V), lG(V);
     for (i=0; i<E; i++) {
-        ll x, y; cin >> x >> y;
+        ll x = fs.nextInt(), y=fs.nextInt();
         rG[--x].emplace_back(--y);
         rin_degree[y]++;
         lG[y].emplace_back(x);
@@ -54,7 +82,7 @@ void solve(ll testcase){
     }
     vl query(Q), rtime(V, -1), ltime(V, -1);
     for (i=0; i<Q; i++) {
-        ll x, d, c; cin >> x >> d >> c;
+        ll x=fs.nextInt(), d=fs.nextInt(), c=fs.nextInt();
         if (d == 1) rtime[x-1] = i;
         else ltime[x-1] = i;
         query[i] = c;
