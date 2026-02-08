@@ -36,111 +36,98 @@ void preprocess() {
 
 }
 
-using ull = uint64_t;
-using u128 = unsigned __int128;
-
-inline ull modmul(ull a, ull b, ull m) {
-    return (u128)a * b % m;
-}
-
-inline ull modpow(ull a, ull e, ull m) {
-    ull r = 1;
-    a %= m;
-    while (e) {
-        if (e & 1) r = modmul(r, a, m);
-        a = modmul(a, a, m);
-        e >>= 1;
-    }
-    return r;
-}
-
-inline bool is_prime(ull n) {
-    if (n<2 || n%2==0 || n%3==0) return n==2 || n==3;
-    ull s = __builtin_ctzll(n-1), d = n-1 >> s;
-    for (ull a : { 2, 325, 9375, 28178, 450775, 9780504, 1795265022 }) {
-        // for (ull a : { 2, 7, 61 }) {
-        if (a%n == 0) continue;
-        ull x = modpow(a, d, n);
-        if (x==1 || x==n-1) continue;   // case 1: 전부 1 or case 2: -1 나오고 그다음 전부 1
-        bool flag = true;
-        for (ull r=1; r<s; r++) {
-            x = modmul(x, x, n);
-            if (x == n-1) { flag = false; break; }  // case 2: 중간에 -1 나오고 그다음 전부 1
-            if (x == 1) return false;
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
         }
-        if (flag) return false;
+        return buf[idx++];
     }
-    return true;
-}
-
-ull pollard_rho(ull n) {
-    if ((n&1) == 0) return 2;
-    if (n%3 == 0) return 3;
-
-    function<ull(ull)> f = [&](ull x) { return (modmul(x, x, n) + 3)%n; };
-    ull x=0, y=0, t=30, p=2, i=1, q=0, ret=1;
-    while (t++ % 40 || (ret = gcd(p, n))==1) {
-        if (x == y) x = ++i, y = f(x);  // x-y==0 을 p에 누적하면 곱 누적이 망가짐 -> 새로운 시도
-        if ((q = modmul(p, x>y?x-y:y-x, n))) p=q;
-        x = f(x), y = f(f(y));
+    ll nextInt() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
     }
-    return ret;
+};
+
+const ll MAX = 1'000'000;
+vl prime, spf(MAX+1, 0);
+
+void linear_sieve() {
+    ll i, j, k;
+    for (i=2; i<spf.size(); i++) {
+        if (!spf[i]) {
+            spf[i] = i;
+            prime.emplace_back(i);
+        }
+        for (auto& p : prime) {
+            j = i * p;
+            if (j > MAX) break;
+            spf[j] = p; // 모든 합성수에 대해 spf는 딱 한번 결정됨 (x = spf * (x/spf)로 유일하게 결정되기 때문)
+            if (p == spf[i]) break;
+            // p > spf[i]인 경우에 대해,
+            // j = i * p 일 때, p와 spf[i]를 교환하여 (i/spf[i]*p) * spf[i] 꼴로 바꾸게 되면
+            // j에 대해 p 대신 더 작은 spf를 생각할 수 있으므로, p>spf[i]인 경우에 대해서는 계산하지 않는다.
+        }
+    }
 }
 
-vl prime_factorization(ull n) {
-    vl factor;
-    function<void(ull)> getFactor = [&](ull x) {
-        if (x == 1) return;
-        if (is_prime(x)) { factor.emplace_back(x); return; }
-        ull d = pollard_rho(x);
-        getFactor(d);
-        getFactor(x/d);
-    };
-    getFactor(n);
-    sort(factor.begin(), factor.end());
-    return factor;
+ll pow(ll x, ll y) {
+    if (y == 0) return 1;
+    if (y == 1) return x;
+    ll half = pow(x, y/2);
+    if (y & 1) return half * half * x;
+    return half * half;
 }
+
+FastScanner fs;
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N, M; cin >> N >> M;
-    vl A, B; A.reserve(N), B.reserve(M);
+    ll N = fs.nextInt(), M = fs.nextInt();
+    unordered_map<ll,ll> cnt;
     for (i=0; i<N; i++) {
-        ll num; cin >> num;
-        if (num == 1) continue;
-        if (is_prime(num)) A.emplace_back(num);
-        else {
-            vl factor = prime_factorization(num);
-            A.insert(A.end(), factor.begin(), factor.end());
+        ll num = fs.nextInt();
+        while (num != 1) {
+            ll p = spf[num];
+            cnt[p] = cnt.contains(p) ? cnt[p]+1 : 1;
+            num /= p;
         }
     }
-    sort(A.begin(), A.end());
     for (i=0; i<M; i++) {
-        ll num; cin >> num;
-        if (num == 1) continue;
-        if (is_prime(num)) B.emplace_back(num);
-        else {
-            vl factor = prime_factorization(num);
-            B.insert(B.end(), factor.begin(), factor.end());
+        ll num = fs.nextInt();
+        while (num != 1) {
+            ll p = spf[num];
+            cnt[p] = cnt.contains(p) ? cnt[p]-1 : -1;
+            num /= p;
         }
     }
-    sort(B.begin(), B.end());
-    ll ja=1, mo=1, a=0, b=0;
-    while (a<A.size() && b<B.size()) {
-        if (A[a] == B[b]) a++, b++;
-        else if (A[a] < B[b]) ja *= A[a++];
-        else mo *= B[b++];
+    ll X=1, Y=1;
+    for (auto [k,v] : cnt) {
+        if (v > 0) X *= pow(k, v);
+        else if (v < 0) Y *= pow(k, -v);
     }
-    while (a<A.size()) ja *= A[a++];
-    while (b<B.size()) mo *= B[b++];
-    cout << "Case #" << testcase << ": " << ja << " / " << mo << "\n";
+    cout << "Case #" << testcase << ": " << X << " / " << Y << "\n";
 }
 
 int main() {
     setup();
     preprocess();
-    ll t = 1;
-    cin >> t;
+    linear_sieve();
+    ll t = fs.nextInt();
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
