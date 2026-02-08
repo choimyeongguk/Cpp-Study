@@ -93,7 +93,7 @@ void solve(ll testcase){
             q.emplace(i);
     while (!q.empty()) {
         ll cur = q.front(); q.pop();
-        for (auto& nxt : rG[cur]) {
+        for (auto nxt : rG[cur]) {
             rtime[nxt] = max(rtime[nxt], rtime[cur]);
             rin_degree[nxt]--;
             if (rin_degree[nxt] == 0)
@@ -105,7 +105,7 @@ void solve(ll testcase){
             q.emplace(i);
     while (!q.empty()) {
         ll cur = q.front(); q.pop();
-        for (auto& nxt : lG[cur]) {
+        for (auto nxt : lG[cur]) {
             ltime[nxt] = max(ltime[nxt], ltime[cur]);
             lin_degree[nxt]--;
             if (lin_degree[nxt] == 0)
