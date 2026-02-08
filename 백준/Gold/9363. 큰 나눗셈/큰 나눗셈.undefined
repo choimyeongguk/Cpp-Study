@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -93,6 +93,16 @@ ll pow(ll x, ll y) {
     return half * half;
 }
 
+ll ipow(ll a, ll e) {
+    ll r = 1;
+    while (e) {
+        if (e & 1) r *= a;
+        a *= a;
+        e >>= 1;
+    }
+    return r;
+}
+
 FastScanner fs;
 
 void solve(ll testcase){
@@ -103,7 +113,7 @@ void solve(ll testcase){
         ll num = fs.nextInt();
         while (num != 1) {
             ll p = spf[num];
-            cnt[p] = cnt.contains(p) ? cnt[p]+1 : 1;
+            cnt[p]++;
             num /= p;
         }
     }
@@ -111,14 +121,14 @@ void solve(ll testcase){
         ll num = fs.nextInt();
         while (num != 1) {
             ll p = spf[num];
-            cnt[p] = cnt.contains(p) ? cnt[p]-1 : -1;
+            cnt[p]--;
             num /= p;
         }
     }
     ll X=1, Y=1;
     for (auto& [k,v] : cnt) {
-        if (v > 0) X *= pow(k, v);
-        else if (v < 0) Y *= pow(k, -v);
+        if (v > 0) X *= ipow(k, v);
+        else if (v < 0) Y *= ipow(k, -v);
     }
     cout << "Case #" << testcase << ": " << X << " / " << Y << "\n";
 }
