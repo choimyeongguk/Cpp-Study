@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -40,14 +40,18 @@ void solve(ll testcase){
     ll i, j, k;
     ll N, D, K, C; cin >> N >> D >> K >> C;
     vl sushi(N); for (auto& e : sushi) cin >> e;
-    unordered_map<ll,ll> mp; mp[C] = 1;
-    ll l, r, ans = 0, it = N;
-    for (l=0,r=0; r<K; r++) mp[sushi[r]]++;
+    vl freq(D+1, 0); freq[C]++;
+    ll l, r, cnt = 1, ans = 0, it = N;
+    for (l=0,r=0; r<K; r++) {
+        if (freq[sushi[r]] == 0) cnt++;
+        freq[sushi[r]]++;
+    }
     do {
-        ans = max(ans, (ll)mp.size());
-        mp[sushi[r]]++;
-        mp[sushi[l]]--;
-        if (mp[sushi[l]] == 0) mp.erase(sushi[l]);
+        ans = max(ans, cnt);
+        if (freq[sushi[r]] == 0) cnt++;
+        freq[sushi[r]]++;
+        freq[sushi[l]]--;
+        if (freq[sushi[l]] == 0) cnt--;
         r = (r+1)%N;
         l = (l+1)%N;
     } while (it--);
