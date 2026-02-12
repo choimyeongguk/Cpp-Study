@@ -68,15 +68,15 @@ void solve(ll testcase){
     FastScanner fs;
     ll N=fs.nextInt(), M=fs.nextInt();
     ll total = 0;
-    vl vote(N);
-    for (auto& e : vote) {
-        e = fs.nextInt();
-        total += e;
+    priority_queue<ll> pq;
+    for (i=0; i<N; i++) {
+        ll num = fs.nextInt();
+        pq.emplace(num);
+        total += num;
     }
-    sort(vote.begin(), vote.end(), greater<>());
     ll sum = 0;
     for (i=0; i<N; i++) {
-        sum += vote[i];
+        sum += pq.top(); pq.pop();
         if (2*sum >= total) {
             cout << M/(i+2);
             return;
