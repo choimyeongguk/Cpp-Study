@@ -67,9 +67,9 @@ void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
     ll N = fs.nextInt();
-    ll a = fs.nextInt(), b = fs.nextInt(), c, d, e = 0;
+    ll a = fs.nextInt(), b = fs.nextInt(), e = 0;
     while (--N) {
-        c = fs.nextInt(), d = fs.nextInt();
+        ll c = fs.nextInt(), d = fs.nextInt();
         e += a*d + b*c;
         a += c, b += d;
     }
