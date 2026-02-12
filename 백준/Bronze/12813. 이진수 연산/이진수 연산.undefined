@@ -38,19 +38,9 @@ void preprocess() {
 
 void solve(ll testcase){
     ll i, j, k;
-    string str;
-    cin >> str; bitset<100'000> A(str);
-    cin >> str; bitset<100'000> B(str);
-    bitset<100'000> C = A & B;
-    cout << C << "\n";
-    C = A | B;
-    cout << C << "\n";
-    C = A ^ B;
-    cout << C << "\n";
-    C = ~A;
-    cout << C << "\n";
-    C = ~B;
-    cout << C << "\n";
+    bitset<100'000> A, B;
+    cin >> A >> B;;
+    cout << (A&B) << "\n" << (A|B) << "\n" << (A^B) << "\n" << ~A << "\n" << ~B;
 }
 
 int main() {
