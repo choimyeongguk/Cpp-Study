@@ -50,7 +50,7 @@ void solve(ll testcase){
     for (i=0; i<N; i++) {
         remain -= block[i];
         unordered_map<ll,ll> tmp;
-        for (auto& [k,v] : mp) {
+        for (auto [k,v] : mp) {
             // 낮은 쪽에 더하는 경우
             ll l=v+block[i], h=v+k;
             if (l>h) swap(l, h);
@@ -62,7 +62,7 @@ void solve(ll testcase){
             if (h-l <= remain)
                 tmp[h-l] = max(tmp[h-l], l);
         }
-        for (auto& [k,v] : tmp)
+        for (auto [k,v] : tmp)
             mp[k] = max(mp[k], v);
     }
     cout << (mp[0] ? mp[0] : -1);
