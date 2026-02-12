@@ -38,9 +38,9 @@ void preprocess() {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N; N--;
+    ll N; cin >> N;
     ll a, b, c, d, e = 0; cin >> a >> b;
-    while (N--) {
+    while (--N) {
         cin >> c >> d;
         e += a*d + b*c;
         a += c, b += d;
