@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll day=0;
+    ll y1, m1, d1; cin >> y1 >> m1 >> d1;
+    ll y2, m2, d2; cin >> y2 >> m2 >> d2;
+    if (y2>y1+1000 || (y2==y1+1000 && (m2>m1 || (m2==m1 && d2>=d1)))) { cout << "gg"; return; }
+    bool isY1Leap = y1%400==0 || (y1%100 && y1%4==0);
+    bool isY2Leap = y2%400==0 || (y2%100 && y2%4==0);
+    if (y1 == y2) {
+        if (m1 == m2) {
+            day += d2 - d1;
+        }
+        else {
+            for (i=m1+1; i<m2; i++) {
+                if (i==1 || i==3 || i==5 || i==7 || i==8 || i==10 || i==12) day += 31;
+                else if (i==4 || i==6 || i==9 || i==11) day += 30;
+                else if (isY1Leap) day += 29;
+                else day += 28;
+            }
+            if (m1==1 || m1==3 || m1==5 || m1==7 || m1==8 || m1==10 || m1==12) day += 31-d1;
+            else if (m1==4 || m1==6 || m1==9 || m1==11) day += 30-d1;
+            else if (isY1Leap) day += 29-d1;
+            else day += 28-d1;
+            day += d2;
+        }
+    }
+    else {
+        for (i=y1+1; i<y2; i++) day += i%400==0 || (i%100 && i%4==0) ? 366 : 365;
+        for (i=m1+1; i<=12; i++) {
+            if (i==1 || i==3 || i==5 || i==7 || i==8 || i==10 || i==12) day += 31;
+            else if (i==4 || i==6 || i==9 || i==11) day += 30;
+            else if (isY1Leap) day += 29;
+            else day += 28;
+        }
+        if (m1==1 || m1==3 || m1==5 || m1==7 || m1==8 || m1==10 || m1==12) day += 31-d1;
+        else if (m1==4 || m1==6 || m1==9 || m1==11) day += 30-d1;
+        else if (isY1Leap) day += 29-d1;
+        else day += 28-d1;
+
+        for (i=1; i<=m2-1; i++) {
+            if (i==1 || i==3 || i==5 || i==7 || i==8 || i==10 || i==12) day += 31;
+            else if (i==4 || i==6 || i==9 || i==11) day += 30;
+            else if (isY2Leap) day += 29;
+            else day += 28;
+        }
+        day += d2;
+    }
+    cout << "D-" << day;
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
