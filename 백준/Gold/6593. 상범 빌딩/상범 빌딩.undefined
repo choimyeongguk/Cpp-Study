@@ -1,0 +1,93 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+struct Loc {
+    ll l, r, c;
+    bool operator==(const Loc &o) const {
+        return l==o.l && r==o.r && c==o.c;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    vvl d = {{0, 0, 0, 0, 1, -1}, {-1, 0, 1, 0, 0, 0}, {0, 1, 0, -1, 0, 0}};
+    while (true) {
+        ll L, R, C; cin >> L >> R >> C;
+        if (L == 0) break;
+        vector<vector<string>> M(L, vector<string>(R));
+        Loc S, E;
+        for (i=0; i<L; i++) {
+            for (j=0; j<R; j++) {
+                cin >> M[i][j];
+                for (k=0; k<C; k++) {
+                    if (M[i][j][k] == 'S') S = { i, j, k };
+                    else if (M[i][j][k] == 'E') E = { i, j, k };
+                }
+            }
+        }
+
+        bool flag = false;
+        queue<pair<ll,Loc>> q; q.emplace(0, S); M[S.l][S.r][S.c] = '#';
+        while (!q.empty()) {
+            auto [time,loc] = q.front(); q.pop();
+            if (loc == E) {
+                flag = true;
+                cout << "Escaped in " << time << " minute(s).\n";
+                break;
+            }
+            for (i=0; i<6; i++) {
+                ll nl=loc.l+d[0][i], nr=loc.r+d[1][i], nc=loc.c+d[2][i];
+                if (nl<0||nr<0||nc<0||nl==L||nr==R||nc==C||M[nl][nr][nc]=='#') continue;
+                M[nl][nr][nc] = '#';
+                q.emplace(time+1, Loc{nl, nr, nc});
+            }
+        }
+        if (!flag) cout << "Trapped!\n";
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
