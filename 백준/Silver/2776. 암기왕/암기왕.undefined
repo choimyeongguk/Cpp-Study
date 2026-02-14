@@ -36,17 +36,57 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
+FastScanner fs;
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N;
+    ll N = fs.nxtLL();
     unordered_set<ll> s;
     while (N--) {
-        ll num; cin >> num;
+        ll num = fs.nxtLL();
         s.emplace(num);
     }
-    cin >> N;
+    N = fs.nxtLL();
     while (N--) {
-        ll num; cin >> num;
+        ll num = fs.nxtLL();
         cout << s.contains(num) << "\n";
     }
 }
@@ -54,8 +94,7 @@ void solve(ll testcase){
 int main() {
     setup();
     preprocess();
-    ll t = 1;
-    cin >> t;
+    ll t = fs.nxtLL();
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
