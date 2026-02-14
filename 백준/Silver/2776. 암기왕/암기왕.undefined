@@ -79,15 +79,12 @@ FastScanner fs;
 void solve(ll testcase){
     ll i, j, k;
     ll N = fs.nxtLL();
-    unordered_set<ll> s;
-    while (N--) {
-        ll num = fs.nxtLL();
-        s.emplace(num);
-    }
+    vl arr(N); for (auto& e : arr) e = fs.nxtLL();
+    sort(arr.begin(), arr.end());
     N = fs.nxtLL();
     while (N--) {
         ll num = fs.nxtLL();
-        cout << s.contains(num) << "\n";
+        cout << binary_search(arr.begin(), arr.end(), num) << "\n";
     }
 }
 
