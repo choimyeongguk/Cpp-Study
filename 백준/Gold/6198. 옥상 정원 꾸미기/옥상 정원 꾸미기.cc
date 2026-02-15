@@ -13,29 +13,6 @@ using vl = vector<ll>;
 using vvl = vector<vl>;
 using vpll = vector<pll>;
 
-#ifdef ONLINE_JUDGE
-constexpr bool ndebug = true;
-#else
-constexpr bool ndebug = false;
-#endif
-
-void setup() {
-    if(!ndebug) {
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    }
-    else {
-        ios_base::sync_with_stdio(0);
-        cin.tie(0);
-        cout.tie(0);
-    }
-}
-
-void preprocess() {
-    ll i, j, k;
-
-}
-
 struct FastScanner {
     static const int SZ = 1 << 20;
     int idx, size;
@@ -74,28 +51,20 @@ struct FastScanner {
     }
 };
 
-void solve(ll testcase){
-    ll i, j, k;
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
     FastScanner fs;
     ll N = fs.nxtLL();
     vl st; st.reserve(N);
     long long ans = 0;
-    for (i=0; i<N; i++) {
+    while (N--) {
         ll num = fs.nxtLL();
         while (!st.empty() && st.back()<=num) st.pop_back();
         ans += st.size();
         st.emplace_back(num);
     }
     cout << ans;
-}
-
-int main() {
-    setup();
-    preprocess();
-    ll t = 1;
-    // cin >> t;
-    for (ll testcase = 1; testcase <= t; testcase++){
-        solve(testcase);
-    }
     return 0;
 }
