@@ -39,19 +39,15 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     ll N; cin >> N;
-    vl arr(N); for (auto& e : arr) cin >> e;
-    ll ans = 1;
-    // 증가
-    ll l=0, r;
+    ll ans=1, al=0, dl=0, r;
+    ll prev; cin >> prev;
     for (r=1; r<N; r++) {
-        if (arr[r-1] > arr[r]) l = r;
-        ans = max(ans, r-l+1);
-    }
-    // 감소
-    l=0;
-    for (r=1; r<N; r++) {
-        if (arr[r-1] < arr[r]) l = r;
-        ans = max(ans, r-l+1);
+        ll cur; cin >> cur;
+        if (prev > cur) al = r;
+        else if (prev < cur) dl = r;
+        ans = max(ans, r-al+1);
+        ans = max(ans, r-dl+1);
+        prev = cur;
     }
     cout << ans;
 }
