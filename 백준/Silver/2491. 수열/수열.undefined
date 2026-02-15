@@ -45,8 +45,7 @@ void solve(ll testcase){
         ll cur; cin >> cur;
         if (prev > cur) al = r;
         else if (prev < cur) dl = r;
-        ans = max(ans, r-al+1);
-        ans = max(ans, r-dl+1);
+        ans = max(ans, r-min(al,dl)+1);
         prev = cur;
     }
     cout << ans;
