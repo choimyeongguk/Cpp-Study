@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -36,13 +36,52 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N;
+    FastScanner fs;
+    ll N = fs.nxtLL();
     ll ans=1, al=0, dl=0, r;
-    ll prev; cin >> prev;
+    ll prev = fs.nxtLL();
     for (r=1; r<N; r++) {
-        ll cur; cin >> cur;
+        ll cur = fs.nxtLL();
         if (prev > cur) al = r;
         else if (prev < cur) dl = r;
         ans = max(ans, r-min(al,dl)+1);
