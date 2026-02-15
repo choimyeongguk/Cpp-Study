@@ -37,7 +37,7 @@ void preprocess() {
 }
 
 struct FastScanner {
-    static const int SZ = 1 << 16;
+    static const int SZ = 1 << 15;
     int idx, size;
     char buf[SZ];
     FastScanner(): idx(0), size(0) {}
