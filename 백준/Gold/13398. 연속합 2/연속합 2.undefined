@@ -4,7 +4,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -36,24 +36,63 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N;
-    vl arr(N); for (auto& e : arr) cin >> e;
+    FastScanner fs;
+    ll N = fs.nxtLL();
+    vl arr(N); for (auto& e : arr) e = fs.nxtLL();
     vl lSumMax(N), rSumMax(N);  // lSumMax[i]=j := i인덱스의 왼쪽으로 합해나갔을 때, 최대 연속합
     // lSumMax[i] = max(arr[i-1]+lSumMax[i-1], 0LL)
     // rSumMax[i] = max(arr[i+1]+rSumMax[i+1], 0LL)
     lSumMax[0] = 0;
     for (i=1; i<N; i++)
-        lSumMax[i] = max(arr[i-1]+lSumMax[i-1], 0LL);
+        lSumMax[i] = max(arr[i-1]+lSumMax[i-1], 0);
     rSumMax[N-1] = 0;
     for (i=N-2; i>=0; i--)
-        rSumMax[i] = max(arr[i+1]+rSumMax[i+1], 0LL);
+        rSumMax[i] = max(arr[i+1]+rSumMax[i+1], 0);
     ll ans = arr[0];
     for (i=0; i<N; i++) {
         if (lSumMax[i]==0 && rSumMax[i]==0)
             ans = max(ans, arr[i]);
-        else ans = max(ans, lSumMax[i]+max(arr[i], 0LL)+rSumMax[i]);   
+        else ans = max(ans, lSumMax[i]+max(arr[i], 0)+rSumMax[i]);
     }
     cout << ans;
 }
