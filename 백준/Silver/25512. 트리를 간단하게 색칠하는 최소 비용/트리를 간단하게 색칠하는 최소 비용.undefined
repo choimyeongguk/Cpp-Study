@@ -89,7 +89,7 @@ void solve(ll testcase){
         b[i] = fs.nxtLL();
     }
     function<void(ll)> treeDP = [&](ll pa) {
-        for (auto ch : G[pa]) {
+        for (auto& ch : G[pa]) {
             treeDP(ch);
             w[pa] += b[ch];
             b[pa] += w[ch];
