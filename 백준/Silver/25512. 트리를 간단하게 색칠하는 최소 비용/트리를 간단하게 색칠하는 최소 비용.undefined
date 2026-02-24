@@ -88,17 +88,15 @@ void solve(ll testcase){
         w[i] = fs.nxtLL();
         b[i] = fs.nxtLL();
     }
-    vl costW(N, 0), costB(N, 0);
     function<void(ll)> treeDP = [&](ll pa) {
-        for (auto ch : G[pa])
+        for (auto ch : G[pa]) {
             treeDP(ch);
-        costW[pa] += w[pa];
-        costB[pa] += b[pa];
-        for (auto ch : G[pa])
-            costW[pa] += costB[ch], costB[pa] += costW[ch];
+            w[pa] += b[ch];
+            b[pa] += w[ch];
+        }
     };
     treeDP(0);
-    cout << min(costW[0], costB[0]);
+    cout << min(w[0], b[0]);
 }
 
 int main() {
