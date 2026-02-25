@@ -78,8 +78,9 @@ void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
     ll N=fs.nxtLL(), K=fs.nxtLL();
-    vl arr(N); for (auto& e : arr) e=fs.nxtLL();
-    vl freq(100'001, 0);
+    ll arr[N];
+    for (i=0; i<N; i++) arr[i]=fs.nxtLL();
+    short freq[100001] = {};
     ll l=0, r, ans=0;
     for (r=0; r<N; r++) {
         freq[arr[r]]++;
