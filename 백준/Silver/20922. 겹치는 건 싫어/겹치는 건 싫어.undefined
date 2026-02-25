@@ -36,21 +36,56 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N, K; cin >> N >> K;
-    vl arr(N); for (auto& e : arr) cin >> e;
+    FastScanner fs;
+    ll N=fs.nxtLL(), K=fs.nxtLL();
+    vl arr(N); for (auto& e : arr) e=fs.nxtLL();
     vl freq(100'001, 0);
     ll l=0, r, ans=0;
     for (r=0; r<N; r++) {
         freq[arr[r]]++;
         if (freq[arr[r]]>K) {
-            while (arr[l]!=arr[r]) {
-                freq[arr[l]]--;
-                l++;
-            }
-            freq[arr[l]]--;
-            l++;
+            while (arr[l]!=arr[r]) freq[arr[l++]]--;
+            freq[arr[l++]]--;
         }
         ans = max(ans, r-l+1);
     }
