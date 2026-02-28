@@ -36,25 +36,59 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll N, M; cin >> N >> M;
-    for (i=0; i<N; i++) {
-        ll x, y; cin >> x >> y;
-    }
+    FastScanner fs;
+    ll N=fs.nxtLL(), M=fs.nxtLL();
+    while (N--) fs.nxtLL(), fs.nxtLL();
     ll R=0, G=0, B=0;
-    for (i=0; i<M; i++) {
-        ll v, w; char c; cin >> v >> w >> c;
-        switch (c) {
+    while (M--) {
+        fs.nxtLL(), fs.nxtLL();
+        switch (fs.read()) {
             case 'R': R++; break;
             case 'G': G++; break;
             case 'B': B++; break;
         }
     }
-    ll winner = G&1 ? R<B : R<=B;
-    winner = R+(G&1)<=B;
-    cout << (winner ? "jhnan917" : "jhnah917");
-    // cout << ((G&1 ? R<=B : R>B) ? "jhnah917" : "jhnan917");
+    cout << (R+(G&1)<=B ? "jhnan917" : "jhnah917");
 }
 
 int main() {
