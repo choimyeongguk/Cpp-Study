@@ -51,14 +51,7 @@ void solve(ll testcase){
             case 'B': B++; break;
         }
     }
-    ll winner;
-    if (G&1) {  // G홀수 -> 파랑 선공
-        winner = B>R;
-    }
-    else {      // G짝수 -> 빨강 선공
-        winner = R<=B;
-    }
-    // ll winner = G&1 ? B>R : B>=R;
+    ll winner = G&1 ? R<B : R<=B;
     cout << (winner ? "jhnan917" : "jhnah917");
     // cout << ((G&1 ? R<=B : R>B) ? "jhnah917" : "jhnan917");
 }
