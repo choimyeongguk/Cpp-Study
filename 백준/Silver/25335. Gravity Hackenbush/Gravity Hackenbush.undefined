@@ -52,6 +52,7 @@ void solve(ll testcase){
         }
     }
     ll winner = G&1 ? R<B : R<=B;
+    winner = R+(G&1)<=B;
     cout << (winner ? "jhnan917" : "jhnah917");
     // cout << ((G&1 ? R<=B : R>B) ? "jhnah917" : "jhnan917");
 }
