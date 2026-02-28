@@ -53,10 +53,10 @@ void solve(ll testcase){
     }
     ll winner;
     if (G&1) {  // G홀수 -> 파랑 선공
-        winner = B>R ? 1 : 0;
+        winner = B>R;
     }
     else {      // G짝수 -> 빨강 선공
-        winner = R>B ? 0 : 1;
+        winner = R<=B;
     }
     // ll winner = G&1 ? B>R : B>=R;
     cout << (winner ? "jhnan917" : "jhnah917");
