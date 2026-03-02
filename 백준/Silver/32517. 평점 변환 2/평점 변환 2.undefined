@@ -77,27 +77,31 @@ struct FastScanner {
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
-    ll N=fs.nxtLL(), b=fs.nxtLL();
+    string out;
+    ll N=fs.nxtLL(), b=fs.nxtLL(), a;
     if (b<1 || b>1e9L) { cout << -1; return; }
-    vl a(N);
-    ll sum = a[0] = b, tmp;
+    ll sum = b, tmp;
+    out += to_string(b);
+    out.push_back(' ');
     for (i=1; i<N; i++) {
         // candi a[i] = b[i]        : 평균 이상인 경우
         //              or b[i]+1   : 평균 미만인 경우
         b = fs.nxtLL();
         if ((tmp=b*i) >= sum) {
-            a[i] = b;
+            a = b;
         }
         else if (tmp+i < sum) {
-            a[i] = b+1;
+            a = b+1;
         }
         else {
             cout << -1; return;
             // b[i]는 평균 미만인데, b[i]+1은 평균 이상인 경우
         }
-        sum += a[i];
+        sum += a;
+        out += to_string(a);
+        out.push_back(' ');
     }
-    for (auto e : a) cout << e << " ";
+    cout << out;
 }
 
 int main() {
