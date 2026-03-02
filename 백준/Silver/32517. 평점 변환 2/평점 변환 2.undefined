@@ -80,15 +80,15 @@ void solve(ll testcase){
     ll N=fs.nxtLL(), b=fs.nxtLL();
     if (b<1 || b>1e9L) { cout << -1; return; }
     vl a(N);
-    ll sum = a[0] = b;
+    ll sum = a[0] = b, tmp;
     for (i=1; i<N; i++) {
         // candi a[i] = b[i]        : 평균 이상인 경우
         //              or b[i]+1   : 평균 미만인 경우
         b = fs.nxtLL();
-        if (b*i >= sum) {
+        if ((tmp=b*i) >= sum) {
             a[i] = b;
         }
-        else if ((b+1)*i < sum) {
+        else if (tmp+i < sum) {
             a[i] = b+1;
         }
         else {
