@@ -1,0 +1,153 @@
+#include<bits/stdc++.h>
+#pragma warning(disable:4996)
+#pragma comment(linker, "/STACK:336777216")
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx,avx2,fma")
+using namespace std;
+using ll = long long;
+using pll = pair<ll,ll>;
+using ld = long double;
+using pld = pair<ld,ld>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vpll = vector<pll>;
+
+#ifdef ONLINE_JUDGE
+constexpr bool ndebug = true;
+#else
+constexpr bool ndebug = false;
+#endif
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
+
+void preprocess() {
+    ll i, j, k;
+
+}
+
+// Usage: LCA lca(V,tree); ll anc = lca.solve(u,v);
+// O(logV)
+// memo : 0-indexed
+
+struct LCA {
+    ll MAXLN;
+    vl depth; vvl anc;
+    LCA(vvl& tree, ll root=0){
+        ll n = (ll)tree.size();
+        depth.assign(n,0);
+        MAXLN = 1;
+        while (1LL<<MAXLN <= n) ++MAXLN;
+        anc.assign(MAXLN,vl(n));
+        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+            for (auto ch : tree[cur]) {
+                if (ch == pa) continue;
+                depth[ch] = depth[cur] + 1;
+                anc[0][ch] = cur;
+                dfs(ch, cur);
+            }
+        };
+        dfs(root, -1);
+        anc[0][root] = root;
+        for (ll i=1; i<MAXLN; i++)
+            for (ll j=0; j<n; j++)
+                anc[i][j] = anc[i-1][anc[i-1][j]];
+    }
+
+    ll solve(ll u, ll v){
+        if (depth[u] < depth[v]) swap(u, v);
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (depth[u]-(1LL<<i) >= depth[v])
+                u = anc[i][u];
+        if (u == v) return u;
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (anc[i][u] != anc[i][v])
+                u = anc[i][u], v = anc[i][v];
+        return anc[0][u];
+    }
+    ll findCh(ll pa, ll ch) {
+        ll diff = depth[ch] - depth[pa] - 1;
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (diff & (1LL<<i)) ch = anc[i][ch];
+        return ch;
+    }
+};
+
+void solve(ll testcase){
+    ll i, j, k;
+    ll N, Q; cin >> N >> Q;
+    vvl G(N);
+    for (i=1; i<N; i++) {
+        ll a, b; cin >> a >> b;
+        G[--a].emplace_back(--b);
+        G[b].emplace_back(a);
+    }
+
+    vl subSz(N, 1), subPairProdSum(N, 0);
+    function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
+        for (auto ch : G[cur]) {
+            if (ch == pa) continue;
+            dfs(ch, cur);
+            subSz[cur] += subSz[ch];
+        }
+        ll sum = 0;
+        for (auto ch : G[cur]) {
+            if (ch == pa) continue;
+            subPairProdSum[cur] += sum * subSz[ch];
+            sum += subSz[ch];
+        }
+    };
+    dfs(0, -1);
+
+    LCA lca(G);
+    ll root = 0;
+    while (Q--) {
+        ll op, x; cin >> op >> x;
+        x--;
+        switch (op) {
+            case 1:
+                root = x;
+                break;
+            case 2:
+                ll ans = 0;
+                if (root == x) {
+                    ans = subSz[x]*(N-subSz[x]+1) + subPairProdSum[x]-1;
+                }
+                else {
+                    ll anc = lca.solve(root, x);
+                    if (anc != x) {
+                        ans = subSz[x]-1 + subPairProdSum[x];
+                    }
+                    else {
+                        ll rmvSub = subSz[lca.findCh(x, root)];
+                        ll newSubSz = subSz[x] - rmvSub;
+                        ll newSubPairProdSum = subPairProdSum[x] - (newSubSz-1)*rmvSub;
+                        ans = newSubSz*(N-rmvSub-newSubSz+1) + newSubPairProdSum-1;
+                    }
+                }
+                cout << ans << "\n";
+                break;
+        }
+    }
+}
+
+int main() {
+    setup();
+    preprocess();
+    ll t = 1;
+    // cin >> t;
+    for (ll testcase = 1; testcase <= t; testcase++){
+        solve(testcase);
+    }
+    return 0;
+}
