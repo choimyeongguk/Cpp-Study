@@ -36,6 +36,44 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 15;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 struct SegTree {
     ll n; vl tree;
     SegTree(ll n): n(n), tree(n<<2, 0) {}
@@ -53,16 +91,14 @@ struct SegTree {
         ll m = (s+e)>>1;
         return query(i<<1, s, m, x) + query(i<<1|1, m+1, e, x);
     }
-    void reset() {
-        fill(tree.begin(), tree.end(), 0);
-    }
 };
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N; cin >> N;
-    vl A(N); for (auto& e : A) cin >> e;
-    vl B(N); for (auto& e : B) cin >> e;
+    FastScanner fs;
+    ll N=fs.nxtLL();
+    vl A(N); for (auto& e : A) e=fs.nxtLL();
+    vl B(N); for (auto& e : B) e=fs.nxtLL();
     ll ans = 0, l=0, r;
     SegTree segA(N+1), segB(N+1);
     for (r=0; r<N; r++) {
