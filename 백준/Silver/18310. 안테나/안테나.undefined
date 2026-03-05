@@ -43,9 +43,7 @@ void solve(ll testcase){
     sort(arr.begin(), arr.end());
     ll cost=accumulate(arr.begin()+1, arr.end(), 0)-arr[0]*(N-1), minCost=cost, ans=arr[0];
     for (i=1; i<N; i++) {
-        ll diff = arr[i] - arr[i-1];
-        cost += diff * i;
-        cost -= diff * (N-i);
+        cost += (arr[i]-arr[i-1]) * (2*i-N);
         if (minCost > cost) {
             minCost = cost;
             ans = arr[i];
