@@ -42,8 +42,9 @@ void solve(ll testcase){
     const ll MAX = 1'455'211;
     ll N; cin >> N;
     priority_queue<ll,vl,greater<>> pq;  // [곱해야하는값,소수]
+    pq.emplace(2);
     vb isPrime(MAX+1, true);
-    for (i=2; i<=MAX; i++) {
+    for (i=3; i<=MAX; i+=2) {
         if (!isPrime[i]) continue;
         pq.emplace(i);
         for (j=i*i; j<=MAX; j+=i) isPrime[j] = false;
