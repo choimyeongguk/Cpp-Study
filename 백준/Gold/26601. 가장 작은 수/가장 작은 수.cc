@@ -39,7 +39,7 @@ void preprocess() {
 void solve(ll testcase){
     ll i, j, k;
     const ll MOD = 2'000'003;
-    const ll MAX = 1'455'566;   // 1'455'078 ~ 1'456'054
+    const ll MAX = 1'455'322;   // 1'455'078 ~ 1'455'566
     ll N; cin >> N;
     priority_queue<ll,vl,greater<>> pq;  // [곱해야하는값,소수]
     vl isPrime(MAX+1, true);
