@@ -78,14 +78,14 @@ void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
     ll V=fs.nxtLL(), E=fs.nxtLL();
-    vl in_degree(V, 0), out_degree(V, 0);
+    vvl degree(2, vl(V, 0));
     for (i=0; i<E; i++) {
-        out_degree[fs.nxtLL()-1]++;
-        in_degree[fs.nxtLL()-1]++;
+        degree[0][fs.nxtLL()-1]++;
+        degree[1][fs.nxtLL()-1]++;
     }
     ll ans = E;
     for (i=0; i<V; i++)
-        ans -= min(in_degree[i], out_degree[i]);
+        ans -= min(degree[0][i], degree[1][i]);
     cout << ans;
 }
 
