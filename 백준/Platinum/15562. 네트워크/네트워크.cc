@@ -77,15 +77,14 @@ struct FastScanner {
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
-    ll V=fs.nxtLL(), E=fs.nxtLL();
-    vl degree(V+1, 0);
-    for (i=0; i<E; i++) {
+    vl degree(fs.nxtLL()+1, 0);
+    for (i=fs.nxtLL(); i>0; --i) {
         degree[fs.nxtLL()]++;
         degree[fs.nxtLL()]--;
     }
     ll ans = 0;
-    for (i=1; i<=V; i++)
-        ans += max(degree[i], 0);
+    for (auto e: degree)
+        ans += max(e, 0);
     cout << ans;
 }
 
