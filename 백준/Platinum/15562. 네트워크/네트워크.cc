@@ -74,19 +74,18 @@ struct FastScanner {
     }
 };
 
-ll in_degree[1'000'000] = {}, out_degree[1'000'000] = {};
-
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
     ll V=fs.nxtLL(), E=fs.nxtLL();
+    vl degree(V+1, 0);
     for (i=0; i<E; i++) {
-        out_degree[fs.nxtLL()-1]++;
-        in_degree[fs.nxtLL()-1]++;
+        degree[fs.nxtLL()]++;
+        degree[fs.nxtLL()]--;
     }
-    ll ans = E;
-    for (i=0; i<V; i++)
-        ans -= min(in_degree[i], out_degree[i]);
+    ll ans = 0;
+    for (i=1; i<=V; i++)
+        ans += max(degree[i], 0);
     cout << ans;
 }
 
