@@ -37,7 +37,7 @@ void preprocess() {
 }
 
 struct FastScanner {
-    static const int SZ = 1 << 22;
+    static const int SZ = 1 << 21;
     int idx, size;
     char buf[SZ];
     FastScanner(): idx(0), size(0) {}
@@ -74,11 +74,12 @@ struct FastScanner {
     }
 };
 
+ll in_degree[1'000'000] = {}, out_degree[1'000'000] = {};
+
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
     ll V=fs.nxtLL(), E=fs.nxtLL();
-    vl in_degree(V, 0), out_degree(V, 0);
     for (i=0; i<E; i++) {
         out_degree[fs.nxtLL()-1]++;
         in_degree[fs.nxtLL()-1]++;
