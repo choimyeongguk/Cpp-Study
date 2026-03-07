@@ -73,18 +73,18 @@ struct FastScanner {
         return str;
     }
 };
-ll degree[1'000'001];
+
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
-    ll V=fs.nxtLL();
+    vl degree(fs.nxtLL()+1, 0);
     for (i=fs.nxtLL(); i>0; --i) {
         degree[fs.nxtLL()]++;
         degree[fs.nxtLL()]--;
     }
     ll ans = 0;
-    for (i=0; i<V; i++)
-        ans += max(degree[i], 0);
+    for (auto& e: degree)
+        ans += max(e, 0);
     cout << ans;
 }
 
