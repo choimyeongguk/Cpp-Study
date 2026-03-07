@@ -36,14 +36,52 @@ void preprocess() {
 
 }
 
+struct FastScanner {
+    static const int SZ = 1 << 15;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
+        }
+        return buf[idx++];
+    }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = read();
+        }
+        return str;
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
-    ll V, E; cin >> V >> E;
+    FastScanner fs;
+    ll V=fs.nxtLL(), E=fs.nxtLL();
     vl in_degree(V, 0), out_degree(V, 0);
     for (i=0; i<E; i++) {
-        ll a, b; cin >> a >> b;
-        in_degree[--b]++;
-        out_degree[--a]++;
+        out_degree[fs.nxtLL()-1]++;
+        in_degree[fs.nxtLL()-1]++;
     }
     ll ans = E;
     for (i=0; i<V; i++)
