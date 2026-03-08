@@ -117,31 +117,38 @@ struct FastOutput {
     ~FastOutput() { flush(); }
 };
 
-struct LCA {
-    ll MAXLN;
-    vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
-        ll n = (ll)tree.size();
-        depth.assign(n,0);
-        MAXLN = 1;
-        while (1LL<<MAXLN <= n) ++MAXLN;
-        anc.assign(MAXLN,vl(n));
-        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-            for (auto ch : tree[cur]) {
-                if (ch == pa) continue;
-                depth[ch] = depth[cur] + 1;
-                anc[0][ch] = cur;
-                dfs(ch, cur);
-            }
-        };
-        dfs(root, -1);
-        anc[0][root] = root;
-        for (ll i=1; i<MAXLN; i++)
-            for (ll j=0; j<n; j++)
-                anc[i][j] = anc[i-1][anc[i-1][j]];
+void solve(ll testcase){
+    ll i, j, k;
+    FastScanner fs;
+    FastOutput fo;
+    ll N=fs.nxtLL();
+    vvl G(N+1);
+    for (i=1; i<N; i++) {
+        ll u=fs.nxtLL(), v=fs.nxtLL();
+        G[u].emplace_back(v);
+        G[v].emplace_back(u);
     }
 
-    ll solve(ll u, ll v){
+    ll MAXLN;
+    vl depth; vvl anc;
+    depth.assign(N+1,0);
+    MAXLN = 1;
+    while (1LL<<MAXLN <= N) ++MAXLN;
+    anc.assign(MAXLN,vl(N+1));
+    function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+        for (auto ch : G[cur]) {
+            if (ch == pa) continue;
+            depth[ch] = depth[cur] + 1;
+            anc[0][ch] = cur;
+            dfs(ch, cur);
+        }
+    };
+    dfs(1, -1);
+    anc[0][1] = 1;
+    for (i=1; i<MAXLN; i++)
+        for (j=0; j<=N; j++)
+            anc[i][j] = anc[i-1][anc[i-1][j]];
+    function<ll(ll,ll)> lca = [&](ll u, ll v){
         if (depth[u] < depth[v]) swap(u, v);
         for (ll i=MAXLN-1; i>=0; i--)
             if (depth[u]-(1LL<<i) >= depth[v])
@@ -151,24 +158,11 @@ struct LCA {
             if (anc[i][u] != anc[i][v])
                 u = anc[i][u], v = anc[i][v];
         return anc[0][u];
-    }
-};
+    };
 
-void solve(ll testcase){
-    ll i, j, k;
-    FastScanner fs;
-    FastOutput fo;
-    ll N=fs.nxtLL();
-    vvl G(N+1);
-    while (--N) {
-        ll u=fs.nxtLL(), v=fs.nxtLL();
-        G[u].emplace_back(v);
-        G[v].emplace_back(u);
-    }
-    LCA lca(G, 1);
     ll M=fs.nxtLL();
     while (M--) {
-        fo.writeLL(lca.solve(fs.nxtLL(), fs.nxtLL()));
+        fo.writeLL(lca(fs.nxtLL(), fs.nxtLL()));
         fo.newline();
     }
 }
