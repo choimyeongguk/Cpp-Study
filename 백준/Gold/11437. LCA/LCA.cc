@@ -120,7 +120,6 @@ struct FastOutput {
 struct OfflineLCA {
     ll n;
     vl pa, sz, anc, vis, ans;
-    vector<vpll> query;
     ll find(ll x) {
         if (pa[x] == x) return x;
         return pa[x] = find(pa[x]);
@@ -132,15 +131,10 @@ struct OfflineLCA {
         pa[b] = a;
         sz[a] += sz[b];
     }
-    OfflineLCA(vvl& tree, vector<pll>& qs, ll root=0)
-        : n(tree.size()), pa(n), sz(n), anc(n), vis(n, 0), ans(qs.size()), query(n, vpll())
+    OfflineLCA(vvl& tree, vector<vpll>& query, ll Q, ll root=0)
+        : n(tree.size()), pa(n), sz(n), anc(n), vis(n, 0), ans(Q)
     {
         iota(pa.begin(), pa.end(), 0);
-        for (ll i=0; i<(ll)qs.size(); i++) {
-            auto [u, v] = qs[i];
-            query[u].emplace_back(v, i);
-            query[v].emplace_back(u, i);
-        }
         function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
             anc[find(cur)] = cur;
             for (auto ch : tree[cur]) {
@@ -173,10 +167,13 @@ void solve(ll testcase){
         G[v].emplace_back(u);
     }
     ll M=fs.nxtLL();
-    vpll query(M);
-    for (auto& [u,v] : query)
-        u=fs.nxtLL(), v=fs.nxtLL();
-    OfflineLCA lca(G, query, 1);
+    vector<vpll> query(N+1);
+    for (i=0; i<M; i++) {
+        ll u=fs.nxtLL(), v=fs.nxtLL();
+        query[u].emplace_back(v, i);
+        query[v].emplace_back(u, i);
+    }
+    OfflineLCA lca(G, query, M, 1);
     for (i=0; i<M; i++) {
         fo.writeLL(lca.solve(i));
         fo.newline();
