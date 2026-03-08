@@ -117,6 +117,50 @@ struct FastOutput {
     ~FastOutput() { flush(); }
 };
 
+struct OfflineLCA {
+    ll n;
+    vl pa, sz, anc, vis, ans;
+    vector<vpll> query;
+    ll find(ll x) {
+        if (pa[x] == x) return x;
+        return pa[x] = find(pa[x]);
+    }
+    void merge(ll a, ll b) {
+        a = find(a), b = find(b);
+        if (a == b) return;
+        if (sz[a] < sz[b]) swap(a, b);
+        pa[b] = a;
+        sz[a] += sz[b];
+    }
+    OfflineLCA(vvl& tree, vector<pll>& qs, ll root=0)
+        : n(tree.size()), pa(n), sz(n), anc(n), vis(n, 0), ans(qs.size()), query(n, vpll())
+    {
+        iota(pa.begin(), pa.end(), 0);
+        for (ll i=0; i<(ll)qs.size(); i++) {
+            auto [u, v] = qs[i];
+            query[u].emplace_back(v, i);
+            query[v].emplace_back(u, i);
+        }
+        function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
+            anc[find(cur)] = cur;
+            for (auto ch : tree[cur]) {
+                if (ch == pa) continue;
+                dfs(ch, cur);
+                merge(cur, ch);
+                anc[find(cur)] = cur;
+            }
+            vis[cur] = true;
+            for (auto [nxt, idx] : query[cur]) {
+                if (vis[nxt]) ans[idx] = anc[find(nxt)];
+            }
+        };
+        dfs(root, -1);
+    }
+    ll solve(ll idx) {
+        return ans[idx];
+    }
+};
+
 void solve(ll testcase){
     ll i, j, k;
     FastScanner fs;
@@ -128,41 +172,13 @@ void solve(ll testcase){
         G[u].emplace_back(v);
         G[v].emplace_back(u);
     }
-
-    ll MAXLN;
-    vl depth; vvl anc;
-    depth.assign(N+1,0);
-    MAXLN = 1;
-    while (1LL<<MAXLN <= N) ++MAXLN;
-    anc.assign(MAXLN,vl(N+1));
-    function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-        for (auto ch : G[cur]) {
-            if (ch == pa) continue;
-            depth[ch] = depth[cur] + 1;
-            anc[0][ch] = cur;
-            dfs(ch, cur);
-        }
-    };
-    dfs(1, -1);
-    anc[0][1] = 1;
-    for (i=1; i<MAXLN; i++)
-        for (j=0; j<=N; j++)
-            anc[i][j] = anc[i-1][anc[i-1][j]];
-    function<ll(ll,ll)> lca = [&](ll u, ll v){
-        if (depth[u] < depth[v]) swap(u, v);
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (depth[u]-(1LL<<i) >= depth[v])
-                u = anc[i][u];
-        if (u == v) return u;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (anc[i][u] != anc[i][v])
-                u = anc[i][u], v = anc[i][v];
-        return anc[0][u];
-    };
-
     ll M=fs.nxtLL();
-    while (M--) {
-        fo.writeLL(lca(fs.nxtLL(), fs.nxtLL()));
+    vpll query(M);
+    for (auto& [u,v] : query)
+        u=fs.nxtLL(), v=fs.nxtLL();
+    OfflineLCA lca(G, query, 1);
+    for (i=0; i<M; i++) {
+        fo.writeLL(lca.solve(i));
         fo.newline();
     }
 }
