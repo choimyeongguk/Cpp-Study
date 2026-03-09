@@ -100,9 +100,6 @@ struct FastOutput {
     ~FastOutput() { flush(); }
 };
 
-FastScanner fs;
-FastOutput fo;
-
 void setup() {
     if(!ndebug) {
         freopen("input.txt", "r", stdin);
@@ -174,26 +171,27 @@ struct LCA {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N=fs.nxtLL();
+    ll N; cin >> N;
     vector<vpll> G(N+1);
     for (i=1; i<N; i++) {
-        ll u=fs.nxtLL(), v=fs.nxtLL(), w=fs.nxtLL();
+        ll u, v, w; cin >> u >> v >> w;
         G[u].emplace_back(v, w);
         G[v].emplace_back(u, w);
     }
     LCA lca(G, 1);
-    ll Q=fs.nxtLL();
+    ll Q; cin >> Q;
     while (Q--) {
-        ll op=fs.nxtLL(), u=fs.nxtLL(), v=fs.nxtLL();
+        ll op, u, v; cin >> op >> u >> v;
         switch (op) {
             case 1:
-                fo.writeLL(lca.pathCost(u, v));
+                cout << lca.pathCost(u, v);
                 break;
             case 2:
-                fo.writeLL(lca.kthNodeOnPath(u, v, fs.nxtLL()));
+                cin >> k;
+                cout << lca.kthNodeOnPath(u, v, k);
                 break;
         }
-        fo.newline();
+        cout << "\n";
     }
 }
 
