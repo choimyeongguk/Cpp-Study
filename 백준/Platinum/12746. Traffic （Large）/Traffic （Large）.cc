@@ -155,12 +155,6 @@ struct LCA {
                 u = anc[i][u], v = anc[i][v];
         return anc[0][u];
     }
-    ll findKthAnc(ll pa, ll ch, ll K) { // 0-idx
-        ll diff = depth[ch] - depth[pa] - K;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (diff & 1LL<<i) ch = anc[i][ch];
-        return ch;
-    }
 };
 
 void solve(ll testcase){
@@ -175,8 +169,8 @@ void solve(ll testcase){
     LCA lca(G, 1);
     vl memo(N+1, 0);
     for (i=0; i<Q; i++) {
-        ll u=fs.nxtLL(), v=fs.nxtLL(), a=lca.solve(u, v);
-        memo[a]-=2, memo[u]++, memo[v]++;
+        ll u=fs.nxtLL(), v=fs.nxtLL();
+        memo[lca.solve(u, v)]-=2, memo[u]++, memo[v]++;
     }
     ll a=-1, b=-1, c=0;
     function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
