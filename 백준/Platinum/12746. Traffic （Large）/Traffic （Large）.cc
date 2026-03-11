@@ -20,8 +20,7 @@ struct FastIO {
     static const int SZ = 1 << 20;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
-
-    char getCh() {
+    char Ch() {
         if (idxR >= szR) {
             szR = (int)fread(bufR, 1, SZ, stdin);
             idxR = 0;
@@ -29,26 +28,26 @@ struct FastIO {
         }
         return bufR[idxR++];
     }
-    ll getLL() {
+    ll LL() {
         char c;
-        do c = getCh(); while (c <= ' ' && c);
+        do c = Ch(); while (c <= ' ' && c);
         ll sgn = 1;
-        if (c == '-') { sgn = -1; c = getCh(); }
+        if (c == '-') { sgn = -1; c = Ch(); }
         ll x = 0;
         while (c > ' ') {
             x = x*10 + (c-'0');
-            c = getCh();
+            c = Ch();
         }
         return x*sgn;
     }
-    string getStr(int len=-1) {
+    string Str(int len=-1) {
         char c;
-        do c = getCh(); while (c <= ' ' && c);
+        do c = Ch(); while (c <= ' ' && c);
         string str;
         if (len != -1) str.reserve(len);
         while (c > ' ') {
             str.push_back(c);
-            c = getCh();
+            c = Ch();
         }
         return str;
     }
@@ -58,11 +57,12 @@ struct FastIO {
             idxW = 0;
         }
     }
-    void write(char c) {
+    FastIO& wr(char c) {
         if (idxW >= SZ) flush();
         bufW[idxW++] = c;
+        return *this;
     }
-    void write(const string& s) {
+    FastIO& wr(const string& s) {
         int n = (int)s.size();
         int p = 0;
         while (p < n) {
@@ -73,20 +73,22 @@ struct FastIO {
             idxW += take;
             p += take;
         }
+        return *this;
     }
-    void write(ll x) {
-        if (x == 0) { write('0'); return; }
-        if (x < 0) { write('-'); x = -x; }
+    FastIO& wr(ll x) {
+        if (x == 0) { wr('0'); return *this; }
+        if (x < 0) { wr('-'); x = -x; }
         char s[24];
         int n = 0;
         while (x) {
             s[n++] = char('0' + x%10);
             x /= 10;
         }
-        while (n--) write(s[n]);
+        while (n--) wr(s[n]);
+        return *this;
     }
-    void sp() { write(' '); }
-    void nl() { write('\n'); }
+    FastIO& sp() { wr(' '); return *this; }
+    FastIO& nl() { wr('\n'); return *this; }
 };
 FastIO io;
 
@@ -134,17 +136,17 @@ struct LCA {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N=io.getLL(), Q=io.getLL();
+    ll N=io.LL(), Q=io.LL();
     vvl G(N+1);
     for (i=1; i<N; i++) {
-        ll a=io.getLL(), b=io.getLL();
+        ll a=io.LL(), b=io.LL();
         G[a].emplace_back(b);
         G[b].emplace_back(a);
     }
     LCA lca(G, 1);
     vl memo(N+1, 0);
     for (i=0; i<Q; i++) {
-        ll u=io.getLL(), v=io.getLL();
+        ll u=io.LL(), v=io.LL();
         memo[lca.solve(u, v)]-=2, memo[u]++, memo[v]++;
     }
     ll a=-1, b=-1, c=0;
@@ -160,9 +162,7 @@ void solve(ll testcase){
         }
     };
     dfs(1, -1);
-    io.write(a); io.sp();
-    io.write(b); io.sp();
-    io.write(c); io.sp();
+    io.wr(a).sp().wr(b).sp().wr(c);
 }
 
 int main() {
