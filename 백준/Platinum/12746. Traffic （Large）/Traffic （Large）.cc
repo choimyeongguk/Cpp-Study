@@ -1,14 +1,11 @@
 #include<bits/stdc++.h>
-#pragma warning(disable:4996)
-#pragma comment(linker, "/STACK:336777216")
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = int;
+using ll = long long;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
-using vb = vector<bool>;
 using vl = vector<ll>;
 using vvl = vector<vl>;
 using vpll = vector<pll>;
@@ -19,18 +16,79 @@ constexpr bool ndebug = true;
 constexpr bool ndebug = false;
 #endif
 
-constexpr int SZ = 1 << 20;
-int Ridx = 0, Rsz = 0, Widx;
-char Rbuf[SZ], Wbuf[SZ];
-char getCh();
-ll getLL();
-string getStr(ll);
-void flush();
-void write(char);
-void write(ll);
-void write(const string&);
-void sp();
-void nl();
+struct FastIO {
+    static const int SZ = 1 << 20;
+    int idxW = 0, idxR = 0, szR = 0;
+    char bufR[SZ], bufW[SZ];
+
+    char getCh() {
+        if (idxR >= szR) {
+            szR = (int)fread(bufR, 1, SZ, stdin);
+            idxR = 0;
+            if (szR == 0) return 0;
+        }
+        return bufR[idxR++];
+    }
+    ll getLL() {
+        char c;
+        do c = getCh(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = getCh(); }
+        ll x = 0;
+        while (c > ' ') {
+            x = x*10 + (c-'0');
+            c = getCh();
+        }
+        return x*sgn;
+    }
+    string getStr(int len=-1) {
+        char c;
+        do c = getCh(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
+            c = getCh();
+        }
+        return str;
+    }
+    void flush() {
+        if (idxW) {
+            fwrite(bufW, 1, idxW, stdout);
+            idxW = 0;
+        }
+    }
+    void write(char c) {
+        if (idxW >= SZ) flush();
+        bufW[idxW++] = c;
+    }
+    void write(const string& s) {
+        int n = (int)s.size();
+        int p = 0;
+        while (p < n) {
+            if (idxW >= SZ) flush();
+            int space = SZ - idxW;
+            int take = min(space, n - p);
+            memcpy(bufW + idxW, s.data() + p, take);
+            idxW += take;
+            p += take;
+        }
+    }
+    void write(ll x) {
+        if (x == 0) { write('0'); return; }
+        if (x < 0) { write('-'); x = -x; }
+        char s[24];
+        int n = 0;
+        while (x) {
+            s[n++] = char('0' + x%10);
+            x /= 10;
+        }
+        while (n--) write(s[n]);
+    }
+    void sp() { write(' '); }
+    void nl() { write('\n'); }
+};
+FastIO io;
 
 void preprocess() {
     ll i, j, k;
@@ -76,17 +134,17 @@ struct LCA {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N=getLL(), Q=getLL();
+    ll N=io.getLL(), Q=io.getLL();
     vvl G(N+1);
     for (i=1; i<N; i++) {
-        ll a=getLL(), b=getLL();
+        ll a=io.getLL(), b=io.getLL();
         G[a].emplace_back(b);
         G[b].emplace_back(a);
     }
     LCA lca(G, 1);
     vl memo(N+1, 0);
     for (i=0; i<Q; i++) {
-        ll u=getLL(), v=getLL();
+        ll u=io.getLL(), v=io.getLL();
         memo[lca.solve(u, v)]-=2, memo[u]++, memo[v]++;
     }
     ll a=-1, b=-1, c=0;
@@ -102,7 +160,9 @@ void solve(ll testcase){
         }
     };
     dfs(1, -1);
-    write(a), sp(), write(b), sp(), write(c);
+    io.write(a); io.sp();
+    io.write(b); io.sp();
+    io.write(c); io.sp();
 }
 
 int main() {
@@ -116,73 +176,6 @@ int main() {
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
-    flush();
+    io.flush();
     return 0;
 }
-
-char getCh() {
-    if (Ridx >= Rsz) {
-        Rsz = (int)fread(Rbuf, 1, SZ, stdin);
-        Ridx = 0;
-        if (Rsz == 0) return 0;
-    }
-    return Rbuf[Ridx++];
-}
-ll getLL() {
-    char c;
-    do c = getCh(); while (c <= ' ' && c);
-    ll sgn = 1;
-    if (c == '-') { sgn = -1; c = getCh(); }
-    ll x = 0;
-    while (c > ' ') {
-        x = x*10 + (c-'0');
-        c = getCh();
-    }
-    return x*sgn;
-}
-string getStr(ll len=-1) {
-    char c;
-    do c = getCh(); while (c <= ' ' && c);
-    string str;
-    if (len != -1) str.reserve(len);
-    while (c > ' ') {
-        str.push_back(c);
-        c = getCh();
-    }
-    return str;
-}
-void flush() {
-    if (Widx) {
-        fwrite(Wbuf, 1, Widx, stdout);
-        Widx = 0;
-    }
-}
-void write(char c) {
-    if (Widx >= SZ) flush();
-    Wbuf[Widx++] = c;
-}
-void write(const string& s) {
-    int n = (int)s.size();
-    int p = 0;
-    while (p < n) {
-        if (Widx >= SZ) flush();
-        int space = SZ - Widx;
-        int take = min(space, n - p);
-        memcpy(Wbuf + Widx, s.data() + p, take);
-        Widx += take;
-        p += take;
-    }
-}
-void write(ll x) {
-    if (x == 0) { write('0'); return; }
-    if (x < 0) { write('-'); x = -x; }
-    char s[24];
-    int n = 0;
-    while (x) {
-        s[n++] = char('0' + x%10);
-        x /= 10;
-    }
-    while (n--) write(s[n]);
-}
-void sp() { write(' '); }
-void nl() { write('\n'); }
