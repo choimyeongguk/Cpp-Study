@@ -19,101 +19,18 @@ constexpr bool ndebug = true;
 constexpr bool ndebug = false;
 #endif
 
-struct FastScanner {
-    static const int SZ = 1 << 20;
-    int idx, size;
-    char buf[SZ];
-    FastScanner(): idx(0), size(0) {}
-    char read() {
-        if (idx >= size) {
-            size = (int)fread(buf, 1, SZ, stdin);
-            idx = 0;
-            if (size == 0) return 0;
-        }
-        return buf[idx++];
-    }
-    ll nxtLL() {
-        char c;
-        do c = read(); while (c <= ' ' && c);
-        ll sgn = 1;
-        if (c == '-') { sgn = -1; c = read(); }
-        ll x = 0;
-        while (c > ' ') {
-            x = x * 10 + (c - '0');
-            c = read();
-        }
-        return x * sgn;
-    }
-    string nxtStr(ll len=-1) {
-        char c;
-        do c = read(); while (c <= ' ' && c);
-        string str;
-        if (len != -1) str.reserve(len);
-        while (c > ' ') {
-            str.push_back(c);
-            c = read();
-        }
-        return str;
-    }
-};
-
-struct FastOutput {
-    static const int SZ = 1 << 20;
-    int idx;
-    char buf[SZ];
-    FastOutput(): idx(0) {}
-    void flush() {
-        if (idx) {
-            fwrite(buf, 1, idx, stdout);
-            idx = 0;
-        }
-    }
-    void write(char c) {
-        if (idx >= SZ) flush();
-        buf[idx++] = c;
-    }
-    void writeStr(const string& s) {
-        int n = (int)s.size();
-        int p = 0;
-        while (p < n) {
-            if (idx >= SZ) flush();
-            int space = SZ - idx;
-            int take = min(space, n - p);
-            memcpy(buf + idx, s.data() + p, take);
-            idx += take;
-            p += take;
-        }
-    }
-    void writeLL(long long x) {
-        if (x == 0) { write('0'); return; }
-        if (x < 0) { write('-'); x = -x; }
-        char s[24];
-        int n = 0;
-        while (x) {
-            s[n++] = char('0' + (x % 10));
-            x /= 10;
-        }
-        while (n--) write(s[n]);
-    }
-    void space() { write(' '); }
-    void newline() { write('\n'); }
-    ~FastOutput() { flush(); }
-};
-
-FastScanner fs;
-FastOutput fo;
-
-void setup() {
-    if(!ndebug) {
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    }
-    else {
-        ios_base::sync_with_stdio(0);
-        cin.tie(0);
-        cout.tie(0);
-    }
-}
+constexpr int SZ = 1 << 20;
+int Ridx = 0, Rsz = 0, Widx;
+char Rbuf[SZ], Wbuf[SZ];
+char getCh();
+ll getLL();
+string getStr(ll);
+void flush();
+void write(char);
+void write(ll);
+void write(const string&);
+void sp();
+void nl();
 
 void preprocess() {
     ll i, j, k;
@@ -159,17 +76,17 @@ struct LCA {
 
 void solve(ll testcase){
     ll i, j, k;
-    ll N=fs.nxtLL(), Q=fs.nxtLL();
+    ll N=getLL(), Q=getLL();
     vvl G(N+1);
     for (i=1; i<N; i++) {
-        ll a=fs.nxtLL(), b=fs.nxtLL();
+        ll a=getLL(), b=getLL();
         G[a].emplace_back(b);
         G[b].emplace_back(a);
     }
     LCA lca(G, 1);
     vl memo(N+1, 0);
     for (i=0; i<Q; i++) {
-        ll u=fs.nxtLL(), v=fs.nxtLL();
+        ll u=getLL(), v=getLL();
         memo[lca.solve(u, v)]-=2, memo[u]++, memo[v]++;
     }
     ll a=-1, b=-1, c=0;
@@ -185,18 +102,87 @@ void solve(ll testcase){
         }
     };
     dfs(1, -1);
-    fo.writeLL(a); fo.space();
-    fo.writeLL(b); fo.space();
-    fo.writeLL(c); fo.space();
+    write(a), sp(), write(b), sp(), write(c);
 }
 
 int main() {
-    setup();
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
     preprocess();
     ll t = 1;
-    // cin >> t;
+    // ll t = getLL();
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
+    flush();
     return 0;
 }
+
+char getCh() {
+    if (Ridx >= Rsz) {
+        Rsz = (int)fread(Rbuf, 1, SZ, stdin);
+        Ridx = 0;
+        if (Rsz == 0) return 0;
+    }
+    return Rbuf[Ridx++];
+}
+ll getLL() {
+    char c;
+    do c = getCh(); while (c <= ' ' && c);
+    ll sgn = 1;
+    if (c == '-') { sgn = -1; c = getCh(); }
+    ll x = 0;
+    while (c > ' ') {
+        x = x*10 + (c-'0');
+        c = getCh();
+    }
+    return x*sgn;
+}
+string getStr(ll len=-1) {
+    char c;
+    do c = getCh(); while (c <= ' ' && c);
+    string str;
+    if (len != -1) str.reserve(len);
+    while (c > ' ') {
+        str.push_back(c);
+        c = getCh();
+    }
+    return str;
+}
+void flush() {
+    if (Widx) {
+        fwrite(Wbuf, 1, Widx, stdout);
+        Widx = 0;
+    }
+}
+void write(char c) {
+    if (Widx >= SZ) flush();
+    Wbuf[Widx++] = c;
+}
+void write(const string& s) {
+    int n = (int)s.size();
+    int p = 0;
+    while (p < n) {
+        if (Widx >= SZ) flush();
+        int space = SZ - Widx;
+        int take = min(space, n - p);
+        memcpy(Wbuf + Widx, s.data() + p, take);
+        Widx += take;
+        p += take;
+    }
+}
+void write(ll x) {
+    if (x == 0) { write('0'); return; }
+    if (x < 0) { write('-'); x = -x; }
+    char s[24];
+    int n = 0;
+    while (x) {
+        s[n++] = char('0' + x%10);
+        x /= 10;
+    }
+    while (n--) write(s[n]);
+}
+void sp() { write(' '); }
+void nl() { write('\n'); }
