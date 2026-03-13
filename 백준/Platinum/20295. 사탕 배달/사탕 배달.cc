@@ -6,176 +6,115 @@ using ll = long long;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
+using vb = vector<bool>;
 using vl = vector<ll>;
 using vvl = vector<vl>;
 using vpll = vector<pll>;
 
 #ifdef ONLINE_JUDGE
 constexpr bool ndebug = true;
-#define debug(x) ((void)0)
 #else
 constexpr bool ndebug = false;
-#define debug(x) cerr << #x << " = " << (x) << '\n'
 #endif
 
-struct FastIO {
-    static constexpr int SZ = 1 << 20;
-    int idxW = 0, idxR = 0, szR = 0;
-    char bufR[SZ], bufW[SZ];
-    int read() {
-        if (idxR >= szR) {
-            szR = (int)fread(bufR, 1, SZ, stdin);
-            idxR = 0;
-            if (szR == 0) return -1;
+struct FastScanner {
+    static const int SZ = 1 << 20;
+    int idx, size;
+    char buf[SZ];
+    FastScanner(): idx(0), size(0) {}
+    char read() {
+        if (idx >= size) {
+            size = (int)fread(buf, 1, SZ, stdin);
+            idx = 0;
+            if (size == 0) return 0;
         }
-        return bufR[idxR++];
+        return buf[idx++];
     }
-    ll getLL() {
-        int c;
-        do c = read(); while (c <= ' ' && c != -1);
-        bool neg = false;
-        if (c == '-') { neg = true; c = read(); }
+    ll nxtLL() {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        ll sgn = 1;
+        if (c == '-') { sgn = -1; c = read(); }
         ll x = 0;
-        while ('0' <= c && c <= '9') {
-            x = x * 10 + (c - '0');
-            c = read();
-        }
-        return neg ? -x : x;
-    }
-    ld getLD() {
-        int c; do c = read(); while (c <= ' ' && c != -1);
-        bool neg = false;
-        if (c == '-') {
-            neg = true;
-            c = read();
-        }
-        ld x = 0;
-        while ('0' <= c && c <= '9') {
-            x = x * 10 + (c - '0');
-            c = read();
-        }
-        if (c == '.') {
-            ld base = 0.1L;
-            c = read();
-            while ('0' <= c && c <= '9') {
-                x += (c - '0') * base;
-                base *= 0.1L;
-                c = read();
-            }
-        }
-        return neg ? -x : x;
-    }
-    char getChar() {
-        int c;
-        do c = read(); while (c <= ' ' && c != -1);
-        return c == -1 ? 0 : (char)c;
-    }
-    string getStr() {
-        int c;
-        do c = read(); while (c <= ' ' && c != -1);
-        string str;
         while (c > ' ') {
-            str.push_back((char)c);
+            x = x * 10 + (c - '0');
+            c = read();
+        }
+        return x * sgn;
+    }
+    string nxtStr(ll len=-1) {
+        char c;
+        do c = read(); while (c <= ' ' && c);
+        string str;
+        if (len != -1) str.reserve(len);
+        while (c > ' ') {
+            str.push_back(c);
             c = read();
         }
         return str;
     }
-    string getLine() {
-        int c = read();
-        while (c == '\r') c = read();
-        string s;
-        while (c != '\n' && c != -1) {
-            if (c != '\r') s.push_back((char)c);
-            c = read();
-        }
-        return s;
-    }
+};
+
+struct FastOutput {
+    static const int SZ = 1 << 20;
+    int idx;
+    char buf[SZ];
+    FastOutput(): idx(0) {}
     void flush() {
-        if (idxW) {
-            fwrite(bufW, 1, idxW, stdout);
-            idxW = 0;
+        if (idx) {
+            fwrite(buf, 1, idx, stdout);
+            idx = 0;
         }
     }
-    FastIO& putLL(ll x) {
-        if (x == 0) { putChar('0'); return *this; }
-        unsigned long long y;
-        if (x < 0) putChar('-'), y = (unsigned long long)-(x+1)+1;
-        else y = (unsigned long long)x;
-        char s[24];
-        int n = 0;
-        while (y) {
-            s[n++] = char('0' + y%10);
-            y /= 10;
-        }
-        while (n--) putChar(s[n]);
-        return *this;
+    void write(char c) {
+        if (idx >= SZ) flush();
+        buf[idx++] = c;
     }
-    FastIO& putLD(ld x, int precision = 12) {
-        if (x < 0) {
-            putChar('-');
-            x = -x;
-        }
-        ld p10 = 1;
-        for (int i = 0; i < precision; i++) p10 *= 10.0L;
-        x += 0.5L / p10;
-        ll intPart = (ll)x;
-        putLL(intPart);
-        if (precision == 0) return *this;
-        x -= intPart;
-        putChar('.');
-        for (int i = 0; i < precision; i++) {
-            x *= 10;
-            int d = (int)x;
-            putChar(char('0' + d));
-            x -= d;
-        }
-        return *this;
-    }
-    FastIO& putChar(char c) {
-        if (idxW >= SZ) flush();
-        bufW[idxW++] = c;
-        return *this;
-    }
-    FastIO& putStr(const string& s) {
+    void writeStr(const string& s) {
         int n = (int)s.size();
         int p = 0;
         while (p < n) {
-            if (idxW >= SZ) flush();
-            int space = SZ - idxW;
+            if (idx >= SZ) flush();
+            int space = SZ - idx;
             int take = min(space, n - p);
-            memcpy(bufW + idxW, s.data() + p, take);
-            idxW += take;
+            memcpy(buf + idx, s.data() + p, take);
+            idx += take;
             p += take;
         }
-        return *this;
     }
-    FastIO& putStr(const char* s) {
-        int n = (int)strlen(s);
-        int p = 0;
-        while (p < n) {
-            if (idxW >= SZ) flush();
-            int space = SZ - idxW;
-            int take = min(space, n - p);
-            memcpy(bufW + idxW, s + p, take);
-            idxW += take;
-            p += take;
+    void writeLL(long long x) {
+        if (x == 0) { write('0'); return; }
+        if (x < 0) { write('-'); x = -x; }
+        char s[24];
+        int n = 0;
+        while (x) {
+            s[n++] = char('0' + (x % 10));
+            x /= 10;
         }
-        return *this;
+        while (n--) write(s[n]);
     }
-    FastIO& operator<<(ll x) { return putLL(x); }
-    FastIO& operator<<(ld x) { return putLD(x); }
-    FastIO& operator<<(char c) { return putChar(c); }
-    FastIO& operator<<(const string& s) { return putStr(s); }
-    FastIO& operator<<(const char* s) { return putStr(s); }
-    FastIO& operator>>(ll& x) { x = getLL(); return *this; }
-    FastIO& operator>>(ld& x) { x = getLD(); return *this; }
-    FastIO& operator>>(char& c) { c = getChar(); return *this; }
-    FastIO& operator>>(string& s) { s = getStr(); return *this; }
-    ~FastIO() { flush(); }
+    void space() { write(' '); }
+    void newline() { write('\n'); }
+    ~FastOutput() { flush(); }
 };
-FastIO io;
+
+FastScanner fs;
+FastOutput fo;
+
+void setup() {
+    if(!ndebug) {
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    }
+    else {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+    }
+}
 
 void preprocess() {
+    ll i, j, k;
 
 }
 
@@ -223,12 +162,12 @@ struct LCA {
 };
 
 void solve(ll testcase){
-    ll N; io >> N;
+    ll N=fs.nxtLL();
     vl check(5, false);
     vvl candy(N+1, vl(5, 0));
     vvl prefSum(N+1, vl(5, 0));
     for (ll i=1; i<=N; i++) {
-        ll num; io >> num;
+        ll num=fs.nxtLL();
         num--;
         candy[i][num]++;
         prefSum[i][num]++;
@@ -236,7 +175,7 @@ void solve(ll testcase){
     }
     vvl G(N+1);
     for (ll i=1; i<N; i++) {
-        ll u, v; io >> u >> v;
+        ll u=fs.nxtLL(), v=fs.nxtLL();
         G[u].emplace_back(v);
         G[v].emplace_back(u);
     }
@@ -250,28 +189,25 @@ void solve(ll testcase){
     };
     dfs(1, -1);
     LCA lca(G, 1);
-    ll M; io >> M;
-    ll nxt, need; io >> nxt >> need;
-    io << (check[need-1] ? "PLAY\n" : "CRY\n");
+    ll M=fs.nxtLL();
+    ll nxt=fs.nxtLL(), need=fs.nxtLL();
+    fo.writeStr(check[need-1] ? "PLAY\n" : "CRY\n");
     ll cur = nxt;
     while (--M) {
-        io >> nxt >> need;
+        nxt=fs.nxtLL(), need=fs.nxtLL();
         need--;
         ll anc = lca.solve(cur, nxt);
         ll cnt = prefSum[cur][need] + prefSum[nxt][need] - prefSum[anc][need]*2 + candy[anc][need];
-        io << (cnt>0 ? "PLAY\n" : "CRY\n");
+        fo.writeStr(cnt>0 ? "PLAY\n" : "CRY\n");
         cur = nxt;
     }
 }
 
 int main() {
-    if(!ndebug) {
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    }
+    setup();
     preprocess();
     ll t = 1;
-    // io >> t;
+    // cin >> t;
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
