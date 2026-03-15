@@ -179,18 +179,18 @@ void preprocess() {
 
 }
 
+vl arr(100'000);
 void solve(ll testcase){
     ll N; io >> N;
-    vl arr(N);
+    arr.resize(N);
     ll candi=0, cnt=0;
     for (ll i=0; i<N; i++) {
-        ll x; io >> x;
-        arr[i] = x;
+        io >> arr[i];
         if (cnt == 0) {
-            candi = x;
+            candi = arr[i];
             cnt = 1;
         }
-        else if (candi == x) cnt++;
+        else if (candi == arr[i]) cnt++;
         else cnt--;
     }
     cnt = 0;
