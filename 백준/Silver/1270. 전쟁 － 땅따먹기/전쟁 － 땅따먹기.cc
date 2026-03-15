@@ -22,7 +22,7 @@ struct FastIO {
     static constexpr int SZ = 1 << 23;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
-    inline int read() {
+    int read() {
         if (idxR >= szR) {
             szR = (int)fread(bufR, 1, SZ, stdin);
             idxR = 0;
@@ -30,7 +30,7 @@ struct FastIO {
         }
         return bufR[idxR++];
     }
-    inline ll getLL() {
+    ll getLL() {
         int c;
         do c = read(); while (c <= ' ' && c != -1);
         bool neg = false;
@@ -42,7 +42,7 @@ struct FastIO {
         }
         return neg ? -x : x;
     }
-    inline ld getLD() {
+    ld getLD() {
         int c; do c = read(); while (c <= ' ' && c != -1);
         bool neg = false;
         if (c == '-') {
@@ -65,12 +65,12 @@ struct FastIO {
         }
         return neg ? -x : x;
     }
-    inline char getChar() {
+    char getChar() {
         int c;
         do c = read(); while (c <= ' ' && c != -1);
         return c == -1 ? 0 : (char)c;
     }
-    inline string getStr() {
+    string getStr() {
         int c;
         do c = read(); while (c <= ' ' && c != -1);
         string str;
@@ -80,7 +80,7 @@ struct FastIO {
         }
         return str;
     }
-    inline string getLine() {
+    string getLine() {
         int c = read();
         while (c == '\r') c = read();
         string s;
@@ -90,13 +90,13 @@ struct FastIO {
         }
         return s;
     }
-    inline void flush() {
+    void flush() {
         if (idxW) {
             fwrite(bufW, 1, idxW, stdout);
             idxW = 0;
         }
     }
-    inline FastIO& putLL(ll x) {
+    FastIO& putLL(ll x) {
         if (x == 0) { putChar('0'); return *this; }
         unsigned long long y;
         if (x < 0) putChar('-'), y = (unsigned long long)-(x+1)+1;
@@ -110,7 +110,7 @@ struct FastIO {
         while (n--) putChar(s[n]);
         return *this;
     }
-    inline FastIO& putLD(ld x, int precision = 12) {
+    FastIO& putLD(ld x, int precision = 12) {
         if (x < 0) {
             putChar('-');
             x = -x;
@@ -131,12 +131,12 @@ struct FastIO {
         }
         return *this;
     }
-    inline FastIO& putChar(char c) {
+    FastIO& putChar(char c) {
         if (idxW >= SZ) flush();
         bufW[idxW++] = c;
         return *this;
     }
-    inline FastIO& putStr(const string& s) {
+    FastIO& putStr(const string& s) {
         int n = (int)s.size();
         int p = 0;
         while (p < n) {
@@ -149,7 +149,7 @@ struct FastIO {
         }
         return *this;
     }
-    inline FastIO& putStr(const char* s) {
+    FastIO& putStr(const char* s) {
         int n = (int)strlen(s);
         int p = 0;
         while (p < n) {
@@ -178,25 +178,27 @@ FastIO io;
 void preprocess() {
 
 }
-
+string out;
 void solve(ll testcase){
     ll N; io >> N;
     vl arr(N);
     ll candi=0, cnt=0;
     for (ll i=0; i<N; i++) {
-        ll x; io >> x;
-        arr[i] = x;
+        io >> arr[i];
         if (cnt == 0) {
-            candi = x;
+            candi = arr[i];
             cnt = 1;
         }
-        else if (candi == x) cnt++;
+        else if (candi == arr[i]) cnt++;
         else cnt--;
     }
     cnt = 0;
     for (auto e: arr) cnt += e==candi;
-    if (cnt*2 > N) io << candi << "\n";
-    else io << "SYJKGW\n";
+    if (cnt*2 > N) {
+        out += to_string(candi);
+        out += '\n';
+    }
+    else out += "SYJKGW\n";
 }
 
 int main() {
@@ -210,5 +212,6 @@ int main() {
     for (ll testcase = 1; testcase <= t; testcase++){
         solve(testcase);
     }
+    io << out;
     return 0;
 }
