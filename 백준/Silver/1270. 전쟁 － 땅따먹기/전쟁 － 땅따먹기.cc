@@ -19,7 +19,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 24;
+    static constexpr int SZ = 1 << 23;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -181,18 +181,21 @@ void preprocess() {
 
 void solve(ll testcase){
     ll N; io >> N;
-    unordered_map<ll,ll> mp;
+    vl arr(N);
+    ll candi=0, cnt=0;
     for (ll i=0; i<N; i++) {
-        ll num; io >> num;
-        mp[num]++;
-    }
-    for (auto [k,v]: mp) {
-        if (v*2 > N) {
-            io << k << "\n";
-            return;
+        io >> arr[i];
+        if (cnt == 0) {
+            candi = arr[i];
+            cnt = 1;
         }
+        else if (candi == arr[i]) cnt++;
+        else cnt--;
     }
-    io << "SYJKGW\n";
+    cnt = 0;
+    for (auto e: arr) cnt += e==candi;
+    if (cnt*2 > N) io << candi << "\n";
+    else io << "SYJKGW\n";
 }
 
 int main() {
