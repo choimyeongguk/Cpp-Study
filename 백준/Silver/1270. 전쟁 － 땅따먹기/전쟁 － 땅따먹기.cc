@@ -182,7 +182,6 @@ void preprocess() {
 vl arr(100'000);
 void solve(ll testcase){
     ll N; io >> N;
-    arr.resize(N);
     ll candi=0, cnt=0;
     for (ll i=0; i<N; i++) {
         io >> arr[i];
@@ -194,7 +193,7 @@ void solve(ll testcase){
         else cnt--;
     }
     cnt = 0;
-    for (auto e: arr) cnt += e==candi;
+    for (ll i=0; i<N; i++) cnt += arr[i]==candi;
     if (cnt*2 > N) io << candi << "\n";
     else io << "SYJKGW\n";
 }
