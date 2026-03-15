@@ -184,12 +184,13 @@ void solve(ll testcase){
     vl arr(N);
     ll candi=0, cnt=0;
     for (ll i=0; i<N; i++) {
-        io >> arr[i];
+        ll x; io >> x;
+        arr[i] = x;
         if (cnt == 0) {
-            candi = arr[i];
+            candi = x;
             cnt = 1;
         }
-        else if (candi == arr[i]) cnt++;
+        else if (candi == x) cnt++;
         else cnt--;
     }
     cnt = 0;
