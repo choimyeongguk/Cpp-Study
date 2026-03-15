@@ -19,7 +19,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 15;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
