@@ -19,7 +19,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 22;
+    static constexpr int SZ = 1 << 21;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -175,7 +175,7 @@ struct FastIO {
 };
 FastIO io;
 
-vl arr(1'000'001, 0);
+ll arr[1'000'001] = {};
 void preprocess() {
     for (ll i=1; i<=1'000'000; i++)
         for (ll j=i; j<=1'000'000; j+=i)
