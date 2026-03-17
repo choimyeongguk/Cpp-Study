@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 22;
+    static constexpr int SZ = 1 << 20;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -180,22 +180,17 @@ void preprocess() {
 
 }
 
-struct SegTree {
+struct Fenwick {
     ll n; vl tree;
-    SegTree(ll n): n(n), tree(n<<2, 0) {}
-    void update(ll pos, ll val) { update(1, 0, n-1, pos, val); }
-    void update(ll i, ll s, ll e, ll pos, ll val) {
-        tree[i] += val;
-        if (s==e) return;
-        ll m = (s+e)>>1;
-        pos<=m ? update(i<<1, s, m, pos, val) : update(i<<1|1, m+1, e, pos, val);
+    Fenwick(ll n): n(n), tree(n+1, 0) {}
+    void update(ll pos, ll val) {
+        for (++pos; pos<=n; pos += pos&-pos) tree[pos] += val;
     }
-    ll query(ll l, ll r) { return query(1, 0, n-1, l, r); }
-    ll query(ll i, ll s, ll e, ll l, ll r) {
-        if (s>r || e<l) return 0;
-        if (l<=s && e<=r) return tree[i];
-        ll m = (s+e)>>1;
-        return query(i<<1, s, m, l, r) + query(i<<1|1, m+1, e, l, r);
+    ll query(ll l, ll r) { return query(r) - (l ? query(l-1) : 0); }
+    ll query(ll pos) {
+        ll ret = 0;
+        for (++pos; pos>0; pos -= pos&-pos) ret += tree[pos];
+        return ret;
     }
 };
 
@@ -217,16 +212,16 @@ void solve(ll testcase){
         out[cur] = time;
     };
     dfs(1);
-    SegTree seg(N+1);
+    Fenwick fw(N+1);
     while (M--) {
         ll op, i; io >> op >> i;
         switch (op) {
             case 1:
                 ll w; io >> w;
-                seg.update(in[i], w);
+                fw.update(in[i], w);
                 break;
             case 2:
-                io << seg.query(in[i], out[i]-1) << "\n";
+                io << fw.query(in[i], out[i]-1) << "\n";
                 break;
         }
     }
