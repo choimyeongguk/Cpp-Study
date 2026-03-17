@@ -179,31 +179,31 @@ void preprocess() {
 
 }
 
-struct LCA {
-    ll MAXLN;
-    vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
-        ll n = (ll)tree.size();
-        MAXLN = 1;
-        while (1LL<<MAXLN <= n) ++MAXLN;
-        anc.assign(MAXLN,vl(n));
-        depth.assign(n,0);
-        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-            for (auto ch : tree[cur]) {
-                if (ch == pa) continue;
-                depth[ch] = depth[cur] + 1;
-                anc[0][ch] = cur;
-                dfs(ch, cur);
-            }
-        };
-        dfs(root, -1);
-        anc[0][root] = root;
-        for (ll i=1; i<MAXLN; i++)
-            for (ll j=0; j<n; j++)
-                anc[i][j] = anc[i-1][anc[i-1][j]];
+void solve(ll testcase){
+    ll N; io >> N;
+    vvl G(N+1);
+    for (ll i=1; i<N; i++) {
+        ll a, b; io >> a >> b;
+        G[a].emplace_back(b);
+        G[b].emplace_back(a);
     }
 
-    ll solve(ll u, ll v){
+    ll MAXLN = 1; while (1LL<<MAXLN <= N) ++MAXLN;
+    vl depth(N+1, 0); vvl anc(MAXLN, vl(N+1));
+    function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+        for (auto ch : G[cur]) {
+            if (ch == pa) continue;
+            depth[ch] = depth[cur] + 1;
+            anc[0][ch] = cur;
+            dfs(ch, cur);
+        }
+    };
+    dfs(1, -1);
+    anc[0][1] = 1;
+    for (ll i=1; i<MAXLN; i++)
+        for (ll j=1; j<=N; j++)
+            anc[i][j] = anc[i-1][anc[i-1][j]];
+    function<ll(ll,ll)> lca = [&](ll u, ll v){
         if (depth[u] < depth[v]) swap(u, v);
         for (ll i=MAXLN-1; i>=0; i--)
             if (depth[u]-(1LL<<i) >= depth[v])
@@ -213,23 +213,13 @@ struct LCA {
             if (anc[i][u] != anc[i][v])
                 u = anc[i][u], v = anc[i][v];
         return anc[0][u];
-    }
-};
+    };
 
-void solve(ll testcase){
-    ll N; io >> N;
-    vvl G(N+1);
-    for (ll i=1; i<N; i++) {
-        ll a, b; io >> a >> b;
-        G[a].emplace_back(b);
-        G[b].emplace_back(a);
-    }
-    LCA lca(G, 1);
     ll M; io >> M;
     ll prev = 1, cur, ans = 0;
     while (M--) {
         io >> cur;
-        ans += lca.depth[prev]+lca.depth[cur]-2*lca.depth[lca.solve(prev, cur)];
+        ans += depth[prev]+depth[cur]-2*depth[lca(prev, cur)];
         prev = cur;
     }
     io << ans;
