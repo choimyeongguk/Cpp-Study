@@ -214,12 +214,6 @@ struct LCA {
                 u = anc[i][u], v = anc[i][v];
         return anc[0][u];
     }
-    ll findKthAnc(ll pa, ll ch, ll K) { // 0-idx
-        ll diff = depth[ch] - depth[pa] - K;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (diff & 1LL<<i) ch = anc[i][ch];
-        return ch;
-    }
 };
 
 void solve(ll testcase){
@@ -232,11 +226,10 @@ void solve(ll testcase){
     }
     LCA lca(G, 1);
     ll M; io >> M;
-    ll prev = 1, cur, anc, ans = 0;
+    ll prev = 1, cur, ans = 0;
     while (M--) {
         io >> cur;
-        anc = lca.solve(prev, cur);
-        ans += lca.depth[prev] + lca.depth[cur] - 2*lca.depth[anc];
+        ans += lca.depth[prev]+lca.depth[cur]-2*lca.depth[lca.solve(prev, cur)];
         prev = cur;
     }
     io << ans;
