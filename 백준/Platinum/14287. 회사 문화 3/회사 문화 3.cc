@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 18;
+    static constexpr int SZ = 1 << 20;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -221,7 +221,7 @@ void solve(ll testcase){
                 fw.update(in[i], w);
                 break;
             case 2:
-                io << fw.query(in[i], out[i]-1) << "\n";
+                io << fw.query(in[i], out[i]-1) << '\n';
                 break;
         }
     }
