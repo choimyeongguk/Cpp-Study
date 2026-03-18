@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 16;
+    static constexpr int SZ = 1 << 17;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -183,8 +183,9 @@ void preprocess() {
 void solve(ll testcase){
     const ll INF = 1e9;
     ll V, E, Q; io >> V >> E >> Q;
-    vpll edge(E);
-    for (auto& [u,v]: edge) io >> u >> v;
+    vpll edge; edge.reserve(E);
+    for (ll i=0; i<E; i++)
+        edge.emplace_back(io.getLL(), io.getLL());
     vl first(V+1, INF), best(V+1, INF);
     for (ll i=0; i<Q; i++) {
         ll q; io >> q;
