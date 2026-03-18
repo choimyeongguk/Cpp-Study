@@ -2,7 +2,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -190,7 +190,7 @@ void solve(ll testcase){
         else pqWA.emplace(s, i);
     }
     string ans;
-    if (qAC.empty()) { io << -1LL; return; }
+    if (qAC.empty()) { io << -1; return; }
     ans += to_string(qAC.front()); ans += '\n'; qAC.pop();
     while (!pqWA.empty()) {
         // 틀렸습니다
@@ -202,7 +202,7 @@ void solve(ll testcase){
         if (qAC.empty()) break;
         ans += to_string(qAC.front()); ans += '\n'; qAC.pop();
     }
-    if (!pqWA.empty() || !qAC.empty()) { io << -1LL; return; }
+    if (!pqWA.empty() || !qAC.empty()) { io << -1; return; }
     io << ans;
 }
 
