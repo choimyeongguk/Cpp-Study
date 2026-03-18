@@ -2,7 +2,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -181,24 +181,28 @@ void preprocess() {
 }
 
 void solve(ll testcase){
-    const ll INF = 1e10;
     ll V, E, Q; io >> V >> E >> Q;
-    vpll edge(E);
-    for (auto& [u,v]: edge) io >> u >> v;
-    vl first(V+1, INF), best(V+1, INF);
+    vvl G(V+1);
+    for (ll i=0; i<E; i++) {
+        ll a, b; io >> a >> b;
+        G[a].emplace_back(b);
+        G[b].emplace_back(a);
+    }
+    vl like(V+1, false), visit(V+1, false);
     for (ll i=0; i<Q; i++) {
-        ll q; io >> q;
-        if (first[q] == INF) first[q] = best[q] = i;
+        ll n; io >> n;
+        if (visit[n]) { io << 0 << '\n'; continue; }
+        visit[n] = true;
+        ll ans = 0;
+        if (like[n] == false) ans++, like[n] = true;
+        for (auto nxt: G[n]) {
+            if (like[nxt] == false) {
+                ans++;
+                like[nxt] = true;
+            }
+        }
+        io << ans << '\n';
     }
-    for (auto [u,v]: edge) {
-        best[u] = min(best[u], first[v]);
-        best[v] = min(best[v], first[u]);
-    }
-    vl ans(Q, 0);
-    for (ll i=1; i<=V; i++)
-        if (best[i] != 1e10)
-            ans[best[i]]++;
-    for (auto e: ans) io << e << "\n";
 }
 
 int main() {
