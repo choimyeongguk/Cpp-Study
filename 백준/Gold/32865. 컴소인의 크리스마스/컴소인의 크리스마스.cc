@@ -2,7 +2,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = int;
+using ll = long long;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 17;
+    static constexpr int SZ = 1 << 20;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -183,26 +183,25 @@ void preprocess() {
 void solve(ll testcase){
     ll N; io >> N;
     queue<ll> qAC;
-    priority_queue<pll,vpll,greater<>> pqWA;
+    queue<pll> qWA;
     for (ll i=1; i<=N; i++) {
         ll s; io >> s;
         if (s == 0) qAC.emplace(i);
-        else pqWA.emplace(s, i);
+        else qWA.emplace(s, i);
     }
     string ans;
-    if (qAC.empty()) { io << -1; return; }
+    if (qAC.empty()) { io << -1LL; return; }
     ans += to_string(qAC.front()); ans += '\n'; qAC.pop();
-    while (!pqWA.empty()) {
+    while (!qWA.empty()) {
         // 틀렸습니다
-        auto [s,n] = pqWA.top(); pqWA.pop();
+        auto& [s,n] = qWA.front();
         ans += to_string(n); ans += '\n';
-        if (--s == 0) qAC.emplace(n);
-        else pqWA.emplace(s, n);
+        if (--s == 0) qAC.emplace(n), qWA.pop();
         // 맞았습니다
         if (qAC.empty()) break;
         ans += to_string(qAC.front()); ans += '\n'; qAC.pop();
     }
-    if (!pqWA.empty() || !qAC.empty()) { io << -1; return; }
+    if (!qWA.empty() || !qAC.empty()) { io << -1LL; return; }
     io << ans;
 }
 
