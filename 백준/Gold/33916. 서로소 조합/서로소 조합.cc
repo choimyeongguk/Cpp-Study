@@ -197,20 +197,17 @@ void linear_sieve() {
 }
 
 vvl factor;
-// factor[i][j]=k := (i!에 들어있는 소수 idx2prime[j]의 개수 k)
+// factor[i][j]=k := (j!에 들어있는 소수 idx2prime[i]의 개수 k)
 void preprocess() {
     linear_sieve();
-    factor.assign(MAX+1, vl(prime.size(), 0));
-    for (ll i=2; i<=MAX; i++) {
-        for (ll j=0; j<prime.size(); j++) {
-            ll num = prime[j];
-            if (i/num > 0) {
-                while (i/num > 0) {
-                    factor[i][j] += i/num;
-                    num *= prime[j];
-                }
+    factor.assign(prime.size(), vl(MAX+1, 0));
+    for (ll i=0; i<prime.size(); i++) {
+        for (ll j=2; j<=MAX; j++) {
+            ll num = prime[i];
+            while (j/num > 0) {
+                factor[i][j] += j/num;
+                num *= prime[i];
             }
-            else break;
         }
     }
 }
@@ -218,8 +215,8 @@ void preprocess() {
 void solve(ll testcase){
     ll n1, r1, n2, r2; io >> n1 >> r1 >> n2 >> r2;
     for (ll i=0; i<prime.size(); i++) {
-        ll pf1 = factor[n1][i] - factor[r1][i] - factor[n1-r1][i];
-        ll pf2 = factor[n2][i] - factor[r2][i] - factor[n2-r2][i];
+        ll pf1 = factor[i][n1] - factor[i][r1] - factor[i][n1-r1];
+        ll pf2 = factor[i][n2] - factor[i][r2] - factor[i][n2-r2];
         if (pf1>0 && pf2>0) {
             io << "0\n";
             return;
