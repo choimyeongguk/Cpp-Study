@@ -196,21 +196,16 @@ void linear_sieve() {
     }
 }
 
-vector<vector<short>> factor;
-// factor[i][j]=k := (i!에 들어있는 소수 idx2prime[j]의 개수 k)
+vector<vector<short>> v_num, v_fact;
+// v_fact[i][j]=k := (i!에 들어있는 소수 idx2prime[j]의 개수 k)
 void preprocess() {
     linear_sieve();
-    factor.assign(MAX+1, vector<short>(prime.size(), 0));
+    v_num.assign(MAX+1, vector<short>(prime.size(), 0));
+    v_fact.assign(MAX+1, vector<short>(prime.size(), 0));
     for (ll i=2; i<=MAX; i++) {
         for (ll j=0; j<prime.size(); j++) {
-            ll num = prime[j];
-            if (i/num > 0) {
-                while (i/num > 0) {
-                    factor[i][j] += i/num;
-                    num *= prime[j];
-                }
-            }
-            else break;
+            v_num[i][j] = i%prime[j] ? 0 : v_num[i/prime[j]][j]+1;
+            v_fact[i][j] = v_fact[i-1][j] + v_num[i][j];
         }
     }
 }
@@ -218,8 +213,8 @@ void preprocess() {
 void solve(ll testcase){
     ll n1, r1, n2, r2; io >> n1 >> r1 >> n2 >> r2;
     for (ll i=0; i<prime.size(); i++) {
-        ll pf1 = factor[n1][i] - factor[r1][i] - factor[n1-r1][i];
-        ll pf2 = factor[n2][i] - factor[r2][i] - factor[n2-r2][i];
+        ll pf1 = v_fact[n1][i] - v_fact[r1][i] - v_fact[n1-r1][i];
+        ll pf2 = v_fact[n2][i] - v_fact[r2][i] - v_fact[n2-r2][i];
         if (pf1>0 && pf2>0) {
             io << "0\n";
             return;
