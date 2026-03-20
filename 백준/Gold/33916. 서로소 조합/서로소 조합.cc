@@ -204,10 +204,13 @@ void preprocess() {
     for (ll i=2; i<=MAX; i++) {
         for (ll j=0; j<prime.size(); j++) {
             ll num = prime[j];
-            while (i/num > 0) {
-                factor[i][j] += i/num;
-                num *= prime[j];
+            if (i/num > 0) {
+                while (i/num > 0) {
+                    factor[i][j] += i/num;
+                    num *= prime[j];
+                }   
             }
+            else break;
         }
     }
 }
