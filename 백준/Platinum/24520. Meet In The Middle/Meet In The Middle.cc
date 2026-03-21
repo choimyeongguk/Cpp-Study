@@ -238,11 +238,16 @@ void solve(ll testcase){
     while (K--) {
         ll u, v; io >> u >> v;
         ll a = lca.solve(u, v);
-        ll len1 = lca.dist[u]-lca.dist[a], len2 = lca.dist[v]-lca.dist[a];
-        if (len1+len2 & 1)
+        // ll len1 = lca.dist[u]-lca.dist[a], len2 = lca.dist[v]-lca.dist[a];
+        // if (len1+len2 & 1)
+        //     io << "-1\n";
+        // else
+        //     io << lca.move(len1>len2 ? u : v, (len1+len2)/2) << "\n";
+
+        if (lca.dist[u]+lca.dist[v] & 1)
             io << "-1\n";
         else
-            io << lca.move(len1>len2 ? u : v, (len1+len2)/2) << "\n";
+            io << lca.move(lca.dist[u]>lca.dist[v] ? u : v, (lca.dist[u]+lca.dist[v])/2-lca.dist[a]) << "\n";
     }
 }
 
