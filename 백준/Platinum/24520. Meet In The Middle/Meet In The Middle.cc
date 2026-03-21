@@ -2,7 +2,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -182,7 +182,8 @@ void preprocess() {
 
 struct LCA {
     ll MAXLN;
-    vl depth, dist; vvl anc;
+    vl depth; vvl anc;
+    vector<long long> dist;
     LCA(vector<vpll>& tree, ll root=0){
         ll n = (ll)tree.size();
         MAXLN = 1;
@@ -215,7 +216,7 @@ struct LCA {
                 u = anc[i][u], v = anc[i][v];
         return anc[0][u];
     }
-    ll move(ll x, ll len) {
+    ll move(ll x, long long len) {
         for (ll i=MAXLN-1; i>=0; i--) {
             if (dist[x]-dist[anc[i][x]] <= len) {
                 len -= dist[x]-dist[anc[i][x]];
@@ -238,16 +239,11 @@ void solve(ll testcase){
     while (K--) {
         ll u, v; io >> u >> v;
         ll a = lca.solve(u, v);
-        // ll len1 = lca.dist[u]-lca.dist[a], len2 = lca.dist[v]-lca.dist[a];
-        // if (len1+len2 & 1)
-        //     io << "-1\n";
-        // else
-        //     io << lca.move(len1>len2 ? u : v, (len1+len2)/2) << "\n";
-
-        if (lca.dist[u]+lca.dist[v] & 1)
+        long long len1 = lca.dist[u]-lca.dist[a], len2 = lca.dist[v]-lca.dist[a];
+        if (len1+len2 & 1)
             io << "-1\n";
         else
-            io << lca.move(lca.dist[u]>lca.dist[v] ? u : v, (lca.dist[u]+lca.dist[v])/2-lca.dist[a]) << "\n";
+            io << lca.move(len1>len2 ? u : v, (len1+len2)/2) << "\n";
     }
 }
 
