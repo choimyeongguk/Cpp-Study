@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 16;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -296,7 +296,7 @@ struct BipartiteGraph {
         dist[l] = INF;
         return false;
     }
-    pair<vl,vl> minimum_vertex_cover() {
+    void minimum_vertex_cover() {
         queue<ll> q;
         vl visL(leftSz, false), visR(rightSz, false);
         for (ll i=0; i<leftSz; i++)
@@ -315,12 +315,15 @@ struct BipartiteGraph {
                 }
             }
         }
-        pair<vl,vl> ans;
+        vl ansL, ansR;
         for (ll i=0; i<leftSz; i++)
-            if (!visL[i]) ans.first.emplace_back(i);
+            if (!visL[i]) ansL.emplace_back(i);
+        io << (ll)ansL.size() << " ";
+        for (auto e: ansL) io << e << " ";
         for (ll i=0; i<rightSz; i++)
-            if (visR[i]) ans.second.emplace_back(i);
-        return ans;
+            if (visR[i]) ansR.emplace_back(i);
+        io << "\n" << (ll)ansR.size() << " ";
+        for (auto e: ansR) io << e << " ";
     }
 };
 
@@ -335,11 +338,7 @@ void solve(ll testcase){
         }
     }
     io << bg.max_matching() << "\n";
-    pair<vl,vl> ans = bg.minimum_vertex_cover();
-    io << (ll)ans.first.size() << " ";
-    for (auto e: ans.first) io << e << " ";
-    io << "\n" << (ll)ans.second.size() << " ";
-    for (auto e: ans.second) io << e << " ";
+    bg.minimum_vertex_cover();
 }
 
 int main() {
