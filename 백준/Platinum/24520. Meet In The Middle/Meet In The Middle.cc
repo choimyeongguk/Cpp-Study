@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 22;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -241,8 +241,6 @@ void solve(ll testcase){
         ll len1 = lca.dist[u]-lca.dist[a], len2 = lca.dist[v]-lca.dist[a];
         if (len1+len2 & 1)
             io << "-1\n";
-        else if (len1 == len2)
-            io << a << "\n";
         else
             io << lca.move(len1>len2 ? u : v, (len1+len2)/2) << "\n";
     }
