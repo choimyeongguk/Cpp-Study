@@ -234,6 +234,7 @@ void solve(ll testcase){
     ll Q; io >> Q;
     while (Q--) {
         ll A, B, C; io >> A >> B >> C;
+        if (A==B && B==C) { io << A << "\n"; continue; }
         ll ancAB = lca.solve(A, B);
         ll ancAC = lca.solve(A, C);
         ll ancBC = lca.solve(B, C);
@@ -242,9 +243,9 @@ void solve(ll testcase){
         ll lenBC = lca.depth[B] + lca.depth[C] - lca.depth[ancBC]*2;
         if (lenAB&1 || lenAC&1 || lenBC&1) { io << "-1\n"; continue; }
         ll midAB = lca.findKthAnc(lca.depth[A] > lca.depth[B] ? A : B, lenAB/2);
+        if (lenAB==lenAC && lenAC==lenBC) { io << midAB << "\n"; continue; }
         ll midAC = lca.findKthAnc(lca.depth[A] > lca.depth[C] ? A : C, lenAC/2);
         ll midBC = lca.findKthAnc(lca.depth[B] > lca.depth[C] ? B : C, lenBC/2);
-        if (lenAB==lenAC && lenAC==lenBC) { io << midAB << "\n"; continue; }
         if (lenAB==lenAC && lenAB>=lenBC) {   // A쪽에 치우친 경우
             ll l = lenBC/2, m = lenAB/2 - l;
             ll ancAmidBC = lca.solve(A, midBC);
