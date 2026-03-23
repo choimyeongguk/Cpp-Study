@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 23;
+    static constexpr int SZ = 1 << 20;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -234,40 +234,30 @@ void solve(ll testcase){
     ll Q; io >> Q;
     while (Q--) {
         ll A, B, C; io >> A >> B >> C;
-        if (A==B && B==C) { io << A << "\n"; continue; }
         ll ancAB = lca.solve(A, B);
         ll ancAC = lca.solve(A, C);
         ll ancBC = lca.solve(B, C);
         ll lenAB = lca.depth[A] + lca.depth[B] - lca.depth[ancAB]*2;
         ll lenAC = lca.depth[A] + lca.depth[C] - lca.depth[ancAC]*2;
         ll lenBC = lca.depth[B] + lca.depth[C] - lca.depth[ancBC]*2;
-        if (lenAB&1 || lenAC&1 || lenBC&1) { io << "-1\n"; continue; }
-        ll midAB = lca.findKthAnc(lca.depth[A] > lca.depth[B] ? A : B, lenAB/2);
-        if (lenAB==lenAC && lenAC==lenBC) { io << midAB << "\n"; continue; }
-        ll midAC = lca.findKthAnc(lca.depth[A] > lca.depth[C] ? A : C, lenAC/2);
-        ll midBC = lca.findKthAnc(lca.depth[B] > lca.depth[C] ? B : C, lenBC/2);
-        if (lenAB==lenAC && lenAB>=lenBC) {   // A쪽에 치우친 경우
-            ll l = lenBC/2, m = lenAB/2 - l;
-            ll ancAmidBC = lca.solve(A, midBC);
-            io << (lca.depth[midBC]-lca.depth[ancAmidBC] >= m
-                ? lca.findKthAnc(midBC, m) : lca.findKthAnc(A, l+m)) << "\n";
-            continue;
+        if (lenAB>=lenAC && lenAB>=lenBC) {
+            if (lenAB&1) { io << "-1\n"; continue; }
+            ll midAB = lca.findKthAnc(lca.depth[A] > lca.depth[B] ? A : B, lenAB/2);
+            ll lenCmidAB = lca.depth[C] + lca.depth[midAB] - lca.depth[lca.solve(C, midAB)]*2;
+            io << (lenCmidAB*2 == lenAB ? midAB : -1ll) << "\n";
         }
-        if (lenAB==lenBC && lenAB>=lenAC) {   // B쪽에 치우친 경우
-            ll l = lenAC/2, m = lenAB/2 - l;
-            ll ancBmidAC = lca.solve(B, midAC);
-            io << (lca.depth[midAC]-lca.depth[ancBmidAC] >= m
-                ? lca.findKthAnc(midAC, m) : lca.findKthAnc(B, l+m)) << "\n";
-            continue;
+        else if (lenAC>=lenAB && lenAC>=lenBC) {
+            if (lenAC&1) { io << "-1\n"; continue; }
+            ll midAC = lca.findKthAnc(lca.depth[A] > lca.depth[C] ? A : C, lenAC/2);
+            ll lenBmidAC = lca.depth[B] + lca.depth[midAC] - lca.depth[lca.solve(B, midAC)]*2;
+            io << (lenBmidAC*2 == lenAC ? midAC : -1ll) << "\n";
         }
-        if (lenAC==lenBC && lenAC>=lenAB) {   // C쪽에 치우친 경우
-            ll l = lenAB/2, m = lenAC/2 - l;
-            ll ancCmidAB = lca.solve(C, midAB);
-            io << (lca.depth[midAB]-lca.depth[ancCmidAB] >= m
-                ? lca.findKthAnc(midAB, m) : lca.findKthAnc(C, l+m)) << "\n";
-            continue;
+        else {
+            if (lenBC&1) { io << "-1\n"; continue; }
+            ll midBC = lca.findKthAnc(lca.depth[B] > lca.depth[C] ? B : C, lenBC/2);
+            ll lenAmidBC = lca.depth[A] + lca.depth[midBC] - lca.depth[lca.solve(A, midBC)]*2;
+            io << (lenAmidBC*2 == lenBC ? midBC : -1ll) << "\n";
         }
-        io << "-1\n";
     }
 }
 
