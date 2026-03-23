@@ -234,6 +234,8 @@ void solve(ll testcase){
     ll Q; io >> Q;
     while (Q--) {
         ll A, B, C; io >> A >> B >> C;
+        //if (A==B && B==C) { io << A << "\n"; continue; }
+        //if (A==B || B==C || C==A) { io << "-1\n"; continue; }
         ll ancAB = lca.solve(A, B);
         ll ancAC = lca.solve(A, C);
         ll ancBC = lca.solve(B, C);
