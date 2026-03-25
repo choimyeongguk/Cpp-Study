@@ -180,22 +180,26 @@ void preprocess() {
 
 }
 
-struct LCA {
-    ll MAXLN;
-    vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
-        ll n = (ll)tree.size();
+struct Tree {
+    ll MAXLN, time = 0;
+    vl depth, in, out; vvl anc;
+    Tree(vvl& G, ll root=0){
+        ll n = (ll)G.size();
         MAXLN = 1;
         while (1LL<<MAXLN <= n) ++MAXLN;
         anc.assign(MAXLN,vl(n));
         depth.assign(n,0);
+        in.assign(n, 0);
+        out.assign(n, 0);
         function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-            for (auto ch : tree[cur]) {
+            in[cur] = time++;
+            for (auto ch : G[cur]) {
                 if (ch == pa) continue;
                 depth[ch] = depth[cur] + 1;
                 anc[0][ch] = cur;
                 dfs(ch, cur);
             }
+            out[cur] = time;
         };
         dfs(root, -1);
         anc[0][root] = root;
@@ -203,19 +207,10 @@ struct LCA {
             for (ll j=0; j<n; j++)
                 anc[i][j] = anc[i-1][anc[i-1][j]];
     }
-
-    ll solve(ll u, ll v){
-        if (depth[u] < depth[v]) swap(u, v);
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (depth[u]-(1LL<<i) >= depth[v])
-                u = anc[i][u];
-        if (u == v) return u;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (anc[i][u] != anc[i][v])
-                u = anc[i][u], v = anc[i][v];
-        return anc[0][u];
+    bool inSubtree(ll x, ll r) {
+        return in[r]<=in[x] && out[x]<=out[r];
     }
-    ll findKthAnc(ll x, ll K) {
+    ll KthAnc(ll x, ll K) {
         for (ll i=MAXLN-1; i>=0; i--)
             if (K & 1LL<<i) x = anc[i][x];
         return x;
@@ -230,23 +225,25 @@ void solve(ll testcase){
         G[u].emplace_back(v);
         G[v].emplace_back(u);
     }
-    LCA lca(G, 1);
+    Tree tr(G, 1);
     ll Q; io >> Q;
     while (Q--) {
         ll op, i, j, k; io >> op >> i >> j >> k;
-        ll anc = lca.solve(i, j);
         switch (op) {
             case 1:
-                io << (lca.depth[k]>=lca.depth[anc]
-                    && (k==lca.solve(i, k) || k==lca.solve(j, k))
-                    ? "NO\n" : "YES\n");
+                if (i==k || j==k) { io << "NO\n"; break; }
+                if (tr.inSubtree(i, k) == true) {
+                    if (tr.inSubtree(j, k) == true)
+                        io << (tr.KthAnc(i, tr.depth[i]-tr.depth[k]-1) == tr.KthAnc(j, tr.depth[j]-tr.depth[k]-1)
+                           ? "YES\n" : "NO\n");
+                    else io << "NO\n";
+                }
+                else io << (tr.inSubtree(j, k)==false ? "YES\n" : "NO\n");
                 break;
             case 2:
                 ll l; io >> l;
-                io << (lca.depth[k]>=lca.depth[anc] && lca.depth[l]>=lca.depth[anc]
-                    && (k==lca.solve(i, k) || k==lca.solve(j, k))
-                    && (l==lca.solve(i, l) || l==lca.solve(j, l))
-                    ? "NO\n" : "YES\n");
+                if (tr.depth[l] > tr.depth[k]) swap(l, k);
+                io << (tr.inSubtree(i, k)==tr.inSubtree(j, k) ? "YES\n" : "NO\n");
                 break;
         }
     }
