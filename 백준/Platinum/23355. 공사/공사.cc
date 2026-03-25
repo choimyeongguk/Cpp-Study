@@ -232,22 +232,21 @@ void solve(ll testcase){
     }
     LCA lca(G, 1);
     ll Q; io >> Q;
-    function<bool(ll,ll,ll)> nodeInPath = [&](ll i, ll j, ll k) {
-        ll anc = lca.solve(i, j);
-        if (lca.depth[k]>=lca.depth[anc]
-            && (k==lca.solve(i, k) || k==lca.solve(j, k)))
-            return true;
-        return false;
-    };
     while (Q--) {
         ll op, i, j, k; io >> op >> i >> j >> k;
+        ll anc = lca.solve(i, j);
         switch (op) {
             case 1:
-                io << (nodeInPath(i, j, k) ? "NO\n" : "YES\n");
+                io << (lca.depth[k]>=lca.depth[anc]
+                    && (k==lca.solve(i, k) || k==lca.solve(j, k))
+                    ? "NO\n" : "YES\n");
                 break;
             case 2:
                 ll l; io >> l;
-                io << (nodeInPath(i, j, k) && nodeInPath(i, j, l) ? "NO\n" : "YES\n");
+                io << (lca.depth[k]>=lca.depth[anc] && lca.depth[l]>=lca.depth[anc]
+                    && (k==lca.solve(i, k) || k==lca.solve(j, k))
+                    && (l==lca.solve(i, l) || l==lca.solve(j, l))
+                    ? "NO\n" : "YES\n");
                 break;
         }
     }
