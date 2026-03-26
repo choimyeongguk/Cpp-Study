@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 21;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -206,10 +206,16 @@ struct LCA {
         for (ll i=1; i<MAXLN; i++)
             for (ll j=0; j<n; j++) {
                 anc[i][j] = anc[i-1][anc[i-1][j]];
-                vl tmp = {max1[i-1][j], max1[i-1][anc[i-1][j]], max2[i-1][j], max2[i-1][anc[i-1][j]]};
-                for (auto e: tmp) {
-                    if (max1[i][j] < e) max2[i][j] = max1[i][j], max1[i][j] = e;
-                    else if (max1[i][j] > e && max2[i][j] < e) max2[i][j] = e;
+                max1[i][j] = max1[i-1][j];
+                max2[i][j] = max2[i-1][j];
+                if (max1[i][j] < max1[i-1][anc[i-1][j]]) {
+                    max2[i][j] = max1[i][j];
+                    max1[i][j] = max1[i-1][anc[i-1][j]];
+                    if (max2[i][j] < max2[i-1][anc[i-1][j]])
+                        max2[i][j] = max2[i-1][anc[i-1][j]];
+                }
+                else if (max1[i][j]!=max1[i-1][anc[i-1][j]] &&  max2[i][j]<max1[i-1][anc[i-1][j]]) {
+                    max2[i][j] = max1[i-1][anc[i-1][j]];
                 }
             }
     }
