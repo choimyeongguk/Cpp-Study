@@ -2,7 +2,7 @@
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
-using ll = long long;
+using ll = int;
 using pll = pair<ll,ll>;
 using ld = long double;
 using pld = pair<ld,ld>;
@@ -185,7 +185,7 @@ struct LCA {
     vl depth; vvl anc, max1, max2;
     LCA(vector<vpll>& tree, ll root=0){
         ll n = (ll)tree.size();
-        MAXLN = 1; while (1LL<<MAXLN <= n) ++MAXLN;
+        MAXLN = 1; while (1<<MAXLN <= n) ++MAXLN;
         anc.assign(MAXLN,vl(n));
         max1.assign(MAXLN, vl(n, -1));
         max2.assign(MAXLN, vl(n, -1));
@@ -264,7 +264,7 @@ void solve(ll testcase){
 
     ll sum = 0;
     vector<vpll> tree(V);
-    vector<Edge> candi; candi.reserve(max(0LL, E-V+1));
+    vector<Edge> candi; candi.reserve(max(0, E-V+1));
     vl sz(V, 1), pa(V); iota(pa.begin(), pa.end(), 0);
     function<ll(ll)> find = [&](ll x) {
         if (pa[x] == x) return x;
@@ -288,10 +288,10 @@ void solve(ll testcase){
         }
     }
     for (ll i=1; i<V; i++)
-        if (find(i) != find(0)) { io << -1ll; return; }
+        if (find(i) != find(0)) { io << -1; return; }
 
     LCA lca(tree);
-    ll minDiff = LLONG_MAX;
+    ll minDiff = INT_MAX;
     for (auto [u,v,c]: candi) {
         auto [max1, max2] = lca.solve(u, v);
         if (max1 < c)
@@ -299,7 +299,7 @@ void solve(ll testcase){
         else if (max2 != -1)
             minDiff = min(minDiff, c-max2);
     }
-    io << (minDiff==LLONG_MAX ? -1ll : sum+minDiff);
+    io << (minDiff==INT_MAX ? -1 : sum+minDiff);
 }
 
 int main() {
