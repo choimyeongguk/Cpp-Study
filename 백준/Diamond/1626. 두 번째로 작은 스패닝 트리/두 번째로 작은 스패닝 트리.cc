@@ -237,19 +237,25 @@ struct LCA {
         ll diff2 = depth[y]-depth[an], cur2 = y;
         for (ll i=MAXLN-1; i>=0; i--) {
             if (diff1 & 1LL<<i) {
-                vl tmp = {max1[i][cur1], max2[i][cur1]};
-                for (auto e: tmp) {
-                    if (m1 < e) m2 = m1, m1 = e;
-                    else if (m1 > e && m2 < e) m2 = e;
+                if (m1 < max1[i][cur1]) {
+                    m2 = m1;
+                    m1 = max1[i][cur1];
+                    if (m2 < max2[i][cur1])
+                        m2 = max2[i][cur1];
                 }
+                else if (m1!=max1[i][cur1] && m2<max1[i][cur1])
+                    m2 = max1[i][cur1];
                 cur1 = anc[i][cur1];
             }
             if (diff2 & 1LL<<i) {
-                vl tmp = {max1[i][cur2], max2[i][cur2]};
-                for (auto e: tmp) {
-                    if (m1 < e) m2 = m1, m1 = e;
-                    else if (m1 > e && m2 < e) m2 = e;
+                if (m1 < max1[i][cur2]) {
+                    m2 = m1;
+                    m1 = max1[i][cur2];
+                    if (m2 < max2[i][cur2])
+                        m2 = max2[i][cur2];
                 }
+                else if (m1!=max1[i][cur2] && m2<max1[i][cur2])
+                    m2 = max1[i][cur2];
                 cur2 = anc[i][cur2];
             }
         }
