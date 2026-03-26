@@ -203,19 +203,20 @@ struct LCA {
         };
         dfs(root, -1);
         anc[0][root] = root;
+        ll tmp;
         for (ll i=1; i<MAXLN; i++)
             for (ll j=0; j<n; j++) {
                 anc[i][j] = anc[i-1][anc[i-1][j]];
                 max1[i][j] = max1[i-1][j];
                 max2[i][j] = max2[i-1][j];
-                if (max1[i][j] < max1[i-1][anc[i-1][j]]) {
+                if (max1[i][j] < (tmp=max1[i-1][anc[i-1][j]])) {
                     max2[i][j] = max1[i][j];
-                    max1[i][j] = max1[i-1][anc[i-1][j]];
-                    if (max2[i][j] < max2[i-1][anc[i-1][j]])
-                        max2[i][j] = max2[i-1][anc[i-1][j]];
+                    max1[i][j] = tmp;
+                    if (max2[i][j] < (tmp=max2[i-1][anc[i-1][j]]))
+                        max2[i][j] = tmp;
                 }
-                else if (max1[i][j]!=max1[i-1][anc[i-1][j]] &&  max2[i][j]<max1[i-1][anc[i-1][j]]) {
-                    max2[i][j] = max1[i-1][anc[i-1][j]];
+                else if (max1[i][j]!=tmp &&  max2[i][j]<tmp) {
+                    max2[i][j] = tmp;
                 }
             }
     }
