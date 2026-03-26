@@ -220,43 +220,57 @@ struct LCA {
                 }
             }
     }
-    pll solve(ll x, ll y){
-        if (depth[x] < depth[y]) swap(x, y);
-        ll u = x, v = y;
+    pll solve(ll u, ll v){
+        if (depth[u] < depth[v]) swap(u, v);
+        ll m1 = -1, m2 = -1;
         for (ll i=MAXLN-1; i>=0; i--)
-            if (depth[u]-(1LL<<i) >= depth[v])
+            if (depth[u]-(1LL<<i) >= depth[v]) {
+                if (m1 < max1[i][u]) {
+                    m2 = m1;
+                    m1 = max1[i][u];
+                    if (m2 < max2[i][u])
+                        m2 = max2[i][u];
+                }
+                else if (m1!=max1[i][u] && m2<max1[i][u])
+                    m2 = max1[i][u];
                 u = anc[i][u];
+            }
         if (u != v) {
             for (ll i=MAXLN-1; i>=0; i--)
-                if (anc[i][u] != anc[i][v])
+                if (anc[i][u] != anc[i][v]) {
+                    if (m1 < max1[i][u]) {
+                        m2 = m1;
+                        m1 = max1[i][u];
+                        if (m2 < max2[i][u])
+                            m2 = max2[i][u];
+                    }
+                    else if (m1!=max1[i][u] && m2<max1[i][u])
+                        m2 = max1[i][u];
+
+                    if (m1 < max1[i][v]) {
+                        m2 = m1;
+                        m1 = max1[i][v];
+                        if (m2 < max2[i][v])
+                            m2 = max2[i][v];
+                    }
+                    else if (m1!=max1[i][v] && m2<max1[i][v])
+                        m2 = max1[i][v];
                     u = anc[i][u], v = anc[i][v];
-            u = anc[0][u];
-        }
-        ll an = u, m1 = -1, m2 = -1;
-        ll diff1 = depth[x]-depth[an], cur1 = x;
-        ll diff2 = depth[y]-depth[an], cur2 = y;
-        for (ll i=MAXLN-1; i>=0; i--) {
-            if (diff1 & 1LL<<i) {
-                if (m1 < max1[i][cur1]) {
-                    m2 = m1;
-                    m1 = max1[i][cur1];
-                    if (m2 < max2[i][cur1])
-                        m2 = max2[i][cur1];
                 }
-                else if (m1!=max1[i][cur1] && m2<max1[i][cur1])
-                    m2 = max1[i][cur1];
-                cur1 = anc[i][cur1];
+            if (m1 < max1[0][u]) {
+                m2 = m1;
+                m1 = max1[0][u];
+                if (m2 < max2[0][u]) m2 = max2[0][u];
+            } else if (m1 != max1[0][u] && m2 < max1[0][u]) {
+                m2 = max1[0][u];
             }
-            if (diff2 & 1LL<<i) {
-                if (m1 < max1[i][cur2]) {
-                    m2 = m1;
-                    m1 = max1[i][cur2];
-                    if (m2 < max2[i][cur2])
-                        m2 = max2[i][cur2];
-                }
-                else if (m1!=max1[i][cur2] && m2<max1[i][cur2])
-                    m2 = max1[i][cur2];
-                cur2 = anc[i][cur2];
+
+            if (m1 < max1[0][v]) {
+                m2 = m1;
+                m1 = max1[0][v];
+                if (m2 < max2[0][v]) m2 = max2[0][v];
+            } else if (m1 != max1[0][v] && m2 < max1[0][v]) {
+                m2 = max1[0][v];
             }
         }
         return {m1, m2};
