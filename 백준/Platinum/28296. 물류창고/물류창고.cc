@@ -210,10 +210,8 @@ void solve(ll testcase){
         pa[y] = x;
         sz[x] += sz[y];
     };
-    for (auto [u,v,c]: edges) {
-        if (find(u) == find(v)) continue;
+    for (auto [u,v,c]: edges)
         merge(u, v, c);
-    }
     for (ll i=1; i<=K; i++) {
         io << ans[i] << "\n";
     }
