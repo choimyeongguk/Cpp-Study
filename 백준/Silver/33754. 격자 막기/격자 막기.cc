@@ -182,15 +182,14 @@ void preprocess() {
 
 void solve(ll testcase){
     ll N; io >> N;
-    vvl M(2, vl(N));
-    for (auto& e: M)
-        for (auto& v: e)
-            io >> v;
-    ll up = M[0][0], down = M[1][0], cnt = up+down;
+    vb U(N), D(N);
+    for (ll i=0; i<N; i++) U[i] = io.getLL();
+    for (ll i=0; i<N; i++) D[i] = io.getLL();
+    ll up = U[0], down = D[0], cnt = up+down;
     for (ll i=1; i<N; i++) {
-        if ((up && M[0][i]) || (down && M[1][i])) {
-            up = M[0][i];
-            down = M[1][i];
+        if ((up && U[i]) || (down && D[i])) {
+            up = U[i];
+            down = D[i];
             cnt += up+down;
             continue;
         }
