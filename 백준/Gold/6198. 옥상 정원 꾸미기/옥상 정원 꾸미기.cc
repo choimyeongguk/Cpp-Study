@@ -1,17 +1,7 @@
 #include<bits/stdc++.h>
-#pragma warning(disable:4996)
-#pragma comment(linker, "/STACK:336777216")
-#pragma GCC optimize("O3,unroll-loops")
-#pragma GCC target("avx,avx2,fma")
 using namespace std;
 using ll = int;
-using pll = pair<ll,ll>;
-using ld = long double;
-using pld = pair<ld,ld>;
-using vb = vector<bool>;
 using vl = vector<ll>;
-using vvl = vector<vl>;
-using vpll = vector<pll>;
 
 struct FastScanner {
     static const int SZ = 1 << 20;
