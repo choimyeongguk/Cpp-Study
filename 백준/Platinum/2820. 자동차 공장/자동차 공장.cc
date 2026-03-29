@@ -181,16 +181,8 @@ void preprocess() {
 }
 
 struct LazySeg {
-    ll n; vl data, lazy;
-    LazySeg(vl& arr): n(arr.size()), data(arr), lazy(n<<2, 0) {
-        init(1, 0, n-1);
-    }
-    void init(ll i, ll s, ll e) {
-        if (s==e) { lazy[i] = data[s]; return; }
-        ll m = (s+e)>>1;
-        init(i<<1, s, m);
-        init(i<<1|1, m+1, e);
-    }
+    ll n; vl lazy;
+    LazySeg(ll n): n(n), lazy(n<<2, 0) {}
     void push(ll i) {
         if (!lazy[i]) return;
         lazy[i<<1] += lazy[i];
@@ -230,16 +222,15 @@ void solve(ll testcase){
         G[io.getLL()-1].emplace_back(i);
     }
     ll time = 0;
-    vl in(N), out(N), arr(N);
+    vl in(N), out(N);
     function<void(ll)> dfs = [&](ll cur) {
         in[cur] = time++;
-        arr[in[cur]] = init[cur];
         for (auto ch: G[cur])
             dfs(ch);
         out[cur] = time;
     };
     dfs(0);
-    LazySeg seg(arr);
+    LazySeg seg(N+1);
     while (M--) {
         char op; ll a; io >> op >> a;
         switch (op) {
@@ -248,7 +239,7 @@ void solve(ll testcase){
                 seg.update(in[a-1]+1, out[a-1]-1, x);
                 break;
             case 'u':
-                io << seg.query(in[a-1]) << '\n';
+                io << init[a-1]+seg.query(in[a-1]) << '\n';
                 break;
         }
     }
