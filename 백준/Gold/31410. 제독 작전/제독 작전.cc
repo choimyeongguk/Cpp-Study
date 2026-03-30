@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 23;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -184,25 +184,24 @@ void solve(ll testcase){
     ll N; io >> N;
     vpll arr(N); for (auto& [x,p]: arr) io >> x >> p;
     sort(arr.begin(), arr.end());
-    ll sumL = 0, sumR = 0, saveL = 0, saveR = 0, tmp; // 왼/오른쪽에서 시작해서 모든 점 통과할 때 비용
-    for (ll i=N-2; i>0; i--) {
-        tmp = arr[i].second + arr.back().first-arr[i].first;
-        sumL += tmp;
-        saveL = max(saveL, tmp);
-        tmp = arr[i].second + arr[i].first-arr.front().first;
-        sumR += tmp;
-        saveR = max(saveR, tmp);
+    ll sumL = 0, sumR = 0; // 왼/오른쪽에서 시작해서 모든 점 통과할 때 비용
+    for (ll i=0; i<N; i++) {
+        sumL += arr[i].second + arr.back().first-arr[i].first;
+        sumR += arr[i].second + arr[i].first-arr.front().first;
     }
-    tmp = arr.front().second + arr.back().second + arr.back().first - arr.front().first;
-    sumL += tmp;
-    sumR += tmp;
-    saveL = max({saveL,
-        arr.front().second + arr.back().first - arr.front().first,
-        arr.back().second + (arr.back().first-arr[N-2].first)*(N-1)});
-    saveR = max({saveR,
-        arr.back().second + arr.back().first - arr.front().first,
-        arr.front().second + (arr[1].first-arr.front().first)*(N-1)});
-    io << min(sumL-saveL, sumR-saveR);
+    // 왼쪽에서 출발
+    ll save = 0;
+    for (ll i=N-2; i>=0; i--)
+        save = max(save, arr[i].second+arr.back().first-arr[i].first);
+    save = max(save, arr.back().second+(arr.back().first-arr[N-2].first)*(N-1));
+    ll ans = sumL - save;
+    // 오른쪽에서 출발
+    save = 0;
+    for (ll i=N-1; i>0; i--)
+        save = max(save, arr[i].second+arr[i].first-arr.front().first);
+    save = max(save, arr.front().second+(arr[1].first-arr.front().first)*(N-1));
+    ans = min(ans, sumR - save);
+    io << ans;
 }
 
 int main() {
