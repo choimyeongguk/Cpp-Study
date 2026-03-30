@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 13;
+    static constexpr int SZ = 1 << 15;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -182,24 +182,37 @@ void preprocess() {
 
 void solve(ll testcase){
     ll N; io >> N;
-    vpll arr(N); for (auto& [x,p]: arr) io >> x >> p;
-    sort(arr.begin(), arr.end());
+    vl x(N), p(N);
+    ll xMax=-1e10, xMin=1e10, pMax=-1, pMin=-1, xsMax=-1e10, xsMin=1e10;
+    for (ll i=0; i<N; i++) {
+        io >> x[i] >> p[i];
+        if (x[i] > xMax) {
+            xsMax = xMax;
+            xMax = x[i], pMax = p[i];
+        }
+        else if (x[i] > xsMax) xsMax = x[i];
+        if (x[i] < xMin) {
+            xsMin = xMin;
+            xMin = x[i], pMin = p[i];
+        }
+        else if (x[i] < xsMin) xsMin = x[i];
+    }
     ll sumL = 0, sumR = 0; // 왼/오른쪽에서 시작해서 모든 점 통과할 때 비용
     for (ll i=0; i<N; i++) {
-        sumL += arr[i].second + arr.back().first-arr[i].first;
-        sumR += arr[i].second + arr[i].first-arr.front().first;
+        sumL += p[i] + xMax-x[i];
+        sumR += p[i] + x[i]-xMin;
     }
     // 왼쪽에서 출발
     ll save = 0;
     for (ll i=N-2; i>=0; i--)
-        save = max(save, arr[i].second+arr.back().first-arr[i].first);
-    save = max(save, arr.back().second+(arr.back().first-arr[N-2].first)*(N-1));
+        save = max(save, p[i]+xMax-x[i]);
+    save = max(save, pMax+(xMax-xsMax)*(N-1));
     ll ans = sumL - save;
     // 오른쪽에서 출발
     save = 0;
     for (ll i=N-1; i>0; i--)
-        save = max(save, arr[i].second+arr[i].first-arr.front().first);
-    save = max(save, arr.front().second+(arr[1].first-arr.front().first)*(N-1));
+        save = max(save, p[i]+x[i]-xMin);
+    save = max(save, pMin+(xsMin-xMin)*(N-1));
     ans = min(ans, sumR - save);
     io << ans;
 }
