@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 21;
+    static constexpr int SZ = 1 << 22;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -228,32 +228,6 @@ void solve(ll testcase){
                 break;
         }
     }
-    // set<ll> empty;
-    // for (ll i=1; i<=N; i++) empty.emplace(i);
-    // vl plug(N+1, -1);
-    // for (ll i=1; i<=Q; i++) {
-    //     ll op, x; io >> op >> x;
-    //     switch (op) {
-    //         case 1: {
-    //             auto target = empty.lower_bound(x);
-    //             if (target == empty.end()) io << "-1\n";
-    //             else {
-    //                 io << *target << "\n";
-    //                 plug[*target] = i;
-    //                 empty.erase(target);
-    //             }
-    //             break;
-    //         }
-    //         case 2:
-    //             if (plug[x] == -1) io << "-1\n";
-    //             else {
-    //                 io << plug[x] << "\n";
-    //                 plug[x] = -1;
-    //                 empty.emplace(x);
-    //             }
-    //             break;
-    //     }
-    // }
 }
 
 int main() {
