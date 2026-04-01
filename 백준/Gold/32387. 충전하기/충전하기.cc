@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 22;
+    static constexpr int SZ = 1 << 21;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -182,19 +182,19 @@ void preprocess() {
 
 struct SegTree {
     ll n; vl plug, tree;
-    SegTree(ll n): n(n), plug(n+1, -1), tree((n+1)<<2, 0) {}
+    SegTree(ll n): n(n), plug(n, -1), tree(n<<2, 0) {}
     ll plugIn(ll x, ll q) {
-        ll pos = query(1, 1, n, x);   // x이상의 남아있는 플러그 번호 반환
+        ll pos = query(1, 0, n-1, x);   // x이상의 남아있는 플러그 번호 반환
         if (pos == -1) return -1;
         plug[pos] = q;
-        update(1, 1, n, pos, +1);
-        return pos;
+        update(1, 0, n-1, pos, +1);
+        return pos+1;
     }
     ll unplug(ll x) {
         if (plug[x] == -1) return -1;
         ll ret = plug[x];
         plug[x] = -1;
-        update(1, 1, n, x, -1);
+        update(1, 0, n-1, x, -1);
         return ret;
     }
     ll query(ll i, ll s, ll e, ll x) {
@@ -221,10 +221,10 @@ void solve(ll testcase){
         ll op, x; io >> op >> x;
         switch (op) {
             case 1:
-                io << seg.plugIn(x, i) << "\n";
+                io << seg.plugIn(x-1, i) << "\n";
                 break;
             case 2:
-                io << seg.unplug(x) << "\n";
+                io << seg.unplug(x-1) << "\n";
                 break;
         }
     }
