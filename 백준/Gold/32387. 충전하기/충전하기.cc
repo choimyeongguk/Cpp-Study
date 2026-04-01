@@ -180,34 +180,80 @@ void preprocess() {
 
 }
 
+struct SegTree {
+    ll n; vl plug, tree;
+    SegTree(ll n): n(n), plug(n+1, -1), tree((n+1)<<2, 0) {}
+    ll plugIn(ll x, ll q) {
+        ll pos = query(1, 1, n, x);   // x이상의 남아있는 플러그 번호 반환
+        if (pos == -1) return -1;
+        plug[pos] = q;
+        update(1, 1, n, pos, +1);
+        return pos;
+    }
+    ll unplug(ll x) {
+        if (plug[x] == -1) return -1;
+        ll ret = plug[x];
+        plug[x] = -1;
+        update(1, 1, n, x, -1);
+        return ret;
+    }
+    ll query(ll i, ll s, ll e, ll x) {
+        if (e < x) return -1;  // 전부 x 미만
+        if (tree[i] == e-s+1) return -1;  // 전부 차 있음
+        if (s == e) return s;
+        ll m = (s+e) >> 1;
+        ll ret = query(i<<1, s, m, x);
+        if (ret != -1) return ret;
+        return query(i<<1|1, m+1, e, x);
+    }
+    void update(ll i, ll s, ll e, ll pos, ll val) {
+        tree[i] += val;
+        if (s==e) return;
+        ll m = (s+e)>>1;
+        pos<=m ? update(i<<1, s, m, pos, val) : update(i<<1|1, m+1, e, pos, val);
+    }
+};
+
 void solve(ll testcase){
     ll N, Q; io >> N >> Q;
-    set<ll> empty;
-    for (ll i=1; i<=N; i++) empty.emplace(i);
-    vl plug(N+1, -1);
+    SegTree seg(N);
     for (ll i=1; i<=Q; i++) {
         ll op, x; io >> op >> x;
         switch (op) {
-            case 1: {
-                auto target = empty.lower_bound(x);
-                if (target == empty.end()) io << "-1\n";
-                else {
-                    io << *target << "\n";
-                    plug[*target] = i;
-                    empty.erase(target);
-                }
+            case 1:
+                io << seg.plugIn(x, i) << "\n";
                 break;
-            }
             case 2:
-                if (plug[x] == -1) io << "-1\n";
-                else {
-                    io << plug[x] << "\n";
-                    plug[x] = -1;
-                    empty.emplace(x);
-                }
+                io << seg.unplug(x) << "\n";
                 break;
         }
     }
+    // set<ll> empty;
+    // for (ll i=1; i<=N; i++) empty.emplace(i);
+    // vl plug(N+1, -1);
+    // for (ll i=1; i<=Q; i++) {
+    //     ll op, x; io >> op >> x;
+    //     switch (op) {
+    //         case 1: {
+    //             auto target = empty.lower_bound(x);
+    //             if (target == empty.end()) io << "-1\n";
+    //             else {
+    //                 io << *target << "\n";
+    //                 plug[*target] = i;
+    //                 empty.erase(target);
+    //             }
+    //             break;
+    //         }
+    //         case 2:
+    //             if (plug[x] == -1) io << "-1\n";
+    //             else {
+    //                 io << plug[x] << "\n";
+    //                 plug[x] = -1;
+    //                 empty.emplace(x);
+    //             }
+    //             break;
+    //     }
+    // }
 }
 
 int main() {
