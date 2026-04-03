@@ -211,26 +211,24 @@ struct Point {
 
 void solve(ll testcase){
     ll N; io >> N;
-    vl xcomp, ycomp; xcomp.reserve(N), ycomp.reserve(N);
+    vl comp; comp.reserve(N);
     vector<Point> pt(N);
     for (auto& [x,y,w]: pt) {
         io >> x >> y >> w;
-        xcomp.emplace_back(x);
-        ycomp.emplace_back(y);
+        comp.emplace_back(x);
+        comp.emplace_back(y);
     }
-    sort(xcomp.begin(), xcomp.end());
-    xcomp.erase(unique(xcomp.begin(), xcomp.end()), xcomp.end());
-    sort(ycomp.begin(), ycomp.end());
-    ycomp.erase(unique(ycomp.begin(), ycomp.end()), ycomp.end());
-    vector<vpll> line(xcomp.size());
+    sort(comp.begin(), comp.end());
+    comp.erase(unique(comp.begin(), comp.end()), comp.end());
+    vector<vpll> line(comp.size());
     for (auto [x,y,w]: pt) {
-        x = lower_bound(xcomp.begin(), xcomp.end(), x) - xcomp.begin();
-        y = lower_bound(ycomp.begin(), ycomp.end(), y) - ycomp.begin();
+        x = lower_bound(comp.begin(), comp.end(), x) - comp.begin();
+        y = lower_bound(comp.begin(), comp.end(), y) - comp.begin();
         line[x].emplace_back(y, w);
     }
     ll ans = 0;
-    SegTree seg((ll)ycomp.size());
-    for (ll start=0; start<xcomp.size(); start++) {
+    SegTree seg((ll)comp.size());
+    for (ll start=0; start<comp.size(); start++) {
         for (ll x=start; x<line.size(); x++) {
             for (auto [y,w]: line[x])
                 seg.update(y, w);
