@@ -200,9 +200,6 @@ struct SegTree {
             max(tree[i<<1|1].r, tree[i<<1|1].sum+tree[i<<1].r)
         };
     }
-    void clear() {
-        fill(tree.begin(), tree.end(), Node{0, 0, 0, 0});
-    }
 };
 
 struct Point {
@@ -211,32 +208,54 @@ struct Point {
 
 void solve(ll testcase){
     ll N; io >> N;
-    vl comp; comp.reserve(N);
+    vl xcomp, ycomp; xcomp.reserve(N), ycomp.reserve(N);
     vector<Point> pt(N);
     for (auto& [x,y,w]: pt) {
         io >> x >> y >> w;
-        comp.emplace_back(x);
-        comp.emplace_back(y);
+        xcomp.emplace_back(x);
+        ycomp.emplace_back(y);
     }
-    sort(comp.begin(), comp.end());
-    comp.erase(unique(comp.begin(), comp.end()), comp.end());
-    vector<vpll> line(comp.size());
-    for (auto [x,y,w]: pt) {
-        x = lower_bound(comp.begin(), comp.end(), x) - comp.begin();
-        y = lower_bound(comp.begin(), comp.end(), y) - comp.begin();
-        line[x].emplace_back(y, w);
-    }
-    ll ans = 0;
-    SegTree seg((ll)comp.size());
-    for (ll start=0; start<comp.size(); start++) {
-        for (ll x=start; x<line.size(); x++) {
-            for (auto [y,w]: line[x])
-                seg.update(y, w);
-            ans = max(ans, seg.getAns());
+    sort(xcomp.begin(), xcomp.end());
+    xcomp.erase(unique(xcomp.begin(), xcomp.end()), xcomp.end());
+    sort(ycomp.begin(), ycomp.end());
+    ycomp.erase(unique(ycomp.begin(), ycomp.end()), ycomp.end());
+    vector<vpll> line;
+    if (xcomp.size() < ycomp.size()) {
+        line.resize(xcomp.size());
+        for (auto [x,y,w]: pt) {
+            x = lower_bound(xcomp.begin(), xcomp.end(), x) - xcomp.begin();
+            y = lower_bound(ycomp.begin(), ycomp.end(), y) - ycomp.begin();
+            line[x].emplace_back(y, w);
         }
-        seg.clear();
+        ll ans = 0;
+        for (ll start=0; start<xcomp.size(); start++) {
+            SegTree seg((ll)ycomp.size());
+            for (ll x=start; x<line.size(); x++) {
+                for (auto [y,w]: line[x])
+                    seg.update(y, w);
+                ans = max(ans, seg.getAns());
+            }
+        }
+        io << ans;
     }
-    io << ans;
+    else {
+        line.resize(ycomp.size());
+        for (auto [x,y,w]: pt) {
+            x = lower_bound(xcomp.begin(), xcomp.end(), x) - xcomp.begin();
+            y = lower_bound(ycomp.begin(), ycomp.end(), y) - ycomp.begin();
+            line[y].emplace_back(x, w);
+        }
+        ll ans = 0;
+        for (ll start=0; start<ycomp.size(); start++) {
+            SegTree seg((ll)xcomp.size());
+            for (ll y=start; y<line.size(); y++) {
+                for (auto [x,w]: line[y])
+                    seg.update(x, w);
+                ans = max(ans, seg.getAns());
+            }
+        }
+        io << ans;
+    }
 }
 
 int main() {
