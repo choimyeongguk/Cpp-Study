@@ -200,6 +200,9 @@ struct SegTree {
             max(tree[i<<1|1].r, tree[i<<1|1].sum+tree[i<<1].r)
         };
     }
+    void clear() {
+        fill(tree.begin(), tree.end(), Node{0, 0, 0, 0});
+    }
 };
 
 struct Point {
@@ -226,13 +229,14 @@ void solve(ll testcase){
         line[x].emplace_back(y, w);
     }
     ll ans = 0;
+    SegTree seg((ll)ycomp.size());
     for (ll start=0; start<xcomp.size(); start++) {
-        SegTree seg((ll)ycomp.size());
         for (ll x=start; x<line.size(); x++) {
             for (auto [y,w]: line[x])
                 seg.update(y, w);
             ans = max(ans, seg.getAns());
         }
+        seg.clear();
     }
     io << ans;
 }
