@@ -189,7 +189,7 @@ void solve(ll testcase){
     while (pq.size() > 1) {
         ll a = pq.top(); pq.pop();
         ll b = pq.top(); pq.pop();
-        ans = (__int128)ans * a %MOD * b %MOD;
+        ans = (__int128)ans * a * b %MOD;
         pq.emplace(a*b);
     }
     io << ans << "\n";
