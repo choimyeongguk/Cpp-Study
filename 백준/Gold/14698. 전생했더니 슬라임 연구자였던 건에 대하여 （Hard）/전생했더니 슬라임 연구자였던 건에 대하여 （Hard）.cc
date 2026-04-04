@@ -185,14 +185,14 @@ void solve(ll testcase){
     ll N; io >> N;
     priority_queue<ll,vl,greater<>> pq;
     while (N--) pq.emplace(io.getLL());
-    __int128 ans = 1;
+    ll ans = 1;
     while (pq.size() > 1) {
         ll a = pq.top(); pq.pop();
         ll b = pq.top(); pq.pop();
-        ans = ans * a * b %MOD;
+        ans = a * b %MOD * ans %MOD;
         pq.emplace(a*b);
     }
-    io << (ll)ans << "\n";
+    io << ans << "\n";
 }
 
 int main() {
