@@ -180,38 +180,26 @@ void preprocess() {
 
 }
 
-void calculate_pi(vl &pi, string &s) {
-    pi[0]=-1;
-    for (ll i=1,j=-1;i<s.size();i++) {
-        while (j>=0 && s[i]!=s[j+1]) j=pi[j];
-        if (s[i]==s[j+1]) pi[i]=++j;
-        else pi[i]=-1;
-    }
-}
-
 void solve(ll testcase){
     ll N; string str; io >> N >> str;
     vl pi(N);
-    calculate_pi(pi, str);
+    pi[0]=-1;
+    for (ll i=1,j=-1;i<N;i++) {
+        while (j>=0 && str[i]!=str[j+1]) j=pi[j];
+        if (str[i]==str[j+1]) pi[i]=++j;
+        else pi[i]=-1;
+    }
+    ll sum = N;
     vl ans(N);
     for (ll i=0; i<N; i++) {;
-        debug(i);
         ll j = pi[i];
-        if (j == -1) {
-            ans[i] = i+1;
-        }
+        if (j == -1) ans[i] = i+1;
         else {
-            if (pi[j] == -1) {
-                ans[i] = j+1;
-            }
-            else {
-                ans[i] = ans[pi[j]];
-            }
+            if (pi[j] == -1) ans[i] = j+1;
+            else ans[i] = ans[pi[j]];
         }
+        sum += i-ans[i];
     }
-    ll sum = 0;
-    for (ll i=0; i<N; i++)
-        sum += (i+1)-ans[i];
     io << sum;
 }
 
