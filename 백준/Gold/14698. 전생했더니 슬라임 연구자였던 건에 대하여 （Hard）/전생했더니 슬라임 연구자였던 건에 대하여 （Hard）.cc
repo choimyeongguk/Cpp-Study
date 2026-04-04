@@ -184,7 +184,7 @@ const ll MOD = 1'000'000'007;
 void solve(ll testcase){
     ll N; io >> N;
     priority_queue<ll,vl,greater<>> pq;
-    for (ll i=0; i<N; i++) pq.emplace(io.getLL());
+    while (N--) pq.emplace(io.getLL());
     ll ans = 1;
     while (pq.size() > 1) {
         ll a = pq.top(); pq.pop();
