@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 21;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -183,26 +183,13 @@ void preprocess() {
 void solve(ll testcase){
     ll N; io >> N;
     vl A(N); for (auto& e: A) io >> e;
-    queue<ll> q; // 위치
-    ll ans=0, have=0, tar=accumulate(A.begin(), A.end(), 0ll)/N;
-    for (ll i=0; i<N; i++) {
-        if (A[i] < tar) {   // 부족한 상태
-            A[i] += have;
-            have = max(0ll, A[i]-tar);
-            if (A[i] < tar) q.emplace(i);
-        }
-        else if (A[i] > tar) {  // 여유가 있는 상태
-            have += A[i]-tar;
-            while (!q.empty() && have>0) {
-                ll tmp = have;
-                A[q.front()] += have;
-                have = max(0ll, A[q.front()]-tar);
-                ans += (tmp - have) * (i-q.front());
-                if (A[q.front()] >= tar) q.pop();
-            }
-        }
-        ans += have;
-    }
+    ll mid = accumulate(A.begin(), A.end(), 0ll)/N;
+    A[0] -= mid;
+    for (ll i=1; i<N; i++)
+        A[i] += A[i-1]-mid;
+    ll ans = 0;
+    for (ll i=0; i<N; i++)
+        ans += abs(A[i]);
     io << ans;
 }
 
