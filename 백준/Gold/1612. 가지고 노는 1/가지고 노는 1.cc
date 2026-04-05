@@ -182,18 +182,25 @@ void preprocess() {
 
 void solve(ll testcase){
     ll N; io >> N;
-    ll dividend = 1, ans = 1;
-    unordered_set<ll> s;
-    while (dividend > 0) {
-        while (dividend < N) {
-            ans++;
-            dividend = dividend*10 + 1;
-        }
-        dividend = dividend % N;
-        if (s.contains(dividend)) { io << "-1\n"; return; }
-        s.emplace(dividend);
+    if (N%2==0 || N%5==0) { io << "-1\n"; return; }
+    ll rem = 1%N, ans = 1;
+    while (rem) {
+        ans++;
+        rem = (rem*10 + 1) %N;
     }
     io << ans;
+    // ll dividend = 1, ans = 1;
+    // unordered_set<ll> s;
+    // while (dividend > 0) {
+    //     while (dividend < N) {
+    //         ans++;
+    //         dividend = dividend*10 + 1;
+    //     }
+    //     dividend = dividend % N;
+    //     if (s.contains(dividend)) { io << "-1\n"; return; }
+    //     s.emplace(dividend);
+    // }
+    // io << ans;
 }
 
 int main() {
