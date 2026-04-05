@@ -183,7 +183,7 @@ void preprocess() {
 void solve(ll testcase){
     ll N; io >> N;
     vl A(N); for (auto& e: A) io >> e;
-    ll mid = accumulate(A.begin(), A.end(), 0)/N;
+    ll mid = accumulate(A.begin(), A.end(), 0ll)/N;
     A[0] -= mid;
     for (ll i=1; i<N; i++)
         A[i] += A[i-1]-mid;
