@@ -20,7 +20,7 @@ constexpr bool ndebug = false;
 #endif
 
 struct FastIO {
-    static constexpr int SZ = 1 << 20;
+    static constexpr int SZ = 1 << 21;
     int idxW = 0, idxR = 0, szR = 0;
     char bufR[SZ], bufW[SZ];
     int read() {
@@ -188,12 +188,18 @@ void solve(ll testcase){
         freq[e]++;
     }
     vl NGF(N, -1);
-    ll sz = 0; vl st(N);
+    stack<ll> st;
     for (ll i=N-1; i>=0; i--) {
-        while (sz>0 && freq[A[i]]>=freq[st[sz-1]]) --sz;
-        NGF[i] = sz ? st[sz-1] : -1;
-        st[sz++] = A[i];
+        while (!st.empty() && freq[A[i]]>=freq[st.top()]) st.pop();
+        NGF[i] = st.empty() ? -1 : st.top();
+        st.emplace(A[i]);
     }
+    // deque<ll> dq;
+    // for (ll i=N-1; i>=0; i--) {
+    //     while (!dq.empty() && freq[A[i]]>=freq[dq.front()]) dq.pop_front();
+    //     NGF[i] = dq.empty() ? -1 : dq.front();
+    //     dq.emplace_front(A[i]);
+    // }
     for (auto e: NGF) io << e << ' ';
 }
 
