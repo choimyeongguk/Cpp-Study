@@ -187,20 +187,14 @@ void solve(ll testcase){
         io >> e;
         freq[e]++;
     }
-    vl NGF(N, -1);
     stack<ll> st;
     for (ll i=N-1; i>=0; i--) {
         while (!st.empty() && freq[A[i]]>=freq[st.top()]) st.pop();
-        NGF[i] = st.empty() ? -1 : st.top();
+        ll tmp = st.empty() ? -1 : st.top();
         st.emplace(A[i]);
+        A[i] = tmp;
     }
-    // deque<ll> dq;
-    // for (ll i=N-1; i>=0; i--) {
-    //     while (!dq.empty() && freq[A[i]]>=freq[dq.front()]) dq.pop_front();
-    //     NGF[i] = dq.empty() ? -1 : dq.front();
-    //     dq.emplace_front(A[i]);
-    // }
-    for (auto e: NGF) io << e << ' ';
+    for (auto e: A) io << e << ' ';
 }
 
 int main() {
