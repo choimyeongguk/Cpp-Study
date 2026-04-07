@@ -180,21 +180,20 @@ void preprocess() {
 
 }
 
-ll freq[1'000'001] = {}, st[1'000'000] = {};
-
 void solve(ll testcase){
     ll N; io >> N;
-    vl A(N);
+    vl A(N), freq(1'000'001);
     for (auto& e: A) {
         io >> e;
         freq[e]++;
     }
-    vl NGF(N, -1);
-    ll sz = 0;
+    vl NGF(N);
+    stack<ll> st;
     for (ll i=N-1; i>=0; i--) {
-        while (sz>0 && freq[A[i]]>=freq[st[sz-1]]) --sz;
-        NGF[i] = sz ? st[sz-1] : -1;
-        st[sz++] = A[i];
+        ll ai = A[i], fai = freq[ai];
+        while (!st.empty() && fai>=freq[st.top()]) st.pop();
+        NGF[i] = st.empty() ? -1 : st.top();
+        st.emplace(ai);
     }
     for (auto e: NGF) io << e << ' ';
 }
