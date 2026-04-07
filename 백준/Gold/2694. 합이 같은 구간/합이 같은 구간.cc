@@ -187,8 +187,7 @@ void solve(ll testcase){
     ll Max = *max_element(A.begin(), A.end());
     ll Sum = accumulate(A.begin(), A.end(), 0);
     while (target < Max) target += A[idx++];
-    while (target <= Sum) {
-        debug(target);
+    while (true) {
         if (Sum % target == 0) {
             ll sum = 0, flag = true;
             for (ll i=idx; i<N; i++) {
