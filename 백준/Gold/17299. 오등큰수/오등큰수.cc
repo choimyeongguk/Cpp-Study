@@ -187,13 +187,13 @@ void solve(ll testcase){
         io >> A[i];
         freq[A[i]]++;
     }
-    vl NGF(N);
-    stack<ll> st;
+    ll sz = 0;
+    vl NGF(N), st(N);
     for (ll i=N-1; i>=0; i--) {
         ll ai = A[i], fai = freq[ai];
-        while (!st.empty() && fai>=freq[st.top()]) st.pop();
-        NGF[i] = st.empty() ? -1 : st.top();
-        st.emplace(ai);
+        while (sz && fai>=freq[st[sz-1]]) --sz;
+        NGF[i] = sz ? st[sz-1] : -1;
+        st[sz++] = ai;
     }
     for (auto e: NGF) io << e << ' ';
 }
