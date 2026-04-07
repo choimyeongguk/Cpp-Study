@@ -183,9 +183,9 @@ void preprocess() {
 void solve(ll testcase){
     ll N; io >> N;
     vl A(N), freq(1'000'001);
-    for (auto& e: A) {
-        io >> e;
-        freq[e]++;
+    for (ll i=0; i<N; i++) {
+        io >> A[i];
+        freq[A[i]]++;
     }
     vl NGF(N);
     stack<ll> st;
