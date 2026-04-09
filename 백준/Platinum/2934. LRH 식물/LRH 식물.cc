@@ -213,19 +213,9 @@ struct LazySeg {
 
 void solve(ll testcase){
     ll N; io >> N;
-    vl comp; comp.reserve(2*N);
-    vpll query(N);
-    for (auto& [L,R]: query) {
-        io >> L >> R;
-        comp.emplace_back(L);
-        comp.emplace_back(R);
-    }
-    sort(comp.begin(), comp.end());
-    comp.erase(unique(comp.begin(), comp.end()), comp.end());
-    LazySeg seg(comp.size());
-    for (auto& [L, R]: query) {
-        L = lower_bound(comp.begin(), comp.end(), L) - comp.begin();
-        R = lower_bound(comp.begin(), comp.end(), R) - comp.begin();
+    LazySeg seg(100001);
+    for (ll i=0; i<N; i++) {
+        ll L, R; io >> L >> R;
         seg.update(L+1, R-1);
         io << seg.query(L)+seg.query(R) << '\n';
     }
