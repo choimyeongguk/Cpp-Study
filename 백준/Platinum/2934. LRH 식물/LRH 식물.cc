@@ -180,44 +180,38 @@ void preprocess() {
 
 }
 
-struct LazySeg {
-    ll n; vl lazy;
-    LazySeg(ll n): n(n), lazy(n<<2) {}
-    void push(ll i) {
-        if (lazy[i] == 0) return;
-        lazy[i<<1] += lazy[i];
-        lazy[i<<1|1] += lazy[i];
-        lazy[i] = 0;
-    }
-    void update(ll l, ll r) { update(1, 0, n-1, l, r); }
-    void update(ll i, ll s, ll e, ll l, ll r) {
-        if (s>r || e<l) return;
-        if (l<=s && e<=r) { lazy[i] += 1; return; }
-        push(i);
+struct SegTree {
+    ll n; vl tree;
+    SegTree(ll n): n(n), tree(n<<2) {}
+    void update(ll pos, ll val) { update(1, 0, n-1, pos, val); }
+    void update(ll i, ll s, ll e, ll pos, ll val) {
+        tree[i] += val;
+        if (s==e) return;
         ll m = (s+e)>>1;
-        update(i<<1, s, m, l, r);
-        update(i<<1|1, m+1, e, l, r);
+        pos<=m ? update(i<<1, s, m, pos, val) : update(i<<1|1, m+1, e, pos, val);
     }
-    ll query(ll pos) { return query(1, 0, n-1, pos); }
-    ll query(ll i, ll s, ll e, ll pos) {
-        if (s==e) {
-            ll ret = lazy[i];
-            lazy[i] = 0;
-            return ret;
-        }
-        push(i);
+    ll query(ll l, ll r) { return query(1, 0, n-1, l, r); }
+    ll query(ll i, ll s, ll e, ll l, ll r) {
+        if (s>r || e<l) return 0;
+        if (l<=s && e<=r) return tree[i];
         ll m = (s+e)>>1;
-        return pos<=m ? query(i<<1, s, m,pos) : query(i<<1|1, m+1, e, pos);
+        return query(i<<1, s, m, l, r) + query(i<<1|1, m+1, e, l, r);
     }
 };
 
 void solve(ll testcase){
     ll N; io >> N;
-    LazySeg seg(100001);
+    SegTree seg(100001);
+    vl flower(100001);
     for (ll i=0; i<N; i++) {
         ll L, R; io >> L >> R;
-        seg.update(L+1, R-1);
-        io << seg.query(L)+seg.query(R) << '\n';
+        ll newFlowerL = seg.query(1, L) - flower[L];
+        ll newFlowerR = seg.query(1, R) - flower[R];
+        flower[L] += newFlowerL;
+        flower[R] += newFlowerR;
+        io << newFlowerL+newFlowerR << '\n';
+        seg.update(L+1, +1);
+        seg.update(R, -1);
     }
 }
 
