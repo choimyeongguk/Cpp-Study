@@ -185,13 +185,18 @@ void solve(ll testcase){
     vvl G(N+1); io.getLL();
     for (ll i=2; i<=N; i++) G[io.getLL()].emplace_back(i);
     ll time = 0; vl in(N+1), out(N+1);
-    function<void(ll)> dfs = [&](ll cur) {
-        in[cur] = time++;
-        for (auto ch: G[cur])
-            dfs(ch);
-        out[cur] = time;
-    };
-    dfs(1);
+    stack<pair<ll,bool>> st; st.emplace(1, false);  // false: 들어가기 전, true: 나올 차례
+    while (!st.empty()) {
+        auto [cur, exit] = st.top();
+        st.pop();
+        if (!exit) {
+            in[cur] = time++;
+            st.emplace(cur, true);
+            for (auto ch: G[cur])
+                st.emplace(ch, false);
+        }
+        else out[cur] = time;
+    }
     vl prefSum(N+1);
     while (M--) {
         ll i, w; io >> i >> w;
