@@ -180,47 +180,6 @@ void preprocess() {
 
 }
 
-struct LCA {
-    ll MAXLN;
-    vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
-        ll n = (ll)tree.size();
-        MAXLN = 1;
-        while (1LL<<MAXLN <= n) ++MAXLN;
-        anc.assign(MAXLN,vl(n));
-        depth.assign(n,0);
-        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-            for (auto ch : tree[cur]) {
-                if (ch == pa) continue;
-                depth[ch] = depth[cur] + 1;
-                anc[0][ch] = cur;
-                dfs(ch, cur);
-            }
-        };
-        dfs(root, -1);
-        anc[0][root] = root;
-        for (ll i=1; i<MAXLN; i++)
-            for (ll j=0; j<n; j++)
-                anc[i][j] = anc[i-1][anc[i-1][j]];
-    }
-    ll solve(ll u, ll v){
-        if (depth[u] < depth[v]) swap(u, v);
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (depth[u]-(1LL<<i) >= depth[v])
-                u = anc[i][u];
-        if (u == v) return u;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (anc[i][u] != anc[i][v])
-                u = anc[i][u], v = anc[i][v];
-        return anc[0][u];
-    }
-    ll findKthAnc(ll x, ll K) {
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (K & 1LL<<i) x = anc[i][x];
-        return x;
-    }
-};
-
 struct LazySeg {
     ll n; vl lazy;   // 터진 조상 중 가장 깊은 깊이
     LazySeg(ll n): n(n), lazy(n<<2) {}
@@ -254,28 +213,38 @@ void solve(ll testcase){
     for (ll i=2; i<=N; i++)
         G[pa[i] = io.getLL()].emplace_back(i);
     ll time = 0; vl in(N+1), out(N+1);
+    ll MAXLN=1; while (1LL<<MAXLN <= N+1) ++MAXLN;
+    vl depth(N+1, 0); vvl anc(MAXLN, vl(N+1));
+    function<ll(ll,ll)> solve = [&](ll u, ll v){
+        if (depth[u] < depth[v]) swap(u, v);
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (depth[u]-(1LL<<i) >= depth[v])
+                u = anc[i][u];
+        if (u == v) return u;
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (anc[i][u] != anc[i][v])
+                u = anc[i][u], v = anc[i][v];
+        return anc[0][u];
+    };
     function<void(ll)> dfs = [&](ll cur) {
         in[cur] = time++;
-        for (auto ch: G[cur])
+        for (auto ch: G[cur]) {
+            depth[ch] = depth[cur] + 1;
+            anc[0][ch] = cur;
             dfs(ch);
+        }
         out[cur] = time;
     };
     dfs(1);
-    // for (ll i=1; i<=N; i++) {
-    //     io << in[i] << " ";
-    // }
-    // io << "\n";
-    LCA lca(G, 1);
-    vl& depth = lca.depth;
+    anc[0][1] = 1;
+    for (ll i=1; i<MAXLN; i++)
+        for (ll j=0; j<=N; j++)
+            anc[i][j] = anc[i-1][anc[i-1][j]];
+
     LazySeg seg(N);
     while (Q--) {
         ll u, v, op; io >> u >> v >> op;
-        // io << u << ' ' << v << ' ' << op << '\n';
-        ll anc = lca.solve(u, v), uu = seg.query(in[u]), vv = seg.query(in[v]);
-        // debug(anc);
-        // debug(uu);
-        // debug(vv);
-        bool hasPath = depth[anc]>=max(uu, vv);
+        bool hasPath = depth[solve(u, v)] >= max(seg.query(in[u]), seg.query(in[v]));
         switch (op) {
             case 0:
                 io << (hasPath ? "YES\n" : "NO\n");
@@ -286,7 +255,6 @@ void solve(ll testcase){
                     if (pa[u] != -1) {
                         pa[u] = -1;
                         seg.update(in[u], out[u]-1, depth[u]);
-                        // io << in[u] << ' ' << out[u]-1 << ' ' << depth[u] << '\n';
                     }
                 }
                 else {
@@ -294,7 +262,6 @@ void solve(ll testcase){
                     if (pa[v] != -1) {
                         pa[v] = -1;
                         seg.update(in[v], out[v]-1, depth[v]);
-                        // io << in[u] << ' ' << out[u]-1 << ' ' << depth[u] << '\n';
                     }
                 }
                 break;
