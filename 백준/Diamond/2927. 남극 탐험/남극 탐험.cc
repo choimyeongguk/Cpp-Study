@@ -282,7 +282,7 @@ void solve(ll testcase){
     vl penguin(N+1); for (ll i=1; i<=N; i++) io >> penguin[i];
 
     ll Q; io >> Q;
-    vpll edge;
+    vvl G(N+1);
     DSU dsu(N+1);
     vector<Query> query(Q);
     for (ll i=0; i<Q; i++) {
@@ -296,7 +296,8 @@ void solve(ll testcase){
         }
         if (op == 0) {
             if (dsu.find(A) != dsu.find(B)) {
-                edge.emplace_back(A, B);
+                G[A].emplace_back(B);
+                G[B].emplace_back(A);
                 dsu.merge(A, B);
                 ans = true;
             }
@@ -306,52 +307,24 @@ void solve(ll testcase){
             ans = -1;
     }
 
-    ll idx = 0;                 // count trees
-    unordered_map<ll,ll> mp;    // dsu root -> tree idx
-    vl group(N+1);              // node -> tree idx
-    for (ll i=1; i<=N; i++) {
-        ll root = dsu.find(i);
-        if (!mp.contains(root)) mp[root] = idx++;
-        group[i] = mp[root];
-    }
-
-    vl size(idx, 0);       // size of tree
-    vl treeIdx(N+1);            // node idx -> tree's node idx
-    for (ll i=1; i<=N; i++) treeIdx[i] = size[group[i]]++;
-    vector<vvl> forest(idx);    // array of trees
-    for (ll i=0; i<idx; i++) forest[i].resize(size[i]);
-    for (auto [u,v]: edge) {
-        ll grp = group[u], nu = treeIdx[u], nv = treeIdx[v];
-        forest[grp][nu].emplace_back(nv);
-        forest[grp][nv].emplace_back(nu);
-    }
-
-    vector<HLD> hld;
-    for (ll i=0; i<idx; i++)
-        hld.emplace_back(forest[i], 0);
-    vector<SegTree> seg;
-    vvl arr(idx);
-    for (ll i=0; i<idx; i++) arr[i].resize(size[i]);
-    for (ll i=1; i<=N; i++) {
-        ll grp = group[i];
-        arr[grp][hld[grp].in[treeIdx[i]]] = penguin[i];
-    }
-    for (ll i=0; i<idx; i++)
-        seg.emplace_back(arr[i]);
+    unordered_set<ll> s; for (ll i=1; i<=N; i++) s.emplace(dsu.find(i));
+    for (auto e: s) G[0].emplace_back(e);
+    HLD hld(G, 0);
+    vl arr(N+1); for (ll i=1; i<=N; i++) arr[hld.in[i]] = penguin[i];
+    SegTree seg(arr);
 
     for (auto [op,A,B,ans]: query) {
-        ll grp = group[A];
         switch (op) {
             case 0:
                 io << (ans ? "yes\n" : "no\n");
                 break;
             case 1:
-                hld[grp].updateNode(treeIdx[A], B, seg[grp]);
+                hld.updateNode(A, B, seg);
                 break;
             case 2:
                 if (ans == -1) io << "impossible\n";
                 else {
-                    ans = hld[grp].queryPath(treeIdx[A], treeIdx[B], seg[grp]);
+                    ans = hld.queryPath(A, B, seg);
                     io << ans << '\n';
                 }
                 break;
