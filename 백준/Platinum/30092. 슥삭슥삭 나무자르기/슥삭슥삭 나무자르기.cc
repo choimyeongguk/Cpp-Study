@@ -54,29 +54,27 @@ void preprocess() {
 }
 
 struct LCA {
-    ll MAXLN;
+    ll MAXLN; vvl G;
     vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
+    LCA(vvl& tree, ll root=0): G(tree) {
         ll n = (ll)tree.size();
-        MAXLN = 1;
-        while (1LL<<MAXLN <= n) ++MAXLN;
+        MAXLN = 1; while (1LL<<MAXLN <= n) ++MAXLN;
         anc.assign(MAXLN,vl(n));
         depth.assign(n,0);
-        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
-            for (auto ch : tree[cur]) {
-                if (ch == pa) continue;
-                depth[ch] = depth[cur] + 1;
-                anc[0][ch] = cur;
-                dfs(ch, cur);
-            }
-        };
         dfs(root, -1);
         anc[0][root] = root;
         for (ll i=1; i<MAXLN; i++)
             for (ll j=0; j<n; j++)
                 anc[i][j] = anc[i-1][anc[i-1][j]];
     }
-
+    void dfs(ll cur,ll pa) {
+        for (auto ch : G[cur]) {
+            if (ch == pa) continue;
+            depth[ch] = depth[cur] + 1;
+            anc[0][ch] = cur;
+            dfs(ch, cur);
+        }
+    };
     ll solve(ll u, ll v){
         if (depth[u] < depth[v]) swap(u, v);
         for (ll i=MAXLN-1; i>=0; i--)
@@ -109,12 +107,13 @@ void solve(ll testcase){
         ll ab = lca.solve(a, b);
         ll bc = lca.solve(b, c), ca = lca.solve(c, a);
         ll bd = lca.solve(b, d), da = lca.solve(d, a);
-        ll cc = max({ab, bc, ca}, [&](const ll& x, const ll& y) {
-            return lca.depth[x] < lca.depth[y];
-        });
-        ll dd = max({ab, bd, da}, [&](const ll& x, const ll& y) {
-            return lca.depth[x] < lca.depth[y];
-        });
+        ll cc = ab;
+        if (lca.depth[bc] > lca.depth[cc]) cc = bc;
+        if (lca.depth[ca] > lca.depth[cc]) cc = ca;
+
+        ll dd = ab;
+        if (lca.depth[bd] > lca.depth[dd]) dd = bd;
+        if (lca.depth[da] > lca.depth[dd]) dd = da;
         io << (cc==dd ? "YES\n" : "NO\n");
     }
 }
