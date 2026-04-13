@@ -77,7 +77,6 @@ struct OfflineLCA {
             query[v].emplace_back(u, i);
         }
         function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
-            anc[find(cur)] = cur;
             for (auto ch : tree[cur]) {
                 if (ch == pa) continue;
                 depth[ch] = depth[cur] + 1;
