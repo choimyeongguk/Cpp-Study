@@ -54,27 +54,29 @@ void preprocess() {
 }
 
 struct LCA {
-    ll MAXLN; vvl G;
+    ll MAXLN;
     vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0): G(tree) {
+    LCA(vvl& tree, ll root=0){
         ll n = (ll)tree.size();
-        MAXLN = 1; while (1LL<<MAXLN <= n) ++MAXLN;
+        MAXLN = 1;
+        while (1LL<<MAXLN <= n) ++MAXLN;
         anc.assign(MAXLN,vl(n));
         depth.assign(n,0);
+        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+            for (auto ch : tree[cur]) {
+                if (ch == pa) continue;
+                depth[ch] = depth[cur] + 1;
+                anc[0][ch] = cur;
+                dfs(ch, cur);
+            }
+        };
         dfs(root, -1);
         anc[0][root] = root;
         for (ll i=1; i<MAXLN; i++)
             for (ll j=0; j<n; j++)
                 anc[i][j] = anc[i-1][anc[i-1][j]];
     }
-    void dfs(ll cur,ll pa) {
-        for (auto ch : G[cur]) {
-            if (ch == pa) continue;
-            depth[ch] = depth[cur] + 1;
-            anc[0][ch] = cur;
-            dfs(ch, cur);
-        }
-    };
+
     ll solve(ll u, ll v){
         if (depth[u] < depth[v]) swap(u, v);
         for (ll i=MAXLN-1; i>=0; i--)
