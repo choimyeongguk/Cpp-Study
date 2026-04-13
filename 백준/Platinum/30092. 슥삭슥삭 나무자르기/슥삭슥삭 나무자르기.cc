@@ -53,45 +53,56 @@ void preprocess() {
 
 }
 
-struct LCA {
-    ll MAXLN;
-    vl depth; vvl anc;
-    LCA(vvl& tree, ll root=0){
-        ll n = (ll)tree.size();
-        MAXLN = 1;
-        while (1LL<<MAXLN <= n) ++MAXLN;
-        anc.assign(MAXLN,vl(n));
-        depth.assign(n,0);
-        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+struct OfflineLCA {
+    ll n; vl pa, sz, anc, vis, ans, depth;
+    vector<vpll> query;
+    ll find(ll x) {
+        if (pa[x] == x) return x;
+        return pa[x] = find(pa[x]);
+    }
+    void merge(ll a, ll b) {
+        a = find(a), b = find(b);
+        if (a == b) return;
+        if (sz[a] < sz[b]) swap(a, b);
+        pa[b] = a;
+        sz[a] += sz[b];
+    }
+    OfflineLCA(vvl& tree, vector<pll>& qs, ll root=1)
+        : n(tree.size()), pa(n), sz(n, 1), anc(n), vis(n), ans(qs.size()), query(n, vpll()), depth(n)
+    {
+        iota(pa.begin(), pa.end(), 0);
+        for (ll i=0; i<(ll)qs.size(); i++) {
+            auto [u, v] = qs[i];
+            query[u].emplace_back(v, i);
+            query[v].emplace_back(u, i);
+        }
+        function<void(ll,ll)> dfs = [&](ll cur, ll pa) {
+            anc[find(cur)] = cur;
             for (auto ch : tree[cur]) {
                 if (ch == pa) continue;
                 depth[ch] = depth[cur] + 1;
-                anc[0][ch] = cur;
                 dfs(ch, cur);
+                merge(cur, ch);
+                anc[find(cur)] = cur;
             }
+            vis[cur] = true;
+            for (auto [nxt, idx] : query[cur])
+                if (vis[nxt]) ans[idx] = anc[find(nxt)];
         };
         dfs(root, -1);
-        anc[0][root] = root;
-        for (ll i=1; i<MAXLN; i++)
-            for (ll j=0; j<n; j++)
-                anc[i][j] = anc[i-1][anc[i-1][j]];
     }
+    ll solve(ll idx) {
+        return ans[idx];
+    }
+};
 
-    ll solve(ll u, ll v){
-        if (depth[u] < depth[v]) swap(u, v);
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (depth[u]-(1LL<<i) >= depth[v])
-                u = anc[i][u];
-        if (u == v) return u;
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (anc[i][u] != anc[i][v])
-                u = anc[i][u], v = anc[i][v];
-        return anc[0][u];
-    }
-    ll findKthAnc(ll x, ll K) {
-        for (ll i=MAXLN-1; i>=0; i--)
-            if (K & 1LL<<i) x = anc[i][x];
-        return x;
+struct Query {
+    ll a, b, c, d;
+};
+
+struct PairHash {
+    size_t operator()(const pll& p) const {
+        return hash<ll>()((p.first << 32) ^ p.second);
     }
 };
 
@@ -103,12 +114,27 @@ void solve(ll testcase){
         G[u].emplace_back(v);
         G[v].emplace_back(u);
     }
-    LCA lca(G, 1);
-    while (Q--) {
-        ll a, b, c, d; io >> a >> b >> c >> d;
-        ll ab = lca.solve(a, b);
-        ll bc = lca.solve(b, c), ca = lca.solve(c, a);
-        ll bd = lca.solve(b, d), da = lca.solve(d, a);
+    ll idx = 0;
+    vpll lcaQuery;
+    unordered_map<pll,ll,PairHash> mp;
+    vector<Query> query(Q);
+    for (auto& [a,b,c,d]: query) {
+        io >> a >> b >> c >> d;
+        for (auto [f,s]: vpll{{a,b}, {b,c}, {c,a}, {b,d}, {d,a}}) {
+            if (f>s) swap(f, s);
+            if (!mp.contains({f, s})) {
+                lcaQuery.emplace_back(f, s);
+                mp[{f, s}] = idx++;
+            }
+        }
+    }
+    OfflineLCA lca(G, lcaQuery, 1);
+    for (auto [a,b,c,d]: query) {
+        ll ab = lca.solve(mp[a<b ? pll{a, b} : pll{b,a}]);
+        ll bc = lca.solve(mp[b<c ? pll{b, c} : pll{c, b}]);
+        ll ca = lca.solve(mp[c<a ? pll{c, a} : pll{a, c}]);
+        ll bd = lca.solve(mp[b<d ? pll{b, d} : pll{d, b}]);
+        ll da = lca.solve(mp[d<a ? pll{d, a} : pll{a, d}]);
         ll cc = max({ab, bc, ca}, [&](const ll& x, const ll& y) {
             return lca.depth[x] < lca.depth[y];
         });
