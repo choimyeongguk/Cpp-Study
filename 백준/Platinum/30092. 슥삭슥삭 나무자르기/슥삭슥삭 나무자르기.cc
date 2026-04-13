@@ -53,92 +53,45 @@ void preprocess() {
 
 }
 
-struct LazySeg {
-    ll n; vl tree, lazy;
-    LazySeg(ll n): n(n), tree(n<<2), lazy(n<<2) {}
-    void push(ll i, ll s, ll e) {
-        if (lazy[i] == 0) return;
-        ll m = (s+e)>>1;
-        tree[i<<1] += (m-s+1) * lazy[i];
-        lazy[i<<1] += lazy[i];
-        tree[i<<1|1] += (e-m) * lazy[i];
-        lazy[i<<1|1] += lazy[i];
-        lazy[i] = 0;
+struct LCA {
+    ll MAXLN;
+    vl depth; vvl anc;
+    LCA(vvl& tree, ll root=0){
+        ll n = (ll)tree.size();
+        MAXLN = 1;
+        while (1LL<<MAXLN <= n) ++MAXLN;
+        anc.assign(MAXLN,vl(n));
+        depth.assign(n,0);
+        function<void(ll,ll)> dfs = [&](ll cur,ll pa) {
+            for (auto ch : tree[cur]) {
+                if (ch == pa) continue;
+                depth[ch] = depth[cur] + 1;
+                anc[0][ch] = cur;
+                dfs(ch, cur);
+            }
+        };
+        dfs(root, -1);
+        anc[0][root] = root;
+        for (ll i=1; i<MAXLN; i++)
+            for (ll j=0; j<n; j++)
+                anc[i][j] = anc[i-1][anc[i-1][j]];
     }
-    void update(ll l, ll r, ll v) { update(1, 0, n-1, l, r, v); }
-    void update(ll i, ll s, ll e, ll l, ll r, ll v) {
-        if (s>r || e<l) return;
-        if (l<=s && e<=r) {
-            tree[i] += (e-s+1) * v;
-            lazy[i] += v;
-            return;
-        }
-        push(i, s, e);
-        ll m = (s+e)>>1;
-        update(i<<1, s, m, l, r, v);
-        update(i<<1|1, m+1, e, l, r, v);
-        tree[i] = tree[i<<1] + tree[i<<1|1];
-    }
-    ll query(ll l, ll r) { return query(1, 0, n-1, l, r); }
-    ll query(ll i, ll s, ll e, ll l, ll r) {
-        if (s>r || e<l) return 0;
-        if (l<=s && e<=r) return tree[i];
-        push(i, s, e);
-        ll m = (s+e)>>1;
-        return query(i<<1, s, m, l, r) + query(i<<1|1, m+1, e, l, r);
-    }
-};
 
-struct HLD {
-    ll n, time = 0;
-    vvl& G; vl depth, sz, pa, top, in, out;
-    HLD(vvl& G, ll root = 1)
-        : n(G.size()), G(G),
-          depth(n), sz(n), pa(n),
-          top(n, root), in(n), out(n) {
-        dfs1(root, -1);
-        dfs2(root, -1);
+    ll solve(ll u, ll v){
+        if (depth[u] < depth[v]) swap(u, v);
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (depth[u]-(1LL<<i) >= depth[v])
+                u = anc[i][u];
+        if (u == v) return u;
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (anc[i][u] != anc[i][v])
+                u = anc[i][u], v = anc[i][v];
+        return anc[0][u];
     }
-    void dfs1(ll cur, ll prev) {
-        sz[cur] = 1, pa[cur] = prev;
-        ll heavy = -1, mx = -1;
-        for (ll i=0; i<G[cur].size(); i++) {
-            ll nxt = G[cur][i]; if (nxt == prev) continue;
-            depth[nxt] = depth[cur] + 1;
-            dfs1(nxt, cur);
-            sz[cur] += sz[nxt];
-            if (mx < sz[nxt]) mx = sz[nxt], heavy = i;
-        }
-        if (heavy != -1) swap(G[cur][0], G[cur][heavy]);
-    }
-    void dfs2(ll cur, ll prev) {
-        in[cur] = time++;
-        for (auto nxt: G[cur]) {
-            if (nxt == prev) continue;
-            top[nxt] = nxt==G[cur][0] ? top[cur] : nxt;
-            dfs2(nxt, cur);
-        }
-        out[cur] = time-1;
-    }
-    void updatePath(ll u, ll v, ll x, LazySeg& seg) {
-        while (top[u] != top[v]) {
-            if (depth[top[u]] < depth[top[v]]) swap(u, v);
-            seg.update(in[top[u]], in[u], x);
-            u = pa[top[u]];
-        }
-        if (depth[u] > depth[v]) swap(u, v);
-        seg.update(in[u]+1, in[v], x);  // 간선 갱신
-    }
-    ll queryPath(ll u, ll v, LazySeg& seg) {
-        ll ret = 0;
-        while (top[u] != top[v]) {
-            if (depth[top[u]] < depth[top[v]]) swap(u, v);
-            ret += seg.query(in[top[u]], in[u]);
-            u = pa[top[u]];
-        }
-        if (depth[u] > depth[v]) swap(u, v);
-        ret += seg.query(in[u]+1, in[v]);   // 간선 갱싱
-        return ret;
+    ll findKthAnc(ll x, ll K) {
+        for (ll i=MAXLN-1; i>=0; i--)
+            if (K & 1LL<<i) x = anc[i][x];
+        return x;
     }
 };
 
@@ -150,13 +103,19 @@ void solve(ll testcase){
         G[u].emplace_back(v);
         G[v].emplace_back(u);
     }
-    HLD hld(G, 1);
-    LazySeg seg(N);
+    LCA lca(G, 1);
     while (Q--) {
         ll a, b, c, d; io >> a >> b >> c >> d;
-        hld.updatePath(a, b, 1, seg);
-        io << (hld.queryPath(c, d, seg)>0 ? "NO\n" : "YES\n");
-        hld.updatePath(a, b, -1, seg);
+        ll ab = lca.solve(a, b);
+        ll bc = lca.solve(b, c), ca = lca.solve(c, a);
+        ll bd = lca.solve(b, d), da = lca.solve(d, a);
+        ll cc = max({ab, bc, ca}, [&](const ll& x, const ll& y) {
+            return lca.depth[x] < lca.depth[y];
+        });
+        ll dd = max({ab, bd, da}, [&](const ll& x, const ll& y) {
+            return lca.depth[x] < lca.depth[y];
+        });
+        io << (cc==dd ? "YES\n" : "NO\n");
     }
 }
 
